@@ -10,9 +10,11 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-gray-100">
-        <Navbar />
-        <main className="p-6">{children}</main>
+      <body className="bg-gray-100 flex flex-col min-h-screen">
+        {/* Contenido centrado verticalmente */}
+        <main className="flex-1 flex justify-center items-center">
+          {children}
+        </main>
       </body>
     </html>
   );
