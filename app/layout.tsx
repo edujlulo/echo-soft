@@ -10,10 +10,11 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-gray-100 flex flex-col min-h-screen">
-        {/* Contenido centrado verticalmente */}
-        <main className="flex-1 flex justify-center items-center">
-          {children}
+      <body className="flex flex-col min-h-screen">
+        {/* Main container that allows scrolling when the viewport is smaller */}
+        <main className="flex-1 flex overflow-auto">
+          {/* Wrapper that centers the content only if there is enough space */}
+          <div className="m-auto">{children}</div>
         </main>
       </body>
     </html>
