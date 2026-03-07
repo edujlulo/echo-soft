@@ -19,7 +19,7 @@ export default function LabeledInput({
         {children}
       </label>
       <input
-        className={`flex-1 border border-blue-300 px-2 pt-1.5 rounded focus:outline-none focus:border-red-500  focus:bg-amber-100 ${inputClassName}`}
+        className={`flex-1 border border-blue-300 px-2 py-1 rounded focus:outline-none focus:border-red-500  focus:bg-amber-100 ${inputClassName}`}
         defaultValue={defaultValue}
         disabled={disabled}
       />
