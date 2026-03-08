@@ -1,6 +1,6 @@
-import PatientsTable from "./components/PatientsTable";
-import ConsultationsTable from "./components/ConsultationsTable";
-import DashboardHeader from "./components/DashboardHeader";
+import PatientsTable from "./_components/PatientsTable";
+import ConsultationsTable from "./_components/ConsultationsTable";
+import DashboardHeader from "./_components/DashboardHeader";
 
 export default function DashboardPage() {
   return (
