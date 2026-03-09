@@ -3,7 +3,8 @@ import { ReactNode } from "react";
 
 export const metadata = {
   title: "EcoSoft",
-  description: "Veterinary Ultrasound Management App",
+  // description: "Veterinary Ultrasound Management App",
+  description: "Aplicación Web de Gestión de Ecografías Veterinarias",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
