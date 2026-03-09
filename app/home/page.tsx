@@ -6,11 +6,14 @@ import Navbar from "@/components/Navbar";
 import { useRouter } from "next/navigation";
 import VeterinariansTable from "./_components/VeterinariansTable";
 import { useEffect } from "react";
-import { useClinicStore } from "@/context/clinicStore";
+import { useClinicStore } from "@/context/activeClinicStore";
+import { useVeterinarians } from "@/hooks/useVeterinarians";
 
 export default function HomePage() {
   const { activeClinic } = useClinicStore();
   const router = useRouter();
+
+  const { vets, loading } = useVeterinarians();
 
   const handleExit = () => {
     router.replace("/");
@@ -87,7 +90,7 @@ export default function HomePage() {
           <h2 className="text-2xl font-bold mb-2">Ecografistas</h2>
 
           {/* Veterinarians table */}
-          <VeterinariansTable />
+          <VeterinariansTable vets={vets} loading={loading} />
         </div>
       </div>
 

@@ -3,25 +3,25 @@
 import Button from "@/components/Button";
 import LabeledInput from "@/components/LabeledInput";
 import { useAuth } from "@/hooks/useAuth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function LoginPage() {
   const { login } = useAuth();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // estado de carga
+  const [email, setEmail] = useState("eduardo@correo.com");
+  const [password, setPassword] = useState("12345");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
-    setIsLoading(true); // inicio de carga
+    if (isLoading) return; // evita doble submit
+    setIsLoading(true);
     try {
       await login(email, password);
-      // Aquí podrías redirigir a la home si es exitoso
+      // redirigir a home si es exitoso
     } catch (error) {
-      // alert("Invalid credentials");
       alert("Correo o contraseña incorrectos");
     } finally {
-      setIsLoading(false); // fin de carga
+      setIsLoading(false);
     }
   };
 
@@ -29,6 +29,19 @@ export default function LoginPage() {
     e.preventDefault();
     handleLogin();
   };
+
+  // 🔹 Agregamos listener global para Enter
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        e.preventDefault(); // evita submit duplicado o comportamiento por defecto
+        handleLogin();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [email, password, isLoading]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -62,21 +75,8 @@ export default function LoginPage() {
           <div className="mt-6 flex justify-center">
             <Button
               type="submit"
-              disabled={isLoading} // desactiva mientras carga
-              className={`
-                bg-blue-600
-                text-blue-50
-                border !border-blue-900
-                rounded-lg
-                shadow-md
-                px-6 py-2
-                font-semibold
-                hover:bg-blue-700
-                focus:outline-none focus:ring-2 focus:ring-blue-400
-                transition-colors duration-200 ease-in-out
-                flex items-center justify-center
-                ${isLoading ? "opacity-70 cursor-not-allowed" : ""}
-              `}
+              disabled={isLoading}
+              className={`bg-blue-600 text-blue-50 border !border-blue-900 rounded-lg shadow-md px-6 py-2 font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors duration-200 ease-in-out flex items-center justify-center ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
             >
               {isLoading ? (
                 <>

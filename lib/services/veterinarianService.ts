@@ -1,5 +1,5 @@
-import { getVeterinarians } from "@/lib/queries/veterinarians";
+// import { getVeterinarians } from "@/lib/queries/veterinarians";
 
-export async function listVeterinarians() {
-  return await getVeterinarians();
-}
+// export async function listVeterinarians() {
+//   return await getVeterinarians();
+// }

@@ -1,4 +1,23 @@
-export default function VeterinariansTable() {
+"use client";
+
+import { Vet } from "@/hooks/useVeterinarians";
+import { useActiveVetStore } from "@/context/activeVetStore";
+
+interface Props {
+  vets: Vet[];
+  loading: boolean;
+}
+
+export default function VeterinariansTable({ vets, loading }: Props) {
+  const { activeVet, setActiveVet } = useActiveVetStore();
+
+  // Filas vacías para mantener altura
+  const emptyRows = Array.from({ length: Math.max(0, 9 - vets.length) });
+
+  const handleSelect = (vet: Vet) => {
+    setActiveVet(vet);
+  };
+
   return (
     <div>
       <div className="overflow-y-auto w-full border border-blue-300 rounded">
@@ -20,34 +39,44 @@ export default function VeterinariansTable() {
             </tr>
           </thead>
           <tbody>
-            {/* Filas de datos */}
-            {[
-              {
-                nombre: "MVZ. HENRY ESTEBAN TABARES ÁLVAREZ",
-                matricula: "COMVEZCOL 41059",
-              },
-              {
-                nombre: "MVZ. ANDRES FELIPE RIASCOS GOMEZ",
-                matricula: "COMVEZCOL 39513",
-              },
-            ].map((item, index) => (
-              <tr key={index} className="bg-[#f5faff] h-6">
-                <td className="border border-blue-300 px-2 py-1 align-middle">
-                  {item.nombre}
-                </td>
-                <td className="border border-blue-300 px-2 py-1 align-middle">
-                  {item.matricula}
+            {loading ? (
+              <tr>
+                <td
+                  colSpan={2}
+                  className="border border-blue-300 px-2 py-1 text-center text-blue-700"
+                >
+                  Cargando veterinarios...
                 </td>
               </tr>
-            ))}
+            ) : (
+              <>
+                {vets.map((vet) => (
+                  <tr
+                    key={vet.vet_id}
+                    onClick={() => handleSelect(vet)}
+                    className={`h-6 cursor-pointer ${
+                      activeVet?.vet_id === vet.vet_id
+                        ? "bg-blue-900 text-blue-50"
+                        : "bg-[#f5faff]"
+                    }`}
+                  >
+                    <td className="border border-blue-300 px-2 py-1 align-middle">
+                      {vet.name}
+                    </td>
+                    <td className="border border-blue-300 px-2 py-1 align-middle">
+                      {vet.registration_number || ""}
+                    </td>
+                  </tr>
+                ))}
 
-            {/* Filas vacías */}
-            {Array.from({ length: 9 }).map((_, i) => (
-              <tr key={i} className="bg-[#f5faff] h-6">
-                <td className="border border-blue-300 px-2 py-1 align-middle"></td>
-                <td className="border border-blue-300 px-2 py-1 align-middle"></td>
-              </tr>
-            ))}
+                {emptyRows.map((_, i) => (
+                  <tr key={i} className="bg-[#f5faff] h-6">
+                    <td className="border border-blue-300 px-2 py-1 align-middle"></td>
+                    <td className="border border-blue-300 px-2 py-1 align-middle"></td>
+                  </tr>
+                ))}
+              </>
+            )}
           </tbody>
         </table>
       </div>

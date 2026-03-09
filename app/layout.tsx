@@ -9,12 +9,12 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body className="flex flex-col min-h-screen">
         {/* Main container that allows scrolling when the viewport is smaller */}
-        <main className="flex-1 flex justify-center items-center">
+        <main className="flex-1 flex justify-center items-center overflow-auto">
           {/* Wrapper that centers the content only if there is enough space */}
-          <div>{children}</div>
+          <div className="inline-block max-w-full max-h-full">{children}</div>
         </main>
       </body>
     </html>

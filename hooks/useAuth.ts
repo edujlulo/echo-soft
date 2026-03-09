@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { useClinicStore } from "@/context/clinicStore";
+import { useClinicStore } from "@/context/activeClinicStore";
 
 export function useAuth() {
   const router = useRouter();
