@@ -1,23 +1,23 @@
 import React from "react";
 
-interface ButtonProps {
+// Extendemos las props estándar de un <button> HTML
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  onClick?: () => void;
   className?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
   children,
-  onClick,
   className = "",
+  ...props
 }) => {
   return (
     <button
-      onClick={onClick}
+      {...props} // Esto incluye type, disabled, onClick, etc.
       className={`
         px-3 py-0.5
         text-sm 
-        bg-gray-100 
+        bg-blue-50
         border border-gray-400 
         rounded 
         transition-colors duration-200 ease-in-out
