@@ -1,15 +1,31 @@
 "use client";
+
+import LabeledInput from "@/components/LabeledInput";
+
 export default function DashboardHeader() {
   return (
-    <div className="flex justify-between items-center">
-      <h2 className="text-xl font-bold">Dashboard</h2>
-      <div className="space-x-2">
-        <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-          New Patient
-        </button>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-          New Consultation
-        </button>
+    <div className="mt-2 ml-6 flex flex-col gap-2 w-max">
+      <div className="flex">
+        <LabeledInput
+          inputClassName="w-120"
+          labelClassName="w-55 font-bold text-lg"
+        >
+          Veterinario trabajando:
+        </LabeledInput>
+      </div>
+      <div className="flex flex-row gap-6">
+        <LabeledInput
+          inputClassName="w-70"
+          labelClassName="w-20 font-bold text-lg"
+        >
+          Mascota
+        </LabeledInput>
+        <LabeledInput
+          inputClassName="w-110"
+          labelClassName="w-28 font-bold text-lg"
+        >
+          Propietario
+        </LabeledInput>
       </div>
     </div>
   );

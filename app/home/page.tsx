@@ -21,6 +21,10 @@ export default function HomePage() {
     router.replace("/");
   };
 
+  const navigateToDashboard = () => {
+    router.push("/home/dashboard"); // Cambia "/dashboard" por la ruta correcta de tu dashboard
+  };
+
   useEffect(() => {
     if (!activeClinic) {
       router.replace("/"); // Redirige al login si no hay clínica activa
@@ -33,7 +37,7 @@ export default function HomePage() {
     <div className="w-[1100px] h-[640px] bg-blue-200 flex flex-col items-center rounded-md text-sm">
       {/* NavBar */}
       <div className="w-full">
-        <Navbar />
+        <Navbar>EcoSoft</Navbar>
       </div>
 
       {/* =============== Top sections ================= */}
@@ -95,17 +99,24 @@ export default function HomePage() {
             </LabeledInput>
 
             <div className="flex flex-row">
-              <LabeledInput
+              {/* <LabeledInput
                 labelClassName="w-52"
                 inputClassName="flex-none w-16"
                 type="password"
               >
                 Introduzca su clave por favor
-              </LabeledInput>
+              </LabeledInput> */}
+
+              <Button
+                onClick={navigateToDashboard}
+                className="ml-30 px-3 py-1 pt-1.5 font-bold bg-orange-300 border border-orange-500 hover:bg-orange-400"
+              >
+                ENTRAR AL SISTEMA
+              </Button>
 
               <Button
                 onClick={handleExit}
-                className="ml-auto px-3 py-1 bg-green-300 border border-gray-50 hover:bg-green-400 relative -translate-y-4"
+                className="ml-auto px-3 py-1 pt-1.5 font-bold bg-green-300 border border-gray-50 hover:bg-green-400 relative -translate-y-4"
               >
                 SALIR
               </Button>

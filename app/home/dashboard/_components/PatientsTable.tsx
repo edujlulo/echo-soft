@@ -1,30 +1,81 @@
 "use client";
+
 export default function PatientsTable() {
+  const emptyRows = Array.from({ length: 15 }); // 15 filas vacías
+
   return (
-    <div className="bg-white p-4 rounded shadow">
-      <h3 className="font-bold mb-2">Patients</h3>
-      <table className="w-full table-auto border-collapse border border-gray-300">
-        <thead>
-          <tr>
-            <th className="border p-2">Name</th>
-            <th className="border p-2">Species</th>
-            <th className="border p-2">Age</th>
-            <th className="border p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="border p-2">Buddy</td>
-            <td className="border p-2">Dog</td>
-            <td className="border p-2">4</td>
-            <td className="border p-2 space-x-2">
-              <button className="text-blue-600 hover:underline">View</button>
-              <button className="text-green-600 hover:underline">Edit</button>
-              <button className="text-red-600 hover:underline">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div>
+      <div className="h-[319px] overflow-y-auto w-full border border-blue-300 rounded">
+        <table className="border-collapse table-fixed w-full text-sm text-blue-950">
+          <thead className="bg-blue-100">
+            <tr>
+              <th
+                className="border border-blue-300 px-2 py-1 text-center align-middle"
+                style={{ width: "12%" }}
+              >
+                Núm. Historia
+              </th>
+              <th
+                className="border border-blue-300 px-2 py-1 text-center align-middle"
+                style={{ width: "20%" }}
+              >
+                Nombre Mascota
+              </th>
+              <th
+                className="border border-blue-300 px-2 py-1 text-center align-middle"
+                style={{ width: "30%" }}
+              >
+                Apellido Nombre Propietario
+              </th>
+              <th
+                className="border border-blue-300 px-2 py-1 text-center align-middle"
+                style={{ width: "10%" }}
+              >
+                Especie
+              </th>
+              <th
+                className="border border-blue-300 px-2 py-1 text-center align-middle"
+                style={{ width: "20%" }}
+              >
+                Raza
+              </th>
+              <th
+                className="border border-blue-300 px-2 py-1 text-center align-middle"
+                style={{ width: "15%" }}
+              >
+                Sexo
+              </th>
+              <th
+                className="border border-blue-300 px-2 py-1 text-center align-middle"
+                style={{ width: "12%" }}
+              >
+                F. Nacimiento
+              </th>
+              <th
+                className="border border-blue-300 px-2 py-1 text-center align-middle"
+                style={{ width: "30%" }}
+              >
+                Diagnóstico
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {emptyRows.map((_, i) => (
+              <tr key={i} className="bg-[#f5faff] h-6">
+                <td className="border border-blue-300 px-2 py-1 align-middle"></td>
+                <td className="border border-blue-300 px-2 py-1 align-middle"></td>
+                <td className="border border-blue-300 px-2 py-1 align-middle"></td>
+                <td className="border border-blue-300 px-2 py-1 align-middle"></td>
+                <td className="border border-blue-300 px-2 py-1 align-middle"></td>
+                <td className="border border-blue-300 px-2 py-1 align-middle"></td>
+                <td className="border border-blue-300 px-2 py-1 align-middle"></td>
+                <td className="border border-blue-300 px-2 py-1 align-middle"></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
