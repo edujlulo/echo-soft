@@ -8,6 +8,8 @@ import VeterinariansTable from "./_components/VeterinariansTable";
 import { useEffect } from "react";
 import { useClinicStore } from "@/context/activeClinicStore";
 import { useVeterinarians } from "@/hooks/useVeterinarians";
+import VetImages from "./_components/VetImages";
+import ClinicImage from "./_components/ClinicImage";
 
 export default function HomePage() {
   const { activeClinic } = useClinicStore();
@@ -41,46 +43,18 @@ export default function HomePage() {
           <div className="flex flex-row gap-2">
             {/* Logo */}
             <div className="flex flex-col items-center justify-start pl-4 pt-8">
-              <img
-                src="/images/logointegral.jpg"
-                alt="Clinic logo"
-                className="w-[300px] h-[200px]"
-              />
+              <ClinicImage />
               <h1 className="text-6xl font-bold pt-4">EcoSoft</h1>
             </div>
 
             {/* Profile & Signature */}
-            <div className="w-[200px] flex flex-col items-center justify-start mt-1">
-              <p className="font-bold">Foto de perfil</p>
-              <img
-                src="images/BLANK.JPG"
-                alt="Profile photo"
-                className="w-[140px] h-[120px]"
-              />
-              <div className="my-2 space-x-1 text-sm">
-                <Button>Archivo</Button>
-                <Button>Zoom</Button>
-                <Button>X</Button>
-              </div>
-
-              <p className="font-bold text-sm">Firma</p>
-              <img
-                src="images/BLANK.JPG"
-                alt="Signature photo"
-                className="w-[120px] h-[100px]"
-              />
-              <div className="my-2 space-x-1 text-sm">
-                <Button>Archivo</Button>
-                <Button>Zoom</Button>
-                <Button>X</Button>
-              </div>
-            </div>
+            <VetImages />
           </div>
 
           {/* Clinic Name */}
           <div className="text-center">
             <h3 className="text-gray-500 font-bold text-lg">
-              CLINICA VETERINARIA INTEGRAL VET
+              {`${activeClinic?.name.toUpperCase()}`}
             </h3>
           </div>
         </div>
@@ -108,14 +82,15 @@ export default function HomePage() {
               <span className="text-[#1344a0] font-bold">500</span>
             </div>
 
-            <LabeledInput
-              defaultValue="VALLE DEL CAUCA - COLOMBIA"
-              disabled={true}
-            >
+            <LabeledInput value={activeClinic?.address} disabled={true}>
               Dirección
             </LabeledInput>
 
-            <LabeledInput disabled={true} inputClassName="flex-none w-110">
+            <LabeledInput
+              value={activeClinic?.phone}
+              disabled={true}
+              inputClassName="flex-none w-110"
+            >
               Teléfonos
             </LabeledInput>
 

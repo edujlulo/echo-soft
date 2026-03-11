@@ -3,7 +3,7 @@
 import { create } from "zustand";
 
 interface Clinic {
-  id: string;
+  clinic_id: string;
   name: string;
   email?: string;
   phone?: string;

@@ -8,8 +8,8 @@ import { useState, useEffect } from "react";
 export default function LoginPage() {
   const { login } = useAuth();
 
-  const [email, setEmail] = useState("eduardo@correo.com");
-  const [password, setPassword] = useState("12345");
+  const [email, setEmail] = useState("correo@correo.com");
+  const [password, setPassword] = useState("Ecosoft123.");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {

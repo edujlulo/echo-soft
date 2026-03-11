@@ -1,10 +1,15 @@
 import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useClinicStore } from "@/context/activeClinicStore";
+import { useActiveVetStore } from "@/context/activeVetStore";
+import { Database } from "@/types/database";
 
 export function useAuth() {
   const router = useRouter();
   const setActiveClinic = useClinicStore((state) => state.setActiveClinic);
+  const setActiveVet = useActiveVetStore((state) => state.setActiveVet);
+
+  type Vet = Database["public"]["Tables"]["veterinarians"]["Row"];
 
   const login = async (email: string, password: string) => {
     // 1️⃣ Login con Supabase
@@ -26,7 +31,7 @@ export function useAuth() {
     // 2️⃣ Buscar al veterinario
     const { data: vet, error: vetError } = await supabase
       .from("veterinarians")
-      .select("vet_id, clinic_id")
+      .select("*")
       .eq("user_id", user.id)
       .single();
 
@@ -34,6 +39,12 @@ export function useAuth() {
 
     // Validar que vet tenga clinic_id
     if (!vet.clinic_id) throw new Error("El veterinario no tiene clinic_id");
+
+    setActiveVet({
+      ...vet,
+      name: `${vet.first_name} ${vet.last_name}`,
+      registration_number: vet.registration_number || undefined,
+    });
 
     // 3️⃣ Obtener la clínica
     const { data: clinic, error: clinicError } = await supabase

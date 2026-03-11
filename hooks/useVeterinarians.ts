@@ -29,7 +29,7 @@ export function useVeterinarians() {
       try {
         // Traemos los datos de la clínica activa
         const data: VeterinarianRow[] = await fetchVeterinarians(
-          activeClinic.id,
+          activeClinic.clinic_id,
         );
 
         // <-- Aquí entra tu fragmento: transformamos los datos a lo que necesita la UI

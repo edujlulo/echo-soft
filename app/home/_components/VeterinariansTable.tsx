@@ -9,14 +9,10 @@ interface Props {
 }
 
 export default function VeterinariansTable({ vets, loading }: Props) {
-  const { activeVet, setActiveVet } = useActiveVetStore();
+  const activeVet = useActiveVetStore((state) => state.activeVet);
 
   // Filas vacías para mantener altura
   const emptyRows = Array.from({ length: Math.max(0, 9 - vets.length) });
-
-  const handleSelect = (vet: Vet) => {
-    setActiveVet(vet);
-  };
 
   return (
     <div>
@@ -38,6 +34,7 @@ export default function VeterinariansTable({ vets, loading }: Props) {
               </th>
             </tr>
           </thead>
+
           <tbody>
             {loading ? (
               <tr>
@@ -53,8 +50,7 @@ export default function VeterinariansTable({ vets, loading }: Props) {
                 {vets.map((vet) => (
                   <tr
                     key={vet.vet_id}
-                    onClick={() => handleSelect(vet)}
-                    className={`h-6 cursor-pointer ${
+                    className={`h-6 ${
                       activeVet?.vet_id === vet.vet_id
                         ? "bg-blue-900 text-blue-50"
                         : "bg-[#f5faff]"
