@@ -22,7 +22,7 @@ export default function HomePage() {
   };
 
   const navigateToDashboard = () => {
-    router.push("/home/dashboard"); // Cambia "/dashboard" por la ruta correcta de tu dashboard
+    router.push("/dashboard"); // Cambia "/dashboard" por la ruta correcta de tu dashboard
   };
 
   useEffect(() => {

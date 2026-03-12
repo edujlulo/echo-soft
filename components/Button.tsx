@@ -15,7 +15,8 @@ const Button: React.FC<ButtonProps> = ({
     <button
       {...props} // Esto incluye type, disabled, onClick, etc.
       className={`
-        px-3 py-0.5
+        px-3
+        py-0.5
         text-sm 
         bg-blue-50
         border border-gray-400 
