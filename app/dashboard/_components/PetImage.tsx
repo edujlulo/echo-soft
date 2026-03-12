@@ -6,9 +6,7 @@ export default function PetImage() {
 
   return (
     <div className="flex flex-col gap-1 justify-center items-center">
-      <p className="py-0.5 px-2 font-bold text-xl bg-gray-300">MASCOTA</p>
-
-      <div className="flex items-center justify-center bg-transparent rounded">
+      <div className="flex items-center justify-center bg-transparent rounded border border-gray-400 ">
         {/* {loading.profile ? (
           <div className="flex flex-col items-center gap-1 text-gray-500 animate-pulse">
             <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
@@ -27,7 +25,7 @@ export default function PetImage() {
           // src={images.profile || "/images/blank-vetimages.jpg"}
           src="/images/blank-petimage.jpg"
           alt="Profile photo"
-          className="w-[160px] h-[140px] object-contain"
+          className="w-[148px] h-[160px] rounded object-contain"
         />
       </div>
 

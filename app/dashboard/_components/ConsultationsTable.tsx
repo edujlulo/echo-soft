@@ -9,23 +9,23 @@ export default function ConsultationsTable() {
           <thead className="bg-blue-100">
             <tr>
               <th
-                className="border border-blue-300 px-2 py-1 text-center align-middle"
+                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
                 style={{ width: "3%" }}
               ></th>
               <th
-                className="border border-blue-300 px-2 pt-1 text-center align-middle"
+                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
                 style={{ width: "20%" }}
               >
                 Fecha
               </th>
               <th
-                className="border border-blue-300 px-2 pt-1 text-center align-middle"
+                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
                 style={{ width: "40%" }}
               >
                 Veterinario
               </th>
               <th
-                className="border border-blue-300 px-2 pt-1 text-center align-middle"
+                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
                 style={{ width: "35%" }}
               >
                 Especialidad
@@ -36,10 +36,10 @@ export default function ConsultationsTable() {
           <tbody>
             {emptyRows.map((_, i) => (
               <tr key={i} className="bg-[#f5faff] h-6">
-                <td className="border border-blue-300 px-2 pt-1 align-middle"></td>
-                <td className="border border-blue-300 px-2 pt-1 align-middle"></td>
-                <td className="border border-blue-300 px-2 pt-1 align-middle"></td>
-                <td className="border border-blue-300 px-2 pt-1 align-middle"></td>
+                <td className="border border-blue-300 px-2 pt-0.5 align-middle"></td>
+                <td className="border border-blue-300 px-2 pt-0.5 align-middle"></td>
+                <td className="border border-blue-300 px-2 pt-0.5 align-middle"></td>
+                <td className="border border-blue-300 px-2 pt-0.5 align-middle"></td>
               </tr>
             ))}
           </tbody>
