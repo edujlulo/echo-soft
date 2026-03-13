@@ -55,6 +55,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <LabeledInput
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           >

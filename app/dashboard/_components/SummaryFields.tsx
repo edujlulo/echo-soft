@@ -1,3 +1,5 @@
+"use client";
+
 import LabeledInput from "@/components/LabeledInput";
 
 export default function SummaryFields() {

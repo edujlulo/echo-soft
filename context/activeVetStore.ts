@@ -1,7 +1,10 @@
 "use client";
 
 import { create } from "zustand";
-import { Vet } from "@/hooks/useVeterinarians";
+import { Database } from "@/types/database";
+
+// Tipo de fila tal como la devuelve Supabase
+type Vet = Database["public"]["Tables"]["veterinarians"]["Row"];
 
 interface ActiveVetState {
   activeVet: Vet | null; // veterinario activo

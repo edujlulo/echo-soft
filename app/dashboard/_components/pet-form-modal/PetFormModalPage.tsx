@@ -1,16 +1,36 @@
+"use client";
+
 import Button from "@/components/Button";
 import Navbar from "@/components/Navbar";
 import PetForm from "./PetForm";
 import PetImage from "../PetImage";
 import EditableSelectList from "../../../../components/EditableSelectList";
+import { usePetForm } from "@/hooks/usePetForm";
+import { Database } from "@/types/database";
+import { useSelectedPetStore } from "@/context/selectedPetStore";
+import { usePetFetcher } from "@/hooks/usePetFetcher";
 
 type PetFormModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
+type Pet = Database["public"]["Tables"]["pets"]["Row"];
+
 export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
   if (!isOpen) return null;
+
+  const { refreshPets } = usePetFetcher();
+  const { setSelectedPet } = useSelectedPetStore();
+
+  const onSuccess = (newPet: Pet) => {
+    refreshPets();
+    setSelectedPet(newPet);
+    onClose();
+  };
+
+  const { selectedPet, setField, errors, submit, isSubmitting, statusMessage } =
+    usePetForm(onSuccess);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 ">
@@ -29,12 +49,21 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
               <div className="flex flex-col gap-2">
                 {/* ======== PET FORM ========= */}
                 <div className="h-full pb-10 flex justify-center items-center ">
-                  <PetForm />
+                  {selectedPet && (
+                    <PetForm
+                      selectedPet={selectedPet as Pet}
+                      setField={setField}
+                      errors={errors}
+                      statusMessage={statusMessage}
+                    />
+                  )}
                 </div>
 
                 {/* ======== BUTTONS ======== */}
                 <div className="pl-6 pb-2 flex flex-row gap-4 justify-start items-start">
-                  <Button>Grabar</Button>
+                  <Button onClick={submit} disabled={isSubmitting}>
+                    {isSubmitting ? "Guardando..." : "Grabar"}
+                  </Button>
                   <Button onClick={onClose}>Cancelar</Button>
                 </div>
               </div>

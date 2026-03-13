@@ -1,16 +1,17 @@
+"use client";
+
 import Button from "@/components/Button";
+import { useSelectedPetStore } from "@/context/selectedPetStore";
 
-type PetButtonsProps = {
-  onNewPetClick: () => void;
-};
+export default function PetButtons() {
+  const { startCreating, startEditing } = useSelectedPetStore();
 
-export default function PetButtons({ onNewPetClick }: PetButtonsProps) {
   return (
     <div className="flex flex-col gap-7">
-      <Button className="w-38" onClick={onNewPetClick}>
+      <Button className="w-38" onClick={startCreating}>
         Nueva Mascota
       </Button>
-      <Button>Modificar Mascota</Button>
+      <Button onClick={startEditing}>Modificar Mascota</Button>
       <Button>Borrar Mascota</Button>
     </div>
   );

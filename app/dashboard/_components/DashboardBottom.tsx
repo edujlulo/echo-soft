@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@/components/Button";
 import ConsultationsButtons from "./ConsultationsButtons";
 import PetButtons from "./PetButtons";
@@ -5,13 +7,7 @@ import PetImage from "./PetImage";
 import SummaryFields from "./SummaryFields";
 import ConsultationsTable from "./ConsultationsTable";
 
-type DashboardBottomProps = {
-  onNewPetClick: () => void;
-};
-
-export default function DashboardBottom({
-  onNewPetClick,
-}: DashboardBottomProps) {
+export default function DashboardBottom() {
   return (
     <div className="h-full mt-1 flex justify-end">
       <div className="w-full flex flex-row gap-2 ">
@@ -29,7 +25,7 @@ export default function DashboardBottom({
           </div>
           <div className="w-full flex flex-row gap-4 justify-center items-center">
             {/* ======= PET BUTTONS ======= */}
-            <PetButtons onNewPetClick={onNewPetClick} />
+            <PetButtons />
 
             {/* ======= CONSULTATIONS TABLE ======= */}
             <div className="w-full h-full flex-1 mr-20 bg-red-200 flex justify-center items-start">

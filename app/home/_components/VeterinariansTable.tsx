@@ -1,7 +1,10 @@
 "use client";
 
-import { Vet } from "@/hooks/useVeterinarians";
 import { useActiveVetStore } from "@/context/activeVetStore";
+import { Database } from "@/types/database";
+
+// Tipo de fila tal como la devuelve Supabase
+type Vet = Database["public"]["Tables"]["veterinarians"]["Row"];
 
 interface Props {
   vets: Vet[];

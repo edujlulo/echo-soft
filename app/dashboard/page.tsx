@@ -7,17 +7,19 @@ import Navbar from "@/components/Navbar";
 import DashboardBottom from "./_components/DashboardBottom";
 import { useState } from "react";
 import PetFormModal from "./_components/pet-form-modal/PetFormModalPage";
+import { useSelectedPetStore } from "@/context/selectedPetStore";
+// import { useSelectedPetStore } from "@/context/selectedPetStore";
 
 export default function DashboardPage() {
-  const [isPetFormModalOpen, setIsPetFormModalOpen] = useState(false);
+  const { isCreating, isEditing, resetSelectedPet } = useSelectedPetStore();
 
-  function openPetFormModal() {
-    setIsPetFormModalOpen(true);
-  }
+  // Abrir modal si está creando o editando
+  const open = isCreating || isEditing;
 
-  function closePetFormModal() {
-    setIsPetFormModalOpen(false);
-  }
+  // Función para cerrar modal: resetea el estado del store
+  const handleClose = () => {
+    resetSelectedPet();
+  };
 
   return (
     <>
@@ -34,9 +36,9 @@ export default function DashboardPage() {
         </div>
 
         {/* =============== Bottom section ================= */}
-        <DashboardBottom onNewPetClick={openPetFormModal} />
+        <DashboardBottom />
       </div>
-      <PetFormModal isOpen={isPetFormModalOpen} onClose={closePetFormModal} />
+      <PetFormModal isOpen={open} onClose={handleClose} />
     </>
   );
 }

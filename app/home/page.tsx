@@ -10,8 +10,11 @@ import { useClinicStore } from "@/context/activeClinicStore";
 import { useVeterinarians } from "@/hooks/useVeterinarians";
 import VetImages from "./_components/VetImages";
 import ClinicImage from "./_components/ClinicImage";
+import { Database } from "@/types/database";
 
 export default function HomePage() {
+  type VetRow = Database["public"]["Tables"]["veterinarians"]["Row"];
+
   const { activeClinic } = useClinicStore();
   const router = useRouter();
 
@@ -68,7 +71,7 @@ export default function HomePage() {
           <h2 className="text-2xl font-bold mb-2">Ecografistas</h2>
 
           {/* Veterinarians table */}
-          <VeterinariansTable vets={vets} loading={loading} />
+          <VeterinariansTable vets={vets as VetRow[]} loading={loading} />
         </div>
       </div>
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useClinicStore } from "@/context/activeClinicStore";
@@ -42,8 +44,8 @@ export function useAuth() {
 
     setActiveVet({
       ...vet,
-      name: `${vet.first_name} ${vet.last_name}`,
-      registration_number: vet.registration_number || undefined,
+      name: `${vet.name}`,
+      registration_number: vet.registration_number ?? null,
     });
 
     // 3️⃣ Obtener la clínica

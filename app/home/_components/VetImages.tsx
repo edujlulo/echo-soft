@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@/components/Button";
 import { useVetImages } from "@/hooks/useVetImages";
 import { useRef } from "react";

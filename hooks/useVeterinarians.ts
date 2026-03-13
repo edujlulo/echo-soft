@@ -35,7 +35,7 @@ export function useVeterinarians() {
         // <-- Aquí entra tu fragmento: transformamos los datos a lo que necesita la UI
         const formatted: Vet[] = data.map((vet: VeterinarianRow) => ({
           vet_id: vet.vet_id,
-          name: `${vet.first_name} ${vet.last_name}`, // concatenamos nombres
+          name: `${vet.name}`,
           registration_number: vet.registration_number || "",
         }));
 
