@@ -5,14 +5,14 @@ import { Database } from "@/types/database";
 
 type Pet = Database["public"]["Tables"]["pets"]["Row"];
 
-type NewPet = Omit<Pet, "pet_id"> & Partial<Pick<Pet, "pet_id">>;
+type NewPet = Omit<Pet, "pet_id" | "record_number"> &
+  Partial<Pick<Pet, "pet_id" | "record_number">>;
 
-const emptyPet: Omit<Pet, "pet_id"> = {
+export const emptyPet: Omit<Pet, "pet_id" | "record_number"> = {
   name: "",
   owner: "",
   vet_id: "",
   clinic_id: "",
-  record_number: 0,
   allergies: null,
   birth_date: null,
   breed: null,

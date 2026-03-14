@@ -19,12 +19,14 @@ export default function PetForm({
   errors,
   statusMessage,
 }: PetFormProps) {
+  if (!selectedPet) return null;
+
   return (
     <div className="flex flex-col gap-4">
       <LabeledInput
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
-        value={selectedPet?.owner || ""}
+        value={selectedPet?.owner ?? ""}
         onChange={(e) => setField("owner", e.target.value)}
       >
         Propietario:
@@ -34,7 +36,7 @@ export default function PetForm({
       <LabeledInput
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
-        value={selectedPet?.name || ""}
+        value={selectedPet?.name ?? ""}
         onChange={(e) => setField("name", e.target.value)}
       >
         Mascota:
@@ -44,7 +46,7 @@ export default function PetForm({
       <LabeledInput
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
-        value={selectedPet?.referred_by || ""}
+        value={selectedPet?.referred_by ?? ""}
         onChange={(e) => setField("referred_by", e.target.value)}
       >
         Referido por:
@@ -53,7 +55,7 @@ export default function PetForm({
       <LabeledInput
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
-        value={selectedPet?.species || ""}
+        value={selectedPet?.species ?? ""}
         onChange={(e) => setField("species", e.target.value)}
       >
         Especie:
@@ -61,7 +63,7 @@ export default function PetForm({
       <LabeledInput
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
-        value={selectedPet?.breed || ""}
+        value={selectedPet?.breed ?? ""}
         onChange={(e) => setField("breed", e.target.value)}
       >
         Raza:
@@ -69,7 +71,7 @@ export default function PetForm({
       <LabeledInput
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
-        value={selectedPet?.sex || ""}
+        value={selectedPet?.sex ?? ""}
         onChange={(e) => setField("sex", e.target.value)}
       >
         Sexo:

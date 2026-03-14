@@ -18,8 +18,6 @@ type PetFormModalProps = {
 type Pet = Database["public"]["Tables"]["pets"]["Row"];
 
 export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
-  if (!isOpen) return null;
-
   const { refreshPets } = usePetFetcher();
   const { setSelectedPet } = useSelectedPetStore();
 
@@ -31,6 +29,8 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
 
   const { selectedPet, setField, errors, submit, isSubmitting, statusMessage } =
     usePetForm(onSuccess);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 ">
