@@ -27,7 +27,17 @@ export function usePetImages() {
     // Si es emptyPet, ponemos la foto de "blank"
     if (JSON.stringify(selectedPet) === JSON.stringify(emptyPet)) {
       setImages({ profile: "/images/blank-petimage.jpg" });
+      setLoading({ profile: false });
       return; // no buscamos nada más
+    }
+
+    // Si la imagen ya está en images, no la sobreescribimos
+    if (
+      selectedPet.image_path &&
+      images.profile?.includes(selectedPet.image_path)
+    ) {
+      setLoading({ profile: false });
+      return;
     }
 
     if (typeof selectedPet.pet_id !== "string") return;
@@ -36,8 +46,6 @@ export function usePetImages() {
     const imagePath = selectedPet.image_path ?? null;
 
     async function fetchImage() {
-      setLoading({ profile: true });
-
       const data: PetImages = await getPetImages(petId, imagePath);
 
       setImages(data);
@@ -52,7 +60,7 @@ export function usePetImages() {
   // =========================
   async function handleUpload(
     event: ChangeEvent<HTMLInputElement>,
-    type: PetImageType,
+    type: PetImageType
   ) {
     if (!selectedPet || typeof selectedPet.pet_id !== "string") return;
 
@@ -71,11 +79,33 @@ export function usePetImages() {
       return;
     }
 
-    setImages({ [type]: url });
+    const finalUrl = url + "?ts=" + Date.now();
+
+    // 1️⃣ Actualizamos la imagen en el estado local de selectedPet
+    setImages({
+      ...images, // tu estado actual
+      [type]: finalUrl,
+    });
+
+    // Actualizamos selectedPet
+    // useSelectedPetStore.getState().setSelectedPet({
+    //   ...selectedPet,
+    //   image_path: finalUrl,
+    // });
+
     setLoading({ [type]: false });
 
-    // Refresh pets list
-    refreshPets();
+    // 3️⃣ Refrescamos la lista global de pets
+    // SOLO actualizar selectedPet después de refreshPets(), así ya no se pisa
+    refreshPets().then(() => {
+      const currentPet = useSelectedPetStore.getState().selectedPet;
+      if (currentPet) {
+        useSelectedPetStore.getState().setSelectedPet({
+          ...currentPet,
+          image_path: finalUrl,
+        });
+      }
+    });
   }
 
   return {

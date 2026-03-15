@@ -84,7 +84,6 @@ export const useSelectedPetStore = create<SelectedPetState>((set) => ({
 
   resetSelectedPet: () =>
     set({
-      selectedPet: null,
       isCreating: false,
       isEditing: false,
     }),

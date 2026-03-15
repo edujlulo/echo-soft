@@ -12,9 +12,9 @@ export default function PetImage() {
   return (
     <div className="flex flex-col gap-1 justify-center items-center">
       {/* ========= PET PROFILE PHOTO ========= */}
-      <div className="flex items-center justify-center bg-transparent rounded ">
+      <div className="relative w-[140px] h-[120px] flex items-center justify-center bg-transparent rounded">
         {loading.profile ? (
-          <div className="flex flex-col items-center gap-1 text-gray-500 animate-pulse">
+          <div className="flex flex-col items-center gap-1 text-blue-800 animate-pulse overlay">
             <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
             <span className="text-xs">Cargando imagen...</span>
           </div>
@@ -40,8 +40,12 @@ export default function PetImage() {
           onChange={(e) => handleUpload(e, "profile")}
         />
 
-        <Button>Zoom</Button>
-        <Button>X</Button>
+        <Button onClick={() => window.alert("Acción en construcción")}>
+          Zoom
+        </Button>
+        <Button onClick={() => window.alert("Acción en construcción")}>
+          X
+        </Button>
       </div>
     </div>
   );

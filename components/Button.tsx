@@ -24,7 +24,7 @@ const Button: React.FC<ButtonProps> = ({
         border border-gray-400 
         rounded 
         transition-colors duration-200 ease-in-out
-        hover:bg-blue-200 hover:border-blue-500
+        hover:bg-blue-300 hover:border-blue-500
         focus:outline-none focus:ring-2 focus:ring-blue-300
         cursor-pointer
         ${className}
