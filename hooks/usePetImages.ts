@@ -60,7 +60,7 @@ export function usePetImages() {
   // =========================
   async function handleUpload(
     event: ChangeEvent<HTMLInputElement>,
-    type: PetImageType
+    type: PetImageType,
   ) {
     if (!selectedPet || typeof selectedPet.pet_id !== "string") return;
 

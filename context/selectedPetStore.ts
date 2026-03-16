@@ -37,7 +37,10 @@ interface SelectedPetState {
   isCreating: boolean;
   isEditing: boolean;
 
+  // justCreatedPet: boolean; // <-- nuevo flag
+
   setSelectedPet: (pet: Pet | NewPet | null) => void;
+  // setJustCreatedPet: (value: boolean) => void;
 
   startCreating: () => void;
   startEditing: () => void;
@@ -54,16 +57,21 @@ export const useSelectedPetStore = create<SelectedPetState>((set) => ({
   isCreating: false,
   isEditing: false,
 
+  // justCreatedPet: false, // valor inicial
+
   setSelectedPet: (pet) =>
     set({
       selectedPet: pet,
     }),
+
+  // setJustCreatedPet: (value: boolean) => set({ justCreatedPet: value }),
 
   startCreating: () =>
     set({
       selectedPet: emptyPet,
       isCreating: true,
       isEditing: false,
+      // justCreatedPet: false,
     }),
 
   startEditing: () =>
@@ -86,5 +94,6 @@ export const useSelectedPetStore = create<SelectedPetState>((set) => ({
     set({
       isCreating: false,
       isEditing: false,
+      // justCreatedPet: false,
     }),
 }));

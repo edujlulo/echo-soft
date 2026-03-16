@@ -37,7 +37,15 @@ export default function PetImage() {
           ref={profileInputRef}
           className="hidden"
           accept="image/*"
-          onChange={(e) => handleUpload(e, "profile")}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file && file.size > 5 * 1024 * 1024) {
+              window.alert("La imagen no puede superar los 5MB.");
+              e.target.value = ""; // 🔹 Reset input aquí
+              return;
+            }
+            handleUpload(e, "profile");
+          }}
         />
 
         <Button onClick={() => window.alert("Acción en construcción")}>

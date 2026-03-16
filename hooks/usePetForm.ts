@@ -113,8 +113,10 @@ export function usePetForm(onSuccess: (pet: any) => void) {
         stopCreating();
         stopEditing();
 
+        // useSelectedPetStore.getState().setJustCreatedPet(true);
+
         onSuccess(pet);
-      }, 1200);
+      }, 1000);
     } catch (err: any) {
       console.error(err);
       setStatusMessage("Error guardando mascota");

@@ -10,11 +10,17 @@ export default function ConsultationsButtons() {
     router.push("/home");
   }
 
+  const navigateToConsultations = () => {
+    router.push("/consultations");
+  };
+
   return (
     <div className="flex flex-col gap-1 justify-center items-center">
       <Button className="w-33">Ver Consulta</Button>
+      <Button className="w-33" onClick={navigateToConsultations}>
+        Crear Ecografía
+      </Button>
       <Button className="w-33">Desde memoria</Button>
-      <Button className="w-33">Crear Ecografía</Button>
       <Button className="w-33">Borrar Consulta</Button>
       <Button className="w-33">Historial Médico</Button>
       <Button

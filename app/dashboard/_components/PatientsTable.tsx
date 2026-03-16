@@ -1,214 +1,159 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  DataGrid,
+  GridApi,
+  GridColDef,
+  GridRowSelectionModel,
+  useGridApiRef,
+} from "@mui/x-data-grid";
 import { usePetFetcher } from "@/hooks/usePetFetcher";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
+import { useRef, useEffect } from "react";
 
 export default function PatientsTable() {
   const { pets, isLoading } = usePetFetcher();
-  const { setSelectedPet, selectedPet } = useSelectedPetStore();
+  const { selectedPet, setSelectedPet } = useSelectedPetStore();
 
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  // Mapeo de filas
+  const rows = pets.map((pet) => ({
+    id: pet.pet_id,
+    record_number: pet.record_number,
+    name: pet.name,
+    owner: pet.owner,
+    species: pet.species,
+    breed: pet.breed,
+    sex: pet.sex,
+    birth_date: pet.birth_date,
+    diagnosis: pet.diagnosis,
+  }));
 
-  const emptyRows = Array.from({ length: 15 });
+  // Columnas
+  const columns: GridColDef[] = [
+    { field: "record_number", headerName: "Núm. Historia", flex: 1 },
+    { field: "name", headerName: "Nombre Mascota", flex: 2 },
+    { field: "owner", headerName: "Propietario", flex: 2.5 },
+    { field: "species", headerName: "Especie", flex: 1 },
+    { field: "breed", headerName: "Raza", flex: 1 },
+    { field: "sex", headerName: "Sexo", flex: 1 },
+    { field: "birth_date", headerName: "F. Nacimiento", flex: 1.2 },
+    { field: "diagnosis", headerName: "Diagnóstico", flex: 2 },
+  ];
 
-  // Manejo de teclado
+  // 1️⃣ Crear ref del DataGrid
+  const dataGridRef = useRef<HTMLDivElement>(null);
+
+  // 1️⃣ Crear apiRef
+  const apiRef = useGridApiRef();
+
+  // // 3️⃣ Efecto para hacer scroll cuando cambia selectedPet
+  // useEffect(() => {
+  //   if (!selectedPet || !dataGridRef.current) return;
+
+  //   // Buscar el rowIndex de la fila que queremos mostrar
+  //   const rowElement = dataGridRef.current.querySelector(
+  //     `[data-id="${selectedPet.pet_id}"]`,
+  //   ) as HTMLDivElement | null;
+
+  //   if (rowElement) {
+  //     rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
+  //   }
+  // }, [selectedPet]);
+
+  // useEffect(() => {
+  //   if (!selectedPet || !apiRef.current) return;
+
+  //   const rowIndex = apiRef.current.getRowIndex(selectedPet.pet_id); // índice real en el grid actual
+  //   if (rowIndex != null && rowIndex >= 0) {
+  //     apiRef.current.scrollToIndexes({ rowIndex });
+  //   }
+  // }, [selectedPet]);
+
+  // useEffect(() => {
+  //   if (!selectedPet) return;
+
+  //   requestAnimationFrame(() => {
+  //     const rowElement = document.querySelector(
+  //       `[data-id="${selectedPet.pet_id}"]`,
+  //     ) as HTMLDivElement | null;
+
+  //     if (rowElement) {
+  //       rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
+  //     }
+  //   });
+  // }, [selectedPet, rows]);
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (isLoading || pets.length === 0) return;
+    if (!selectedPet) return;
 
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setSelectedIndex((prev) => {
-          const nextIndex =
-            prev === null ? 0 : Math.min(prev + 1, pets.length - 1);
-          setSelectedPet(pets[nextIndex]);
-          scrollToRow(nextIndex);
-          return nextIndex;
-        });
+    // Espera un tick para que la fila se renderice
+    const timeout = setTimeout(() => {
+      const rowElement = document.querySelector(
+        `[data-id="${selectedPet.pet_id}"]`,
+      ) as HTMLDivElement | null;
+
+      if (rowElement) {
+        rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
       }
+    }, 50); // 50ms suele ser suficiente
 
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setSelectedIndex((prev) => {
-          const nextIndex =
-            prev === null ? pets.length - 1 : Math.max(prev - 1, 0);
-          setSelectedPet(pets[nextIndex]);
-          scrollToRow(nextIndex);
-          return nextIndex;
-        });
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [pets, isLoading, setSelectedPet]);
-
-  // Scroll para mantener la fila visible
-  const scrollToRow = (index: number) => {
-    const row = document.getElementById(`pet-row-${index}`);
-    if (!row) return;
-
-    const container = row.closest(".overflow-y-auto") as HTMLElement;
-    if (!container) return;
-
-    const headHeight = 23;
-
-    const rowTop = row.offsetTop;
-    const rowBottom = rowTop + row.offsetHeight;
-
-    const viewTop = container.scrollTop + headHeight;
-    const viewBottom = container.scrollTop + container.clientHeight;
-
-    // si la fila está arriba del visible
-    if (rowTop < viewTop) {
-      container.scrollTop = rowTop - headHeight;
-    }
-
-    // si la fila está abajo del visible
-    if (rowBottom > viewBottom) {
-      container.scrollTop = rowBottom - container.clientHeight;
-    }
-  };
+    return () => clearTimeout(timeout);
+  }, [selectedPet, rows]);
 
   return (
-    <div>
-      <div className="h-[295px] overflow-y-auto w-full border border-blue-300 rounded">
-        <table className="border-collapse table-fixed w-full text-sm text-blue-950">
-          <thead className="bg-blue-100 sticky top-0 z-10">
-            <tr>
-              <th
-                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
-                style={{ width: "12%" }}
-              >
-                Núm. Historia
-              </th>
-              <th
-                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
-                style={{ width: "20%" }}
-              >
-                Nombre Mascota
-              </th>
-              <th
-                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
-                style={{ width: "30%" }}
-              >
-                Propietario
-              </th>
-              <th
-                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
-                style={{ width: "10%" }}
-              >
-                Especie
-              </th>
-              <th
-                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
-                style={{ width: "20%" }}
-              >
-                Raza
-              </th>
-              <th
-                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
-                style={{ width: "15%" }}
-              >
-                Sexo
-              </th>
-              <th
-                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
-                style={{ width: "12%" }}
-              >
-                F. Nacimiento
-              </th>
-              <th
-                className="border border-blue-300 px-2 pt-0.5 text-center align-middle"
-                style={{ width: "30%" }}
-              >
-                Diagnóstico
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {/* Loading */}
-            {isLoading && (
-              <tr>
-                <td
-                  colSpan={8}
-                  className="text-center p-2 font-bold text-blue-800"
-                >
-                  Cargando mascotas...
-                </td>
-              </tr>
-            )}
-
-            {/* Pets */}
-            {!isLoading &&
-              pets.map((pet, index) => (
-                <tr
-                  id={`pet-row-${index}`}
-                  key={pet.pet_id}
-                  className={`h-6 cursor-pointer ${
-                    selectedPet?.pet_id === pet.pet_id
-                      ? "bg-blue-900 text-blue-50"
-                      : "bg-[#f5faff] hover:bg-blue-200"
-                  }`}
-                  onClick={() => {
-                    setSelectedPet(pet);
-                    setSelectedIndex(index);
-                  }}
-                >
-                  <td className="border border-blue-300 px-2 pt-0.5">
-                    {pet.record_number}
-                  </td>
-
-                  <td className="border border-blue-300 px-2 pt-0.5">
-                    {pet.name}
-                  </td>
-
-                  <td className="border border-blue-300 px-2 pt-0.5">
-                    {pet.owner}
-                  </td>
-
-                  <td className="border border-blue-300 px-2 pt-0.5">
-                    {pet.species}
-                  </td>
-
-                  <td className="border border-blue-300 px-2 pt-0.5">
-                    {pet.breed}
-                  </td>
-
-                  <td className="border border-blue-300 px-2 pt-0.5">
-                    {pet.sex}
-                  </td>
-
-                  <td className="border border-blue-300 px-2 pt-0.5">
-                    {pet.birth_date}
-                  </td>
-
-                  <td className="border border-blue-300 px-2 pt-0.5">
-                    {pet.diagnosis}
-                  </td>
-                </tr>
-              ))}
-
-            {/* Filas vacías para mantener altura */}
-            {!isLoading &&
-              pets.length < 15 &&
-              emptyRows.slice(pets.length).map((_, i) => (
-                <tr key={i} className="bg-[#f5faff] h-6">
-                  <td className="border border-blue-300 px-2 pt-0.5"></td>
-                  <td className="border border-blue-300 px-2 pt-0.5"></td>
-                  <td className="border border-blue-300 px-2 pt-0.5"></td>
-                  <td className="border border-blue-300 px-2 pt-0.5"></td>
-                  <td className="border border-blue-300 px-2 pt-0.5"></td>
-                  <td className="border border-blue-300 px-2 pt-0.5"></td>
-                  <td className="border border-blue-300 px-2 pt-0.5"></td>
-                  <td className="border border-blue-300 px-2 pt-0.5"></td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </div>
+    <div style={{ height: 300, width: "100%" }}>
+      <DataGrid
+        apiRef={apiRef}
+        ref={dataGridRef}
+        rows={rows}
+        columns={columns}
+        loading={isLoading}
+        pageSizeOptions={[15]}
+        rowHeight={26}
+        columnHeaderHeight={28}
+        hideFooter
+        // Selecciona mascota con clic
+        onRowClick={(params) => {
+          const pet = pets.find((p) => p.pet_id === params.id);
+          if (pet) setSelectedPet(pet);
+        }}
+        // Selecciona mascota con Enter o espacio
+        onCellKeyDown={(params, event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            const pet = pets.find((p) => p.pet_id === params.id);
+            if (pet) setSelectedPet(pet);
+            event.preventDefault();
+          }
+        }}
+        getRowClassName={(params) =>
+          selectedPet?.pet_id === params.id ? "selected-row" : ""
+        }
+        sx={{
+          border: "1px solid #93c5fd",
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: "#dbeafe",
+            color: "#172554",
+          },
+          "& .MuiDataGrid-columnHeader": {
+            backgroundColor: "#dbeafe",
+            color: "#172554",
+            borderRight: "1px solid #93c5fd",
+          },
+          "& .MuiDataGrid-columnHeaderTitle": { fontWeight: "bold" },
+          "& .MuiDataGrid-cell": {
+            borderRight: "1px solid #93c5fd",
+            borderBottom: "1px solid #93c5fd",
+          },
+          "& .MuiDataGrid-row": { borderBottom: "1px solid #93c5fd" },
+          "& .Mui-selected": {
+            backgroundColor: "#ffffff !important",
+          },
+          "& .selected-row": {
+            backgroundColor: "#1e3a8a !important", // el azul que quieras
+            color: "#f0f9ff", // color de texto si quieres
+          },
+        }}
+      />
     </div>
   );
 }

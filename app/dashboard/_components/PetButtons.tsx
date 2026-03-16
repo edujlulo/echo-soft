@@ -8,7 +8,7 @@ export default function PetButtons() {
 
   return (
     <div className="flex flex-col gap-7">
-      <Button className="w-38" onClick={startCreating}>
+      <Button className="w-38" onClick={() => startCreating()}>
         Nueva Mascota
       </Button>
       <Button
