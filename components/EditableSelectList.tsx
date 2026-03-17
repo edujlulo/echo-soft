@@ -36,7 +36,7 @@ export default function EditableSelectList() {
 
               <tbody>
                 {emptyRows.map((_, i) => (
-                  <tr key={i} className="bg-[#f5faff] h-6">
+                  <tr key={i} className="bg-white h-6">
                     <td className="border border-blue-300 px-2 pt-0.5 align-middle"></td>
                     <td className="border border-blue-300 px-2 pt-0.5 align-middle"></td>
                   </tr>

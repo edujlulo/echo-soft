@@ -48,7 +48,7 @@ export default function LabeledInput({
         type={type}
         value={value ?? ""}
         onChange={handleChange}
-        className={`bg-blue-50 flex-1 border border-blue-300 px-2 pb-0.5 pt-1.5 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white ${inputClassName}`}
+        className={`bg-blue-50 border border-blue-300 px-2 pb-0.5 pt-1.5 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white ${inputClassName}`}
       />
     </div>
   );

@@ -15,7 +15,7 @@ export default function ConsultationsPage() {
 
   return (
     <>
-      <div className="w-[1500px] h-[800px] bg-gray-300 flex flex-col rounded-md text-sm">
+      <div className="w-[1600px] h-[800px] bg-gray-300 flex flex-col rounded-md text-sm">
         {/* NavBar */}
         <div className="w-full">
           <Navbar>Consulta de Ecografía</Navbar>
