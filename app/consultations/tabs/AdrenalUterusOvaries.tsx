@@ -5,9 +5,9 @@ export default function AdrenalUterusOvaries() {
   return (
     <>
       {/* =========== Main content =========== */}
-      <div className="flex flex-row gap-4">
+      <div className="ml-6 flex flex-row gap-4">
         {/* =========== Consultation form ============ */}
-        <div className="w-[550px] -mt-2 flex flex-col gap-1">
+        <div className="w-[650px] -mt-2 flex flex-col gap-1">
           <ConsultLabeledTextarea>GLÁNDULAS ADRENALES</ConsultLabeledTextarea>
           <ConsultLabeledTextarea>ÚTERO</ConsultLabeledTextarea>
           <ConsultLabeledTextarea>OVARIOS</ConsultLabeledTextarea>
@@ -18,7 +18,7 @@ export default function AdrenalUterusOvaries() {
         </div>
 
         {/* =========== Editable select list section ============ */}
-        <div className="w-[550px]">
+        <div className="w-[650px]">
           <EditableSelectList />
         </div>
       </div>

@@ -7,7 +7,7 @@ export default function PetDetailsAndReason() {
   return (
     <>
       {/* =========== Main content =========== */}
-      <div className="flex flex-row gap-4">
+      <div className="ml-6 flex flex-row gap-4">
         {/* ======== Pet and consultation details section ========== */}
         <div className="flex flex-col gap-2">
           {/* ========== Pet form and image ========== */}
@@ -29,12 +29,17 @@ export default function PetDetailsAndReason() {
                   >
                     Especie:
                   </LabeledInput>
-                  <LabeledInput
-                    labelClassName="font-bold"
-                    inputClassName="w-20 bg-white"
-                  >
-                    Peso:
-                  </LabeledInput>
+                  <div className="flex flex-row gap-2">
+                    <LabeledInput
+                      labelClassName="font-bold"
+                      inputClassName="w-20 bg-white"
+                    >
+                      Peso:
+                    </LabeledInput>
+                    <p className="font-bold text-sm text-blue-950 flex justify-center items-center">
+                      Kg.
+                    </p>
+                  </div>
                 </div>
 
                 {/* Right section */}
@@ -69,10 +74,10 @@ export default function PetDetailsAndReason() {
 
               <div>
                 <LabeledInput
-                  labelClassName="font-bold"
+                  labelClassName="w-28 font-bold"
                   inputClassName="w-80 bg-white"
                 >
-                  Referido:
+                  Referido por:
                 </LabeledInput>
               </div>
             </div>
@@ -92,7 +97,7 @@ export default function PetDetailsAndReason() {
         </div>
 
         {/* =========== Editable select list section ============ */}
-        <div className="w-[480px]">
+        <div className="w-[620px]">
           <EditableSelectList />
         </div>
       </div>

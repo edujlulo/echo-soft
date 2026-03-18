@@ -5,9 +5,14 @@ import Navbar from "@/components/Navbar";
 import ConsultationTabs from "./ConsultationTabs";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
+import { useSelectedPetStore } from "@/context/selectedPetStore";
+import { useActiveVetStore } from "@/context/activeVetStore";
 
 export default function ConsultationsPage() {
   const router = useRouter();
+
+  const { activeVet } = useActiveVetStore();
+  const { selectedPet } = useSelectedPetStore();
 
   const navigateToDashboard = () => {
     router.push("/dashboard");
@@ -27,19 +32,22 @@ export default function ConsultationsPage() {
           <div className="mx-4 my-0.5 flex flex-row gap-4">
             <LabeledInput
               labelClassName="font-bold"
-              inputClassName="w-65 bg-white"
+              inputClassName="w-55 bg-white"
+              value={selectedPet?.name}
             >
               MASCOTA:
             </LabeledInput>
             <LabeledInput
               labelClassName="font-bold w-30"
-              inputClassName="w-65 bg-white"
+              inputClassName="w-90 bg-white"
+              value={selectedPet?.owner}
             >
               PROPIETARIO:
             </LabeledInput>
             <LabeledInput
               labelClassName="font-bold w-30"
-              inputClassName="w-65 bg-white"
+              inputClassName="w-90 bg-white"
+              value={activeVet?.name}
             >
               VETERINARIO:
             </LabeledInput>

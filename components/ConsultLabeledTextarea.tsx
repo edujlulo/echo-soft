@@ -1,17 +1,20 @@
 "use client";
 
+import clsx from "clsx";
 import React from "react";
 
 interface Props extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   children: React.ReactNode;
   labelClassName?: string;
   textareaClassName?: string;
+  textareaHeight?: string;
 }
 
 export default function ConsultLabeledTextarea({
   children,
   labelClassName,
   textareaClassName,
+  textareaHeight,
   // type,
   // value,
   // onChange,
@@ -48,7 +51,11 @@ export default function ConsultLabeledTextarea({
         // type={type}
         // value={value ?? ""}
         // onChange={handleChange}
-        className={`w-full h-24 bg-white border border-blue-200 px-2 pb-0.5 pt-1.5 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white ${textareaClassName}`}
+        className={clsx(
+          "w-full bg-white border border-blue-200 px-2 pb-0.5 pt-1.5 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white",
+          textareaClassName,
+          textareaHeight ?? "h-24",
+        )}
       />
     </div>
   );
