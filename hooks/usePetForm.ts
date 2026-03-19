@@ -77,7 +77,7 @@ export function usePetForm(onSuccess: (pet: any) => void) {
   const editPet = async () => {
     const updatedPet = await updatePet(
       selectedPet?.pet_id!,
-      selectedPet as PetUpdate,
+      selectedPet as PetUpdate
     );
 
     return updatedPet;
@@ -93,7 +93,7 @@ export function usePetForm(onSuccess: (pet: any) => void) {
     setIsSubmitting(true);
 
     setStatusMessage(
-      isCreating ? "Guardando mascota..." : "Actualizando mascota...",
+      isCreating ? "Guardando mascota..." : "Actualizando mascota..."
     );
 
     try {
@@ -130,6 +130,7 @@ export function usePetForm(onSuccess: (pet: any) => void) {
     setField,
 
     errors,
+    setErrors,
     isSubmitting,
     statusMessage,
 

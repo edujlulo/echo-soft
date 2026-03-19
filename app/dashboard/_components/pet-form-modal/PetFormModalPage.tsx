@@ -27,8 +27,15 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
     onClose();
   };
 
-  const { selectedPet, setField, errors, submit, isSubmitting, statusMessage } =
-    usePetForm(onSuccess);
+  const {
+    selectedPet,
+    setField,
+    errors,
+    setErrors,
+    submit,
+    isSubmitting,
+    statusMessage,
+  } = usePetForm(onSuccess);
 
   if (!isOpen) return null;
 
@@ -64,7 +71,14 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
                   <Button onClick={submit} disabled={isSubmitting}>
                     {isSubmitting ? "Guardando..." : "Grabar"}
                   </Button>
-                  <Button onClick={onClose}>Cancelar</Button>
+                  <Button
+                    onClick={() => {
+                      setErrors({});
+                      onClose();
+                    }}
+                  >
+                    Cancelar
+                  </Button>
                 </div>
               </div>
 
