@@ -9,8 +9,8 @@ import LargeIntestineBladderUrethraLymph from "./tabs/LargeIntestineBladderUreth
 import AdrenalUterusOvaries from "./tabs/AdrenalUterusOvaries";
 import MammaryGlandsAndOthers from "./tabs/MammaryGlandsAndOthers";
 import EyeMuscleVeinBone from "./tabs/EyeMuscleVeinBone";
-import UltrasoundImages from "./tabs/UltrasoundImages";
 import SummaryReportContent from "./tabs/summary-report-tab/SummaryReportContent";
+import UltrasoundImagesContent from "./tabs/ultrasound-images-tab/UltrasoundImagesContent";
 
 export default function ConsultationTabs() {
   const [value, setValue] = useState(0);
@@ -84,7 +84,7 @@ export default function ConsultationTabs() {
         {value === 5 && <MammaryGlandsAndOthers />}
         {value === 6 && <EyeMuscleVeinBone />}
         {value === 7 && <SummaryReportContent />}
-        {value === 8 && <UltrasoundImages />}
+        {value === 8 && <UltrasoundImagesContent />}
       </Box>
     </Box>
   );

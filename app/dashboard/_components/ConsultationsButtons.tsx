@@ -1,10 +1,13 @@
 "use client";
 
 import Button from "@/components/Button";
+import { useSelectedPetStore, emptyPet } from "@/context/selectedPetStore";
 import { useRouter } from "next/navigation";
 
 export default function ConsultationsButtons() {
   const router = useRouter();
+
+  const { selectedPet } = useSelectedPetStore();
 
   function navigateToHome() {
     router.push("/home");
@@ -17,7 +20,20 @@ export default function ConsultationsButtons() {
   return (
     <div className="flex flex-col gap-1 justify-center items-center">
       <Button className="w-33">Ver Consulta</Button>
-      <Button className="w-33" onClick={navigateToConsultations}>
+      <Button
+        className="w-33"
+        onClick={() => {
+          if (
+            !selectedPet ||
+            JSON.stringify(selectedPet) === JSON.stringify(emptyPet)
+          ) {
+            window.alert("Por favor seleccione una mascota");
+            return;
+          }
+
+          navigateToConsultations();
+        }}
+      >
         Crear Ecografía
       </Button>
       <Button className="w-33">Desde memoria</Button>

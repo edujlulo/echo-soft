@@ -21,7 +21,7 @@ export default function LabeledInput({
     let newValue = e.target.value;
 
     // Solo convertir a mayúsculas si NO es email o password
-    if (type !== "email" && type !== "password") {
+    if (type !== "email" && type !== "password" && type !== "date") {
       newValue = newValue.toUpperCase();
     }
 
@@ -47,6 +47,7 @@ export default function LabeledInput({
         {...props}
         type={type}
         value={value ?? ""}
+        maxLength={60}
         onChange={handleChange}
         className={`bg-blue-50 border border-blue-300 px-2 pb-0.5 pt-1.5 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white ${inputClassName}`}
       />
