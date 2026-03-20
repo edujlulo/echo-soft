@@ -3,8 +3,32 @@ import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
 import LabeledInput from "@/components/LabeledInput";
 import ConsultationPetForm from "./ConsultationPetForm";
+import { Database } from "@/types/database";
 
-export default function PetDetailsAndReason() {
+type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
+type NewPet = Omit<Database["public"]["Tables"]["pets"]["Row"], "pet_id" | "record_number"> &
+  Partial<Pick<Database["public"]["Tables"]["pets"]["Row"], "pet_id" | "record_number">>;
+type SelectedPet = Database["public"]["Tables"]["pets"]["Row"] | NewPet;
+
+type SetFieldFn = (field: keyof PetUpdate, value: string | null) => void;
+
+type CalculateAgeFn = (birthDateStr: string | undefined) => string;
+
+interface PetDetailsAndReasonProps {
+  selectedPet: SelectedPet | null;
+  setField: SetFieldFn;
+  isSaving: boolean;
+  statusMessage: string | null;
+  calculateAge: CalculateAgeFn;
+}
+
+export default function PetDetailsAndReason({
+  selectedPet,
+  setField,
+  isSaving,
+  statusMessage,
+  calculateAge,
+}: PetDetailsAndReasonProps) {
   return (
     <>
       {/* =========== Main content =========== */}
@@ -14,7 +38,13 @@ export default function PetDetailsAndReason() {
           {/* ========== Pet form and image ========== */}
           <div className="flex flex-row gap-2">
             {/* ========= Pet form ========== */}
-            <ConsultationPetForm />
+            <ConsultationPetForm
+              selectedPet={selectedPet}
+              setField={setField}
+              isSaving={isSaving}
+              statusMessage={statusMessage}
+              calculateAge={calculateAge}
+            />
             {/* =========== Pet image ========== */}
             <div className="ml-2">
               <PetImage />

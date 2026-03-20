@@ -11,9 +11,13 @@ import MammaryGlandsAndOthers from "./tabs/MammaryGlandsAndOthers";
 import EyeMuscleVeinBone from "./tabs/EyeMuscleVeinBone";
 import SummaryReportContent from "./tabs/summary-report-tab/SummaryReportContent";
 import UltrasoundImagesContent from "./tabs/ultrasound-images-tab/UltrasoundImagesContent";
+import { useConsultationPetForm } from "@/hooks/useConsultationPetForm";
 
 export default function ConsultationTabs() {
   const [value, setValue] = useState(0);
+
+  const { selectedPet, setField, isSaving, statusMessage, calculateAge } =
+    useConsultationPetForm();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -76,14 +80,30 @@ export default function ConsultationTabs() {
       </Tabs>
 
       <Box className="py-1 px-4">
-        {value === 0 && <PetDetailsAndReason />}
+        {value === 0 && (
+          <PetDetailsAndReason
+            selectedPet={selectedPet}
+            setField={setField}
+            isSaving={isSaving}
+            statusMessage={statusMessage}
+            calculateAge={calculateAge}
+          />
+        )}
         {value === 1 && <LiverGallbladderKidneys />}
         {value === 2 && <SpleenPancreasStomachSmallIntestine />}
         {value === 3 && <LargeIntestineBladderUrethraLymph />}
         {value === 4 && <AdrenalUterusOvaries />}
         {value === 5 && <MammaryGlandsAndOthers />}
         {value === 6 && <EyeMuscleVeinBone />}
-        {value === 7 && <SummaryReportContent />}
+        {value === 7 && (
+          <SummaryReportContent
+            selectedPet={selectedPet}
+            setField={setField}
+            isSaving={isSaving}
+            statusMessage={statusMessage}
+            calculateAge={calculateAge}
+          />
+        )}
         {value === 8 && <UltrasoundImagesContent />}
       </Box>
     </Box>

@@ -99,12 +99,41 @@ export function useConsultationPetForm() {
     };
   }, []);
 
+  // -------------------
+  // Function for calculate pet age
+  // -------------------
+  function calculateAge(birthDateStr: string | undefined) {
+    if (!birthDateStr) return "";
+
+    const birthDate = new Date(birthDateStr);
+    const today = new Date();
+
+    let years = today.getFullYear() - birthDate.getFullYear();
+    let months = today.getMonth() - birthDate.getMonth();
+
+    if (today.getDate() < birthDate.getDate()) {
+      months -= 1; // no ha cumplido el mes completo
+    }
+
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+
+    if (years > 0) {
+      return `${years} año${years > 1 ? "s" : ""} ${months} mes${months !== 1 ? "es" : ""}`;
+    } else {
+      return `${months} mes${months !== 1 ? "es" : ""}`;
+    }
+  }
+
   return {
     selectedPet,
     setField,
     isSaving,
     statusMessage,
     errors,
+    calculateAge,
     savePet, // opcional: guardar manualmente todos los cambios
   };
 }

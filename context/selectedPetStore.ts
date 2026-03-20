@@ -5,8 +5,10 @@ import { Database } from "@/types/database";
 
 type Pet = Database["public"]["Tables"]["pets"]["Row"];
 
-type NewPet = Omit<Pet, "pet_id" | "record_number"> &
+export type NewPet = Omit<Pet, "pet_id" | "record_number"> &
   Partial<Pick<Pet, "pet_id" | "record_number">>;
+
+type SelectedPet = Pet | NewPet;
 
 export const emptyPet: Omit<Pet, "pet_id" | "record_number"> = {
   name: "",
@@ -37,7 +39,7 @@ interface SelectedPetState {
   isCreating: boolean;
   isEditing: boolean;
 
-  // justCreatedPet: boolean; // <-- nuevo flag
+  // justCreatedPet: boolean; // <-- new flag
 
   setSelectedPet: (pet: Pet | NewPet | null) => void;
   // setJustCreatedPet: (value: boolean) => void;

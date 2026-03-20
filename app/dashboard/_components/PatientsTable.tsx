@@ -40,48 +40,11 @@ export default function PatientsTable() {
     { field: "diagnosis", headerName: "Diagnóstico", flex: 2 },
   ];
 
-  // 1️⃣ Crear ref del DataGrid
+  // 1️Crear ref del DataGrid
   const dataGridRef = useRef<HTMLDivElement>(null);
 
-  // 1️⃣ Crear apiRef
+  // 1️Crear apiRef
   const apiRef = useGridApiRef();
-
-  // // 3️⃣ Efecto para hacer scroll cuando cambia selectedPet
-  // useEffect(() => {
-  //   if (!selectedPet || !dataGridRef.current) return;
-
-  //   // Buscar el rowIndex de la fila que queremos mostrar
-  //   const rowElement = dataGridRef.current.querySelector(
-  //     `[data-id="${selectedPet.pet_id}"]`,
-  //   ) as HTMLDivElement | null;
-
-  //   if (rowElement) {
-  //     rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
-  //   }
-  // }, [selectedPet]);
-
-  // useEffect(() => {
-  //   if (!selectedPet || !apiRef.current) return;
-
-  //   const rowIndex = apiRef.current.getRowIndex(selectedPet.pet_id); // índice real en el grid actual
-  //   if (rowIndex != null && rowIndex >= 0) {
-  //     apiRef.current.scrollToIndexes({ rowIndex });
-  //   }
-  // }, [selectedPet]);
-
-  // useEffect(() => {
-  //   if (!selectedPet) return;
-
-  //   requestAnimationFrame(() => {
-  //     const rowElement = document.querySelector(
-  //       `[data-id="${selectedPet.pet_id}"]`,
-  //     ) as HTMLDivElement | null;
-
-  //     if (rowElement) {
-  //       rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
-  //     }
-  //   });
-  // }, [selectedPet, rows]);
 
   useEffect(() => {
     if (!selectedPet) return;
@@ -149,8 +112,12 @@ export default function PatientsTable() {
             backgroundColor: "#ffffff !important",
           },
           "& .selected-row": {
-            backgroundColor: "#1e3a8a !important", // el azul que quieras
-            color: "#f0f9ff", // color de texto si quieres
+            backgroundColor: "#1e3a8a !important",
+            color: "#f0f9ff",
+          },
+          "& .MuiDataGrid-cell:focus": {
+            outline: "3px solid #1e3a8a",
+            outlineOffset: -3,
           },
         }}
       />

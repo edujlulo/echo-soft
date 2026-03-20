@@ -28,7 +28,7 @@ export default function DashboardBottom() {
             <PetButtons />
 
             {/* ======= CONSULTATIONS TABLE ======= */}
-            <div className="w-full h-full flex-1 mr-20 bg-red-200 flex justify-center items-start">
+            <div className="w-full h-full flex-1 mr-20 flex justify-center items-start">
               <ConsultationsTable />
             </div>
           </div>

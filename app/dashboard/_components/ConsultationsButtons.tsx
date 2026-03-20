@@ -1,13 +1,18 @@
 "use client";
 
 import Button from "@/components/Button";
+import { useSelectedConsultationStore } from "@/context/selectedConsultationStore";
 import { useSelectedPetStore, emptyPet } from "@/context/selectedPetStore";
+import { useConsultations } from "@/hooks/useConsultations";
 import { useRouter } from "next/navigation";
 
 export default function ConsultationsButtons() {
   const router = useRouter();
 
   const { selectedPet } = useSelectedPetStore();
+  const { selectedConsultation } = useSelectedConsultationStore();
+
+  const { addConsultation } = useConsultations();
 
   function navigateToHome() {
     router.push("/home");
@@ -19,7 +24,20 @@ export default function ConsultationsButtons() {
 
   return (
     <div className="flex flex-col gap-1 justify-center items-center">
-      <Button className="w-33">Ver Consulta</Button>
+      <Button
+        className="w-33"
+        // onClick={() => {
+        //   if (!selectedConsultation) {
+        //     window.alert("Por favor seleccione una mascota");
+        //     return;
+        //   }
+
+        //   addConsultation(selectedPet?.pet_id ?? "");
+        //   navigateToConsultations();
+        // }}
+      >
+        Ver Consulta
+      </Button>
       <Button
         className="w-33"
         onClick={() => {
@@ -31,6 +49,7 @@ export default function ConsultationsButtons() {
             return;
           }
 
+          addConsultation(selectedPet?.pet_id ?? "");
           navigateToConsultations();
         }}
       >

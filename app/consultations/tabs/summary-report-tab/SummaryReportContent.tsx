@@ -2,8 +2,32 @@ import React from "react";
 import ReportDraft from "./ReportDraft";
 import PetInfoForm from "./PetInfoForm";
 import ReportActions from "./ReportActions";
+import { Database } from "@/types/database";
 
-export default function SummaryReportContent() {
+type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
+type NewPet = Omit<Database["public"]["Tables"]["pets"]["Row"], "pet_id" | "record_number"> &
+  Partial<Pick<Database["public"]["Tables"]["pets"]["Row"], "pet_id" | "record_number">>;
+type SelectedPet = Database["public"]["Tables"]["pets"]["Row"] | NewPet;
+
+type SetFieldFn = (field: keyof PetUpdate, value: string | null) => void;
+
+type CalculateAgeFn = (birthDateStr: string | undefined) => string;
+
+interface PetDetailsAndReasonProps {
+  selectedPet: SelectedPet | null;
+  setField: SetFieldFn;
+  isSaving: boolean;
+  statusMessage: string | null;
+  calculateAge: CalculateAgeFn;
+}
+
+export default function SummaryReportContent({
+  selectedPet,
+  setField,
+  isSaving,
+  statusMessage,
+  calculateAge,
+}: PetDetailsAndReasonProps) {
   return (
     <>
       {/* ====== Main content ======= */}
@@ -18,7 +42,13 @@ export default function SummaryReportContent() {
           {/* ====== Pet info form ====== */}
 
           <div>
-            <PetInfoForm />
+            <PetInfoForm
+              selectedPet={selectedPet}
+              setField={setField}
+              isSaving={isSaving}
+              statusMessage={statusMessage}
+              calculateAge={calculateAge}
+            />
           </div>
         </div>
 

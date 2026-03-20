@@ -1,8 +1,42 @@
 import PetImage from "@/app/dashboard/_components/PetImage";
 import LabeledInput from "@/components/LabeledInput";
 import PetInfoFormActions from "./PetInfoFormActions";
+import { Database } from "@/types/database";
+import { useSelectedConsultationStore } from "@/context/selectedConsultationStore";
 
-export default function PetInfoForm() {
+type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
+type NewPet = Omit<
+  Database["public"]["Tables"]["pets"]["Row"],
+  "pet_id" | "record_number"
+> &
+  Partial<
+    Pick<
+      Database["public"]["Tables"]["pets"]["Row"],
+      "pet_id" | "record_number"
+    >
+  >;
+type SelectedPet = Database["public"]["Tables"]["pets"]["Row"] | NewPet;
+
+type SetFieldFn = (field: keyof PetUpdate, value: string | null) => void;
+type CalculateAgeFn = (birthDateStr: string | undefined) => string;
+
+interface PetDetailsAndReasonProps {
+  selectedPet: SelectedPet | null;
+  setField: SetFieldFn;
+  isSaving: boolean;
+  statusMessage: string | null;
+  calculateAge: CalculateAgeFn;
+}
+
+export default function PetInfoForm({
+  selectedPet,
+  setField,
+  isSaving,
+  statusMessage,
+  calculateAge,
+}: PetDetailsAndReasonProps) {
+  const { selectedConsultation } = useSelectedConsultationStore();
+
   return (
     <>
       {/* ========== Pet info form and image ========== */}
@@ -19,12 +53,16 @@ export default function PetInfoForm() {
               <LabeledInput
                 labelClassName="font-bold"
                 inputClassName="w-40 bg-white"
+                value={selectedPet?.sex ?? ""}
+                onChange={(e) => setField("sex", e.target.value)}
               >
                 Sexo:
               </LabeledInput>
               <LabeledInput
                 labelClassName="font-bold"
                 inputClassName="w-30 bg-white"
+                value={selectedPet?.species ?? ""}
+                onChange={(e) => setField("species", e.target.value)}
               >
                 Especie:
               </LabeledInput>
@@ -32,6 +70,8 @@ export default function PetInfoForm() {
                 <LabeledInput
                   labelClassName="font-bold"
                   inputClassName="w-20 bg-white"
+                  value={selectedPet?.weight ?? ""}
+                  onChange={(e) => setField("weight", e.target.value)}
                 >
                   Peso:
                 </LabeledInput>
@@ -47,24 +87,34 @@ export default function PetInfoForm() {
               <LabeledInput
                 labelClassName="w-26 font-bold"
                 inputClassName="w-40 bg-white"
+                type="date"
+                value={selectedPet?.birth_date ?? ""}
+                onChange={(e) => setField("birth_date", e.target.value)}
               >
                 Fecha de nacimiento:
               </LabeledInput>
               <LabeledInput
                 labelClassName="w-26 font-bold"
                 inputClassName="w-40 bg-white"
+                value={calculateAge(selectedPet?.birth_date ?? undefined)}
+                disabled
               >
                 Edad:
               </LabeledInput>
               <LabeledInput
                 labelClassName="w-26 font-bold"
                 inputClassName="w-40 bg-white"
+                value={selectedPet?.breed ?? ""}
+                onChange={(e) => setField("breed", e.target.value)}
               >
                 Raza:
               </LabeledInput>
               <LabeledInput
                 labelClassName="w-26 font-bold"
                 inputClassName="w-40 bg-white"
+                type="Date"
+                disabled
+                value={selectedConsultation?.consultation_date}
               >
                 Fecha:
               </LabeledInput>
@@ -74,6 +124,8 @@ export default function PetInfoForm() {
           <LabeledInput
             labelClassName="w-28 font-bold"
             inputClassName="w-100 bg-white"
+            value={selectedPet?.referred_by ?? ""}
+            onChange={(e) => setField("referred_by", e.target.value)}
           >
             Referido por:
           </LabeledInput>
@@ -86,6 +138,7 @@ export default function PetInfoForm() {
           <LabeledInput
             labelClassName="w-37 font-bold"
             inputClassName="w-110 bg-white"
+            value={selectedConsultation?.report_title ?? ""}
           >
             Título del informe:
           </LabeledInput>

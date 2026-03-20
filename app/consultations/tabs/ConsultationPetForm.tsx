@@ -1,34 +1,38 @@
 import LabeledInput from "@/components/LabeledInput";
-import { useConsultationPetForm } from "@/hooks/useConsultationPetForm";
+import { useSelectedConsultationStore } from "@/context/selectedConsultationStore";
+import { Database } from "@/types/database";
 
-export default function ConsultationPetForm() {
-  const { selectedPet, setField, isSaving, statusMessage } =
-    useConsultationPetForm();
+type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
+type NewPet = Omit<
+  Database["public"]["Tables"]["pets"]["Row"],
+  "pet_id" | "record_number"
+> &
+  Partial<
+    Pick<
+      Database["public"]["Tables"]["pets"]["Row"],
+      "pet_id" | "record_number"
+    >
+  >;
+type SelectedPet = Database["public"]["Tables"]["pets"]["Row"] | NewPet;
 
-  function calculateAge(birthDateStr: string | undefined) {
-    if (!birthDateStr) return "";
+type SetFieldFn = (field: keyof PetUpdate, value: string | null) => void;
 
-    const birthDate = new Date(birthDateStr);
-    const today = new Date();
+type ConsultationPetFormProps = {
+  selectedPet: SelectedPet | null;
+  setField: SetFieldFn;
+  isSaving: boolean;
+  statusMessage: string | null;
+  calculateAge: (birthDateStr: string | undefined) => string;
+};
 
-    let years = today.getFullYear() - birthDate.getFullYear();
-    let months = today.getMonth() - birthDate.getMonth();
-
-    if (today.getDate() < birthDate.getDate()) {
-      months -= 1; // no ha cumplido el mes completo
-    }
-
-    if (months < 0) {
-      years -= 1;
-      months += 12;
-    }
-
-    if (years > 0) {
-      return `${years} año${years > 1 ? "s" : ""} ${months} mes${months !== 1 ? "es" : ""}`;
-    } else {
-      return `${months} mes${months !== 1 ? "es" : ""}`;
-    }
-  }
+export default function ConsultationPetForm({
+  selectedPet,
+  setField,
+  isSaving,
+  statusMessage,
+  calculateAge,
+}: ConsultationPetFormProps) {
+  const { selectedConsultation } = useSelectedConsultationStore();
 
   return (
     <>
@@ -98,6 +102,9 @@ export default function ConsultationPetForm() {
             <LabeledInput
               labelClassName="w-26 font-bold"
               inputClassName="w-40 bg-white"
+              type="Date"
+              disabled
+              value={selectedConsultation?.consultation_date}
             >
               Fecha:
             </LabeledInput>
