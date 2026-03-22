@@ -13,7 +13,7 @@ export interface SignedVetImages {
 
 // Traer imágenes y generar signed URLs
 export async function getVetImagesWithSignedUrls(
-  vetId: string,
+  vetId: string
 ): Promise<SignedVetImages> {
   const { data, error } = await supabase
     .from("veterinarian_images")
@@ -21,8 +21,6 @@ export async function getVetImagesWithSignedUrls(
     .eq("vet_id", vetId);
 
   if (error) throw new Error(error.message);
-
-  console.log("Raw image rows from DB:", data);
 
   if (!data) return { profile: null, signature: null, other: [] };
 
@@ -34,7 +32,7 @@ export async function getVetImagesWithSignedUrls(
         .createSignedUrl(img.file_path, 3600); // URL válido 1 hora
       if (urlError) return null;
       return { type: img.image_type, url: urlData.signedUrl };
-    }),
+    })
   );
 
   const result: SignedVetImages = { profile: null, signature: null, other: [] };
@@ -53,7 +51,7 @@ export async function uploadVetImage(
   vetId: string,
   file: File,
   type: VetImageType,
-  description: string | null = null,
+  description: string | null = null
 ): Promise<string | null> {
   const fileExt = file.name.split(".").pop();
   const fileName = `${type}.${fileExt}`;
@@ -103,7 +101,7 @@ export async function uploadVetImage(
   if (dbError) {
     console.error(
       "Error inserting/updating veterinarian_images table:",
-      dbError,
+      dbError
     );
     return null;
   }

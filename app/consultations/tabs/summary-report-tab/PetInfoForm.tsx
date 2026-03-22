@@ -2,7 +2,7 @@ import PetImage from "@/app/dashboard/_components/PetImage";
 import LabeledInput from "@/components/LabeledInput";
 import PetInfoFormActions from "./PetInfoFormActions";
 import { Database } from "@/types/database";
-import { useSelectedConsultationStore } from "@/context/selectedConsultationStore";
+import { useSelectedConsultationStore } from "@/context/consultationStore";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
 type NewPet = Omit<

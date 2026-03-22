@@ -1,10 +1,9 @@
 import PetImage from "@/app/dashboard/_components/PetImage";
 import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
-import LabeledInput from "@/components/LabeledInput";
 import ConsultationPetForm from "./ConsultationPetForm";
 import { Database } from "@/types/database";
-import { useConsultationForm } from "@/hooks/useConsultationForm";
+import { useConsultationStore } from "@/context/consultationStore";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
 type NewPet = Omit<
@@ -38,7 +37,10 @@ export default function PetDetailsAndReason({
   statusMessage,
   calculateAge,
 }: PetDetailsAndReasonProps) {
-  const { selectedConsultation, setFieldConsultation } = useConsultationForm();
+  const formConsultation = useConsultationStore((s) => s.formConsultation);
+  const setFieldConsultation = useConsultationStore(
+    (s) => s.setFieldConsultation
+  );
 
   return (
     <>
@@ -65,7 +67,7 @@ export default function PetDetailsAndReason({
           {/* =========== Consultation form ============ */}
           <div className="mt-6 flex flex-col gap-4">
             <ConsultLabeledTextarea
-              value={selectedConsultation?.reason_for_ultrasound ?? ""}
+              value={formConsultation?.reason_for_ultrasound ?? ""}
               onChange={(e) =>
                 setFieldConsultation("reason_for_ultrasound", e.target.value)
               }

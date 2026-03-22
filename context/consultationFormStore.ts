@@ -1,57 +1,75 @@
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { Database } from "@/types/database";
+// "use client";
 
-type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
+// import { create } from "zustand";
+// import { immer } from "zustand/middleware/immer";
+// import { Database } from "@/types/database";
 
-interface ConsultationFormState {
-  selectedConsultation: ConsultationRow | null;
-  isSavingConsultation: boolean;
-  statusMessageConsultation: string | null;
-  errorsConsultation: Record<string, string | undefined>;
+// type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
-  // Actions
-  setSelectedConsultation: (consultation: ConsultationRow | null) => void;
-  setFieldConsultation: (
-    field: keyof ConsultationRow,
-    value: string | null,
-  ) => void;
-  setIsSavingConsultation: (saving: boolean) => void;
-  setStatusMessageConsultation: (msg: string | null) => void;
-  setErrorsConsultation: (errors: Record<string, string | undefined>) => void;
-}
+// interface ConsultationFormState {
+//   formConsultation: ConsultationRow | null;
 
-export const useConsultationFormStore = create(
-  immer<ConsultationFormState>((set) => ({
-    selectedConsultation: null,
-    isSavingConsultation: false,
-    statusMessageConsultation: null,
-    errorsConsultation: {},
+//   isSavingConsultation: boolean;
+//   statusMessageConsultation: string | null;
+//   errorsConsultation: Record<string, string | undefined>;
 
-    setSelectedConsultation: (consultation) =>
-      set((state) => {
-        state.selectedConsultation = consultation;
-      }),
+//   // actions
 
-    setFieldConsultation: (field, value) =>
-      set((state) => {
-        if (!state.selectedConsultation) return;
-        state.selectedConsultation[field] = value;
-      }),
+//   loadFromSelected: (consultation: ConsultationRow | null) => void;
 
-    setIsSavingConsultation: (saving) =>
-      set((state) => {
-        state.isSavingConsultation = saving;
-      }),
+//   setFieldConsultation: <K extends keyof ConsultationRow>(
+//     field: K,
+//     value: ConsultationRow[K]
+//   ) => void;
 
-    setStatusMessageConsultation: (msg) =>
-      set((state) => {
-        state.statusMessageConsultation = msg;
-      }),
+//   setIsSavingConsultation: (saving: boolean) => void;
 
-    setErrorsConsultation: (errors) =>
-      set((state) => {
-        state.errorsConsultation = errors;
-      }),
-  })),
-);
+//   setStatusMessageConsultation: (msg: string | null) => void;
+
+//   setErrorsConsultation: (errors: Record<string, string | undefined>) => void;
+
+//   clearForm: () => void;
+// }
+
+// export const useConsultationFormStore = create(
+//   immer<ConsultationFormState>((set) => ({
+//     formConsultation: null,
+
+//     isSavingConsultation: false,
+//     statusMessageConsultation: null,
+//     errorsConsultation: {},
+
+//     // ✅ copiar desde selectedConsultationStore
+//     loadFromSelected: (consultation) =>
+//       set((state) => {
+//         state.formConsultation = consultation ? { ...consultation } : null;
+//       }),
+
+//     setFieldConsultation: (field, value) =>
+//       set((state) => {
+//         if (!state.formConsultation) return;
+
+//         state.formConsultation[field] = value as any;
+//       }),
+
+//     setIsSavingConsultation: (saving) =>
+//       set((state) => {
+//         state.isSavingConsultation = saving;
+//       }),
+
+//     setStatusMessageConsultation: (msg) =>
+//       set((state) => {
+//         state.statusMessageConsultation = msg;
+//       }),
+
+//     setErrorsConsultation: (errors) =>
+//       set((state) => {
+//         state.errorsConsultation = errors;
+//       }),
+
+//     clearForm: () =>
+//       set((state) => {
+//         state.formConsultation = null;
+//       }),
+//   }))
+// );

@@ -22,8 +22,6 @@ export function useVetImages() {
   useEffect(() => {
     if (!activeVet) return;
 
-    console.log("Active vet ID:", activeVet.vet_id);
-
     async function fetchImages() {
       setLoading({ profile: true, signature: true });
       const signedImages = await getVetImagesWithSignedUrls(activeVet!.vet_id);
@@ -36,7 +34,7 @@ export function useVetImages() {
 
   async function handleUpload(
     event: ChangeEvent<HTMLInputElement>,
-    type: VetImageType,
+    type: VetImageType
   ) {
     if (!activeVet || !event.target.files?.length) return;
 

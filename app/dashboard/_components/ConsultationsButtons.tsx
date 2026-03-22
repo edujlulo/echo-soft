@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/Button";
-import { useSelectedConsultationStore } from "@/context/selectedConsultationStore";
+import { useSelectedConsultationStore } from "@/context/consultationStore";
 import { useSelectedPetStore, emptyPet } from "@/context/selectedPetStore";
 import { useConsultations } from "@/hooks/useConsultations";
 import { useRouter } from "next/navigation";
@@ -33,6 +33,10 @@ export default function ConsultationsButtons() {
           }
 
           navigateToConsultations();
+          console.log(
+            "PetDetailsAndReason - selectedConsultation:",
+            selectedConsultation
+          );
         }}
       >
         Ver Consulta

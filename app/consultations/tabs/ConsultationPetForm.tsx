@@ -1,5 +1,5 @@
 import LabeledInput from "@/components/LabeledInput";
-import { useSelectedConsultationStore } from "@/context/selectedConsultationStore";
+import { useSelectedConsultationStore } from "@/context/consultationStore";
 import { Database } from "@/types/database";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];

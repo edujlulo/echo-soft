@@ -89,7 +89,11 @@ export default function HomePage() {
               <span className="text-[#1344a0] font-bold">500</span>
             </div>
 
-            <LabeledInput value={activeClinic?.address} disabled={true}>
+            <LabeledInput
+              value={activeClinic?.address}
+              disabled={true}
+              inputClassName="w-110"
+            >
               Dirección
             </LabeledInput>
 

@@ -2,7 +2,7 @@
 
 import { useClinicStore } from "@/context/activeClinicStore";
 import { useActiveVetStore } from "@/context/activeVetStore";
-import { useSelectedConsultationStore } from "@/context/selectedConsultationStore";
+import { useSelectedConsultationStore } from "@/context/consultationStore";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 
 import {
@@ -57,7 +57,7 @@ export const useConsultations = () => {
 
       return result;
     },
-    [activeVet, activeClinic, selectedPet],
+    [activeVet, activeClinic, selectedPet]
   );
 
   // ========= FETCH CONSULTATIONS BY PET =========

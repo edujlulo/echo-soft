@@ -1,35 +1,40 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
-import { useConsultationFormStore } from "@/context/consultationFormStore";
+import { useCallback, useEffect, useRef } from "react";
 import { updateConsultation } from "@/lib/queries/consultations";
 import { Database } from "@/types/database";
+import { useConsultationStore } from "@/context/consultationStore";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 type ConsultationUpdate = Partial<ConsultationRow>;
 
+/**
+ * Custom hook para manejar la consulta editable con debounce
+ * y sincronización con la fuente de verdad.
+ */
 export function useConsultationForm() {
   const {
+    formConsultation,
     selectedConsultation,
     setFieldConsultation,
+    loadFromSelected,
     setSelectedConsultation,
     isSavingConsultation,
     setIsSavingConsultation,
     statusMessageConsultation,
     setStatusMessageConsultation,
-    errorsConsultation,
-    setErrorsConsultation,
-  } = useConsultationFormStore();
+  } = useConsultationStore();
 
+  // Cambios pendientes antes de guardado
   const pendingChanges = useRef<ConsultationUpdate>({});
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // -------------------
-  // Set field con debounce
+  // Cambios en campos con debounce
   // -------------------
   const handleFieldChange = useCallback(
     (field: keyof ConsultationRow, value: string | null) => {
-      // Actualiza estado global de forma inmediata usando Zustand + Immer
+      // Actualiza la copia editable inmediatamente
       setFieldConsultation(field, value);
 
       // Acumula cambios pendientes
@@ -44,15 +49,14 @@ export function useConsultationForm() {
         saveConsultation();
       }, 2000);
     },
-    [setFieldConsultation],
+    [setFieldConsultation]
   );
 
   // -------------------
   // Guardar cambios en Supabase
   // -------------------
   const saveConsultation = useCallback(async () => {
-    if (!selectedConsultation?.consultation_id) return;
-
+    if (!formConsultation?.consultation_id) return;
     const changes = pendingChanges.current;
     if (Object.keys(changes).length === 0) return;
 
@@ -60,11 +64,17 @@ export function useConsultationForm() {
 
     try {
       const updated: ConsultationRow = await updateConsultation(
-        selectedConsultation.consultation_id,
-        changes,
+        formConsultation.consultation_id,
+        changes
       );
 
+      // Actualiza la copia editable
+      loadFromSelected(updated);
+
+      // Actualiza la fuente de verdad
       setSelectedConsultation(updated);
+
+      // Resetea cambios pendientes
       pendingChanges.current = {};
 
       setStatusMessageConsultation("Guardado correctamente!");
@@ -77,11 +87,20 @@ export function useConsultationForm() {
       setIsSavingConsultation(false);
     }
   }, [
-    selectedConsultation,
+    formConsultation,
+    loadFromSelected,
     setSelectedConsultation,
     setIsSavingConsultation,
     setStatusMessageConsultation,
   ]);
+
+  // -------------------
+  // Sincronizar copia editable con la selección global
+  // -------------------
+  useEffect(() => {
+    loadFromSelected(selectedConsultation);
+    pendingChanges.current = {};
+  }, [selectedConsultation, loadFromSelected]);
 
   // -------------------
   // Cleanup al desmontar
@@ -94,11 +113,11 @@ export function useConsultationForm() {
   }, [saveConsultation]);
 
   return {
+    formConsultation,
     selectedConsultation,
     setFieldConsultation: handleFieldChange,
     isSavingConsultation,
     statusMessageConsultation,
-    errorsConsultation,
     saveConsultation,
   };
 }

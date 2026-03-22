@@ -6,12 +6,16 @@ import { useSelectedPetStore } from "@/context/selectedPetStore";
 
 import { useRef, useEffect, useMemo, useState } from "react";
 import { useConsultations } from "@/hooks/useConsultations";
-import { useSelectedConsultationStore } from "@/context/selectedConsultationStore";
+import { useSelectedConsultationStore } from "@/context/consultationStore";
+import { useConsultationFormStore } from "@/context/consultationFormStore";
 
 export default function ConsultationsTable() {
   const { consultationsByPet, loadingConsultations } = useConsultations();
   const { selectedPet } = useSelectedPetStore();
   const { setSelectedConsultation } = useSelectedConsultationStore();
+  const loadFormConsultation = useConsultationFormStore(
+    (s) => s.loadFromSelected
+  );
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
@@ -73,6 +77,7 @@ export default function ConsultationsTable() {
   useEffect(() => {
     setSelectedRowId(null);
     setSelectedConsultation(null);
+    loadFormConsultation(null);
   }, [selectedPet]);
 
   // =========================
@@ -84,7 +89,7 @@ export default function ConsultationsTable() {
 
     const timeout = setTimeout(() => {
       const rowElement = document.querySelector(
-        `[data-id="${selectedRowId}"]`,
+        `[data-id="${selectedRowId}"]`
       ) as HTMLDivElement | null;
 
       if (rowElement) {
@@ -108,10 +113,11 @@ export default function ConsultationsTable() {
     setSelectedRowId(params.id);
 
     const consultation = consultationsByPet?.find(
-      (c: any) => c.consultation_id === params.id,
+      (c: any) => c.consultation_id === params.id
     );
 
     setSelectedConsultation(consultation ?? null);
+    loadFormConsultation(consultation ?? null);
   };
 
   // =========================
@@ -125,10 +131,11 @@ export default function ConsultationsTable() {
       setSelectedRowId(params.id);
 
       const consultation = consultationsByPet?.find(
-        (c: any) => c.consultation_id === params.id,
+        (c: any) => c.consultation_id === params.id
       );
 
       setSelectedConsultation(consultation ?? null);
+      loadFormConsultation(consultation ?? null);
 
       event.preventDefault();
     }
