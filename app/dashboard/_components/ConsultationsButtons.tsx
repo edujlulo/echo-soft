@@ -26,15 +26,14 @@ export default function ConsultationsButtons() {
     <div className="flex flex-col gap-1 justify-center items-center">
       <Button
         className="w-33"
-        // onClick={() => {
-        //   if (!selectedConsultation) {
-        //     window.alert("Por favor seleccione una mascota");
-        //     return;
-        //   }
+        onClick={() => {
+          if (!selectedConsultation?.consultation_id) {
+            window.alert("Por favor seleccione una consulta");
+            return;
+          }
 
-        //   addConsultation(selectedPet?.pet_id ?? "");
-        //   navigateToConsultations();
-        // }}
+          navigateToConsultations();
+        }}
       >
         Ver Consulta
       </Button>

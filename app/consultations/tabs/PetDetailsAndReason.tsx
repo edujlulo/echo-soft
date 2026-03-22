@@ -4,10 +4,19 @@ import EditableSelectList from "@/components/EditableSelectList";
 import LabeledInput from "@/components/LabeledInput";
 import ConsultationPetForm from "./ConsultationPetForm";
 import { Database } from "@/types/database";
+import { useConsultationForm } from "@/hooks/useConsultationForm";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
-type NewPet = Omit<Database["public"]["Tables"]["pets"]["Row"], "pet_id" | "record_number"> &
-  Partial<Pick<Database["public"]["Tables"]["pets"]["Row"], "pet_id" | "record_number">>;
+type NewPet = Omit<
+  Database["public"]["Tables"]["pets"]["Row"],
+  "pet_id" | "record_number"
+> &
+  Partial<
+    Pick<
+      Database["public"]["Tables"]["pets"]["Row"],
+      "pet_id" | "record_number"
+    >
+  >;
 type SelectedPet = Database["public"]["Tables"]["pets"]["Row"] | NewPet;
 
 type SetFieldFn = (field: keyof PetUpdate, value: string | null) => void;
@@ -29,6 +38,8 @@ export default function PetDetailsAndReason({
   statusMessage,
   calculateAge,
 }: PetDetailsAndReasonProps) {
+  const { selectedConsultation, setFieldConsultation } = useConsultationForm();
+
   return (
     <>
       {/* =========== Main content =========== */}
@@ -53,7 +64,12 @@ export default function PetDetailsAndReason({
 
           {/* =========== Consultation form ============ */}
           <div className="mt-6 flex flex-col gap-4">
-            <ConsultLabeledTextarea>
+            <ConsultLabeledTextarea
+              value={selectedConsultation?.reason_for_ultrasound ?? ""}
+              onChange={(e) =>
+                setFieldConsultation("reason_for_ultrasound", e.target.value)
+              }
+            >
               MOTIVO DEL EXAMEN ECOGRÁFICO
             </ConsultLabeledTextarea>
             <ConsultLabeledTextarea>EQUIPO UTILIZADO</ConsultLabeledTextarea>

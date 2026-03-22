@@ -22,7 +22,7 @@ export function useConsultationForm() {
   } = useConsultationFormStore();
 
   const pendingChanges = useRef<ConsultationUpdate>({});
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // -------------------
   // Set field con debounce
