@@ -36,8 +36,19 @@ export default function HomePage() {
 
   if (!activeClinic) return null;
 
+  // Function for activate enter to system button when user press enter key
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter") {
+      navigateToDashboard();
+    }
+  };
+
   return (
-    <div className="w-[1100px] h-[640px] bg-blue-200 flex flex-col items-center rounded-md text-sm">
+    <div
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      className="w-[1100px] h-[640px] bg-blue-200 flex flex-col items-center rounded-md text-sm"
+    >
       {/* NavBar */}
       <div className="w-full">
         <Navbar>EcoSoft</Navbar>
@@ -106,14 +117,6 @@ export default function HomePage() {
             </LabeledInput>
 
             <div className="flex flex-row">
-              {/* <LabeledInput
-                labelClassName="w-52"
-                inputClassName="flex-none w-16"
-                type="password"
-              >
-                Introduzca su clave por favor
-              </LabeledInput> */}
-
               <Button
                 onClick={navigateToDashboard}
                 className="ml-30 px-3 py-1 pt-1.5 font-bold bg-orange-300 border border-orange-500 hover:bg-orange-400"

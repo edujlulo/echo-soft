@@ -1,5 +1,5 @@
 import LabeledInput from "@/components/LabeledInput";
-import { useSelectedConsultationStore } from "@/context/consultationStore";
+import { useConsultationStore } from "@/context/consultationStore";
 import { Database } from "@/types/database";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
@@ -32,7 +32,7 @@ export default function ConsultationPetForm({
   statusMessage,
   calculateAge,
 }: ConsultationPetFormProps) {
-  const { selectedConsultation } = useSelectedConsultationStore();
+  const { selectedConsultation } = useConsultationStore();
 
   return (
     <>

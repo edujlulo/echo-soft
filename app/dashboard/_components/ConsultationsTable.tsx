@@ -3,19 +3,22 @@
 import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
 
 import { useSelectedPetStore } from "@/context/selectedPetStore";
+import { useConsultationStore } from "@/context/consultationStore";
 
 import { useRef, useEffect, useMemo, useState } from "react";
 import { useConsultations } from "@/hooks/useConsultations";
-import { useSelectedConsultationStore } from "@/context/consultationStore";
-import { useConsultationFormStore } from "@/context/consultationFormStore";
+
+import { Database } from "@/types/database";
+
+type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
 export default function ConsultationsTable() {
   const { consultationsByPet, loadingConsultations } = useConsultations();
+
   const { selectedPet } = useSelectedPetStore();
-  const { setSelectedConsultation } = useSelectedConsultationStore();
-  const loadFormConsultation = useConsultationFormStore(
-    (s) => s.loadFromSelected
-  );
+
+  const { selectedConsultation, setSelectedConsultation, loadFromSelected } =
+    useConsultationStore();
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
@@ -28,20 +31,13 @@ export default function ConsultationsTable() {
 
   const emptyRowCount = 7;
 
-  const emptyRows = Array.from({ length: emptyRowCount }, (_, index) => ({
-    id: `empty-${index}`,
-    consultation_date: "",
-    vet_name: "",
-    report_title: "",
-  }));
-
   // =========================
   // ROWS FROM DB
   // =========================
 
   const rows = useMemo(() => {
     const consultationRows =
-      consultationsByPet?.map((c: any) => ({
+      consultationsByPet?.map((c: ConsultationRow) => ({
         id: c.consultation_id,
         consultation_date: c.consultation_date?.slice(0, 10),
         vet_name: c.vet_name,
@@ -65,19 +61,31 @@ export default function ConsultationsTable() {
   // =========================
 
   const columns: GridColDef[] = [
-    { field: "consultation_date", headerName: "Fecha", flex: 1 },
-    { field: "vet_name", headerName: "Veterinario", flex: 2 },
-    { field: "report_title", headerName: "Especialidad", flex: 2.5 },
+    {
+      field: "consultation_date",
+      headerName: "Fecha",
+      flex: 1,
+    },
+    {
+      field: "vet_name",
+      headerName: "Veterinario",
+      flex: 2,
+    },
+    {
+      field: "report_title",
+      headerName: "Especialidad",
+      flex: 2.5,
+    },
   ];
 
   // =========================
-  // RESET selection when pet changes
+  // RESET when pet changes
   // =========================
 
   useEffect(() => {
     setSelectedRowId(null);
     setSelectedConsultation(null);
-    loadFormConsultation(null);
+    loadFromSelected(null);
   }, [selectedPet]);
 
   // =========================
@@ -89,7 +97,7 @@ export default function ConsultationsTable() {
 
     const timeout = setTimeout(() => {
       const rowElement = document.querySelector(
-        `[data-id="${selectedRowId}"]`
+        `[data-id="${selectedRowId}"]`,
       ) as HTMLDivElement | null;
 
       if (rowElement) {
@@ -107,17 +115,21 @@ export default function ConsultationsTable() {
   // SELECT WITH CLICK
   // =========================
 
+  const selectConsultation = (id: string) => {
+    const consultation =
+      consultationsByPet?.find(
+        (c: ConsultationRow) => c.consultation_id === id,
+      ) ?? null;
+
+    setSelectedRowId(id);
+    setSelectedConsultation(consultation);
+    loadFromSelected(consultation);
+  };
+
   const handleRowClick = (params: any) => {
     if (String(params.id).startsWith("empty")) return;
 
-    setSelectedRowId(params.id);
-
-    const consultation = consultationsByPet?.find(
-      (c: any) => c.consultation_id === params.id
-    );
-
-    setSelectedConsultation(consultation ?? null);
-    loadFormConsultation(consultation ?? null);
+    selectConsultation(params.id);
   };
 
   // =========================
@@ -128,14 +140,7 @@ export default function ConsultationsTable() {
     if (event.key === "Enter" || event.key === " ") {
       if (String(params.id).startsWith("empty")) return;
 
-      setSelectedRowId(params.id);
-
-      const consultation = consultationsByPet?.find(
-        (c: any) => c.consultation_id === params.id
-      );
-
-      setSelectedConsultation(consultation ?? null);
-      loadFormConsultation(consultation ?? null);
+      selectConsultation(params.id);
 
       event.preventDefault();
     }

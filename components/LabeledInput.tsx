@@ -6,6 +6,7 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   children: React.ReactNode;
   labelClassName?: string;
   inputClassName?: string;
+  forceUpperCase?: boolean;
 }
 
 export default function LabeledInput({
@@ -15,13 +16,19 @@ export default function LabeledInput({
   type,
   value,
   onChange,
+  forceUpperCase,
   ...props
 }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value;
 
-    // Solo convertir a mayúsculas si NO es email o password
-    if (type !== "email" && type !== "password" && type !== "date") {
+    // Solo convertir a mayúsculas si NO es los siguientes types
+    if (
+      type !== "email" &&
+      type !== "password" &&
+      type !== "date" &&
+      forceUpperCase !== false
+    ) {
       newValue = newValue.toUpperCase();
     }
 

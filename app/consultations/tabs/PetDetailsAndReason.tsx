@@ -3,7 +3,8 @@ import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
 import ConsultationPetForm from "./ConsultationPetForm";
 import { Database } from "@/types/database";
-import { useConsultationStore } from "@/context/consultationStore";
+import { useConsultationForm } from "@/hooks/useConsultationForm";
+import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
 type NewPet = Omit<
@@ -37,10 +38,19 @@ export default function PetDetailsAndReason({
   statusMessage,
   calculateAge,
 }: PetDetailsAndReasonProps) {
-  const formConsultation = useConsultationStore((s) => s.formConsultation);
-  const setFieldConsultation = useConsultationStore(
-    (s) => s.setFieldConsultation
-  );
+  // const formConsultation = useConsultationStore((s) => s.formConsultation);
+  // const setFieldConsultation = useConsultationStore(
+  //   (s) => s.setFieldConsultation,
+  // );
+
+  const {
+    formConsultation,
+    setFieldConsultation,
+    isSavingConsultation,
+    statusMessageConsultation,
+  } = useConsultationForm();
+
+  const { setActiveField } = useEditableSelectListStore();
 
   return (
     <>
@@ -71,10 +81,33 @@ export default function PetDetailsAndReason({
               onChange={(e) =>
                 setFieldConsultation("reason_for_ultrasound", e.target.value)
               }
+              onFocus={() => setActiveField("MOTIVO DEL EXAMEN ECOGRÁFICO")}
+              onBlur={() => setActiveField(null)}
             >
               MOTIVO DEL EXAMEN ECOGRÁFICO
             </ConsultLabeledTextarea>
-            <ConsultLabeledTextarea>EQUIPO UTILIZADO</ConsultLabeledTextarea>
+            <ConsultLabeledTextarea
+              value={formConsultation?.equipment_used ?? ""}
+              onChange={(e) =>
+                setFieldConsultation("equipment_used", e.target.value)
+              }
+              onFocus={() => setActiveField("EQUIPO UTILIZADO")}
+              onBlur={() => setActiveField(null)}
+            >
+              EQUIPO UTILIZADO
+            </ConsultLabeledTextarea>
+
+            {/* ======== Saving and status messages ======== */}
+            <div className="h-5 mt-2 flex justify-center items-center">
+              {isSavingConsultation && (
+                <p className="text-sm text-blue-600">Guardando...</p>
+              )}
+              {statusMessageConsultation && (
+                <h3 className="text-sm text-green-700">
+                  {statusMessageConsultation}
+                </h3>
+              )}
+            </div>
           </div>
         </div>
 

@@ -2,7 +2,7 @@
 
 import { useClinicStore } from "@/context/activeClinicStore";
 import { useActiveVetStore } from "@/context/activeVetStore";
-import { useSelectedConsultationStore } from "@/context/consultationStore";
+import { useConsultationStore } from "@/context/consultationStore";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 
 import {
@@ -16,7 +16,7 @@ export const useConsultations = () => {
   const { activeVet } = useActiveVetStore();
   const { activeClinic } = useClinicStore();
   const { selectedPet } = useSelectedPetStore();
-  const { setSelectedConsultation } = useSelectedConsultationStore();
+  const { setSelectedConsultation } = useConsultationStore();
 
   const [consultationsByPet, setConsultationsByPet] = useState<any[]>([]);
   const [loadingConsultations, setLoadingConsultations] = useState(false);
@@ -57,7 +57,7 @@ export const useConsultations = () => {
 
       return result;
     },
-    [activeVet, activeClinic, selectedPet]
+    [activeVet, activeClinic, selectedPet],
   );
 
   // ========= FETCH CONSULTATIONS BY PET =========

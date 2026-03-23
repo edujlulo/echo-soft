@@ -1,8 +1,8 @@
 "use client";
 
 import Button from "@/components/Button";
-import { useSelectedConsultationStore } from "@/context/consultationStore";
 import { useSelectedPetStore, emptyPet } from "@/context/selectedPetStore";
+import { useConsultationForm } from "@/hooks/useConsultationForm";
 import { useConsultations } from "@/hooks/useConsultations";
 import { useRouter } from "next/navigation";
 
@@ -10,7 +10,7 @@ export default function ConsultationsButtons() {
   const router = useRouter();
 
   const { selectedPet } = useSelectedPetStore();
-  const { selectedConsultation } = useSelectedConsultationStore();
+  const { selectedConsultation } = useConsultationForm();
 
   const { addConsultation } = useConsultations();
 
@@ -33,10 +33,6 @@ export default function ConsultationsButtons() {
           }
 
           navigateToConsultations();
-          console.log(
-            "PetDetailsAndReason - selectedConsultation:",
-            selectedConsultation
-          );
         }}
       >
         Ver Consulta

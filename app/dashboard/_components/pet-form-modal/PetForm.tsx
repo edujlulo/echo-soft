@@ -1,6 +1,7 @@
 "use client";
 
 import LabeledInput from "@/components/LabeledInput";
+import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import { FormErrors } from "@/hooks/usePetForm";
 import { Database } from "@/types/database";
 
@@ -21,6 +22,8 @@ export default function PetForm({
 }: PetFormProps) {
   if (!selectedPet) return null;
 
+  const { setActiveField } = useEditableSelectListStore();
+
   return (
     <div className="flex flex-col gap-4">
       <LabeledInput
@@ -28,6 +31,8 @@ export default function PetForm({
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.owner ?? ""}
         onChange={(e) => setField("owner", e.target.value)}
+        onFocus={() => setActiveField("PROPIETARIOS")}
+        onBlur={() => setActiveField(null)}
       >
         Propietario:
       </LabeledInput>
@@ -57,6 +62,8 @@ export default function PetForm({
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.species ?? ""}
         onChange={(e) => setField("species", e.target.value)}
+        onFocus={() => setActiveField("ESPECIES")}
+        onBlur={() => setActiveField(null)}
       >
         Especie:
       </LabeledInput>

@@ -2,7 +2,8 @@ import PetImage from "@/app/dashboard/_components/PetImage";
 import LabeledInput from "@/components/LabeledInput";
 import PetInfoFormActions from "./PetInfoFormActions";
 import { Database } from "@/types/database";
-import { useSelectedConsultationStore } from "@/context/consultationStore";
+import { useConsultationStore } from "@/context/consultationStore";
+import { useConsultationForm } from "@/hooks/useConsultationForm";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
 type NewPet = Omit<
@@ -35,7 +36,14 @@ export default function PetInfoForm({
   statusMessage,
   calculateAge,
 }: PetDetailsAndReasonProps) {
-  const { selectedConsultation } = useSelectedConsultationStore();
+  const { selectedConsultation } = useConsultationStore();
+
+  const {
+    formConsultation,
+    setFieldConsultation,
+    isSavingConsultation,
+    statusMessageConsultation,
+  } = useConsultationForm();
 
   return (
     <>
@@ -132,13 +140,21 @@ export default function PetInfoForm({
           <LabeledInput
             labelClassName="w-56 font-bold"
             inputClassName="w-110 bg-white"
+            forceUpperCase={false}
+            value={formConsultation?.suggested_pdf_name ?? ""}
+            onChange={(e) =>
+              setFieldConsultation("suggested_pdf_name", e.target.value)
+            }
           >
-            Nombre suferido para el PDF:
+            Nombre sugerido para el PDF:
           </LabeledInput>
           <LabeledInput
             labelClassName="w-37 font-bold"
             inputClassName="w-110 bg-white"
-            value={selectedConsultation?.report_title ?? ""}
+            value={formConsultation?.report_title ?? ""}
+            onChange={(e) =>
+              setFieldConsultation("report_title", e.target.value)
+            }
           >
             Título del informe:
           </LabeledInput>
