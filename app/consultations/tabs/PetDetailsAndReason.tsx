@@ -38,11 +38,6 @@ export default function PetDetailsAndReason({
   statusMessage,
   calculateAge,
 }: PetDetailsAndReasonProps) {
-  // const formConsultation = useConsultationStore((s) => s.formConsultation);
-  // const setFieldConsultation = useConsultationStore(
-  //   (s) => s.setFieldConsultation,
-  // );
-
   const {
     formConsultation,
     setFieldConsultation,
@@ -51,6 +46,13 @@ export default function PetDetailsAndReason({
   } = useConsultationForm();
 
   const { setActiveField } = useEditableSelectListStore();
+
+  // FUNCTION FOR FORMAT TEXT FOR DISPLAY
+  const SEP = "\u{241F}"; // separador invisible
+
+  function formatForDisplay(text: string) {
+    return text.replaceAll(SEP, ", "); // separador visible para el usuario
+  }
 
   return (
     <>
@@ -77,22 +79,23 @@ export default function PetDetailsAndReason({
           {/* =========== Consultation form ============ */}
           <div className="mt-6 flex flex-col gap-4">
             <ConsultLabeledTextarea
-              value={formConsultation?.reason_for_ultrasound ?? ""}
+              categoryKey="reason_for_ultrasound"
+              value={formatForDisplay(
+                formConsultation?.reason_for_ultrasound ?? "",
+              )}
               onChange={(e) =>
                 setFieldConsultation("reason_for_ultrasound", e.target.value)
               }
-              onFocus={() => setActiveField("MOTIVO DEL EXAMEN ECOGRÁFICO")}
-              onBlur={() => setActiveField(null)}
             >
               MOTIVO DEL EXAMEN ECOGRÁFICO
             </ConsultLabeledTextarea>
+
             <ConsultLabeledTextarea
-              value={formConsultation?.equipment_used ?? ""}
+              categoryKey="equipment_used"
+              value={formatForDisplay(formConsultation?.equipment_used ?? "")}
               onChange={(e) =>
                 setFieldConsultation("equipment_used", e.target.value)
               }
-              onFocus={() => setActiveField("EQUIPO UTILIZADO")}
-              onBlur={() => setActiveField(null)}
             >
               EQUIPO UTILIZADO
             </ConsultLabeledTextarea>
@@ -113,7 +116,7 @@ export default function PetDetailsAndReason({
 
         {/* =========== Editable select list section ============ */}
         <div className="w-[620px]">
-          <EditableSelectList />
+          <EditableSelectList setFieldConsultation={setFieldConsultation} />
         </div>
       </div>
     </>

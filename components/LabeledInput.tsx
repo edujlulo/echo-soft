@@ -1,5 +1,6 @@
 "use client";
 
+import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import React from "react";
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -19,6 +20,13 @@ export default function LabeledInput({
   forceUpperCase,
   ...props
 }: Props) {
+  const { setActiveField } = useEditableSelectListStore();
+
+  const label =
+    typeof children === "string"
+      ? children.replace(/:/g, "").toUpperCase()
+      : "";
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value;
 
@@ -56,6 +64,8 @@ export default function LabeledInput({
         value={value ?? ""}
         maxLength={60}
         onChange={handleChange}
+        onFocus={() => setActiveField(label)}
+        onBlur={() => setActiveField(null)}
         className={`bg-blue-50 border border-blue-300 px-2 pb-0.5 pt-1.5 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white ${inputClassName}`}
       />
     </div>

@@ -11,9 +11,21 @@ import { usePetFetcher } from "@/hooks/usePetFetcher";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useRef, useEffect } from "react";
 
+type PetRow = {
+  id: string;
+  record_number: number;
+  name: string;
+  owner: string;
+  species: string | null;
+  breed: string | null;
+  sex: string | null;
+  birth_date: string | null;
+  diagnosis: string | null;
+};
+
 export default function PatientsTable() {
   const { pets, isLoading } = usePetFetcher();
-  const { selectedPet, setSelectedPet } = useSelectedPetStore();
+  const { startEditing, selectedPet, setSelectedPet } = useSelectedPetStore();
 
   // Mapeo de filas
   const rows = pets.map((pet) => ({
@@ -29,14 +41,27 @@ export default function PatientsTable() {
   }));
 
   // Columnas
-  const columns: GridColDef[] = [
+  const columns: GridColDef<PetRow>[] = [
     { field: "record_number", headerName: "Núm. Historia", flex: 1 },
     { field: "name", headerName: "Nombre Mascota", flex: 2 },
     { field: "owner", headerName: "Propietario", flex: 2.5 },
     { field: "species", headerName: "Especie", flex: 1 },
     { field: "breed", headerName: "Raza", flex: 1 },
     { field: "sex", headerName: "Sexo", flex: 1 },
-    { field: "birth_date", headerName: "F. Nacimiento", flex: 1.2 },
+    {
+      field: "birth_date",
+      headerName: "F. Nacimiento",
+      flex: 1.2,
+      renderCell: (params) => {
+        if (!params.value) return "";
+
+        const date = new Date(params.value);
+
+        if (isNaN(date.getTime())) return "";
+
+        return date.toLocaleDateString("en-GB");
+      },
+    },
     { field: "diagnosis", headerName: "Diagnóstico", flex: 2 },
   ];
 
@@ -63,18 +88,56 @@ export default function PatientsTable() {
     return () => clearTimeout(timeout);
   }, [selectedPet, rows]);
 
+  // Rellenar con filas vacías hasta 15 filas
+  const totalRows = 15;
+  const emptyRowsCount = Math.max(totalRows - rows.length, 0);
+
+  const emptyRows: PetRow[] = Array.from(
+    { length: emptyRowsCount },
+    (_, i) => ({
+      id: `empty-${i}`, // ID único para cada fila vacía
+      record_number: 0,
+      name: "",
+      owner: "",
+      species: null,
+      breed: null,
+      sex: null,
+      birth_date: null,
+      diagnosis: null,
+    }),
+  );
+
+  // Combinar filas reales + vacías
+  const displayRows = [...rows, ...emptyRows];
+
+  // =========================
+  // OPEN PAGE ON DOUBLE CLICK
+  // =========================
+
+  const handleRowDoubleClick = (params: any) => {
+    if (String(params.id).startsWith("empty")) return;
+
+    // Asegurarse de que la fila está seleccionada
+    const pet = pets.find((p) => p.pet_id === params.id);
+    if (pet) setSelectedPet(pet);
+
+    // Navegar o abrir modal
+    startEditing();
+  };
+
   return (
     <div style={{ height: 300, width: "100%" }}>
       <DataGrid
         apiRef={apiRef}
         ref={dataGridRef}
-        rows={rows}
+        rows={displayRows}
         columns={columns}
         loading={isLoading}
         pageSizeOptions={[15]}
         rowHeight={26}
         columnHeaderHeight={28}
         hideFooter
+        onRowDoubleClick={handleRowDoubleClick}
         // Selecciona mascota con clic
         onRowClick={(params) => {
           const pet = pets.find((p) => p.pet_id === params.id);

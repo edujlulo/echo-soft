@@ -31,8 +31,8 @@ export default function PetForm({
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.owner ?? ""}
         onChange={(e) => setField("owner", e.target.value)}
-        onFocus={() => setActiveField("PROPIETARIOS")}
-        onBlur={() => setActiveField(null)}
+        // onFocus={() => setActiveField("PROPIETARIOS")}
+        // onBlur={() => setActiveField(null)}
       >
         Propietario:
       </LabeledInput>
@@ -62,8 +62,6 @@ export default function PetForm({
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.species ?? ""}
         onChange={(e) => setField("species", e.target.value)}
-        onFocus={() => setActiveField("ESPECIES")}
-        onBlur={() => setActiveField(null)}
       >
         Especie:
       </LabeledInput>

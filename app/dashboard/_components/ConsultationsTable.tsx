@@ -9,10 +9,12 @@ import { useRef, useEffect, useMemo, useState } from "react";
 import { useConsultations } from "@/hooks/useConsultations";
 
 import { Database } from "@/types/database";
+import { useRouter } from "next/navigation";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
 export default function ConsultationsTable() {
+  const router = useRouter();
   const { consultationsByPet, loadingConsultations } = useConsultations();
 
   const { selectedPet } = useSelectedPetStore();
@@ -24,6 +26,10 @@ export default function ConsultationsTable() {
 
   const apiRef = useGridApiRef();
   const dataGridRef = useRef<HTMLDivElement>(null);
+
+  const navigateToConsultations = () => {
+    router.push("/consultations");
+  };
 
   // =========================
   // EMPTY ROWS
@@ -65,6 +71,15 @@ export default function ConsultationsTable() {
       field: "consultation_date",
       headerName: "Fecha",
       flex: 1,
+      renderCell: (params) => {
+        if (!params.value) return "";
+
+        const date = new Date(params.value);
+
+        if (isNaN(date.getTime())) return "";
+
+        return date.toLocaleDateString("en-GB");
+      },
     },
     {
       field: "vet_name",
@@ -147,6 +162,20 @@ export default function ConsultationsTable() {
   };
 
   // =========================
+  // OPEN PAGE ON DOUBLE CLICK
+  // =========================
+
+  const handleRowDoubleClick = (params: any) => {
+    if (String(params.id).startsWith("empty")) return;
+
+    // Set selected consultation
+    selectConsultation(params.id);
+
+    // Navigate to /consultations
+    navigateToConsultations();
+  };
+
+  // =========================
   // RENDER
   // =========================
 
@@ -163,6 +192,7 @@ export default function ConsultationsTable() {
         columnHeaderHeight={28}
         hideFooter
         onRowClick={handleRowClick}
+        onRowDoubleClick={handleRowDoubleClick}
         onCellKeyDown={handleKeyDown}
         getRowClassName={(params) =>
           selectedRowId === params.id ? "selected-row" : ""
