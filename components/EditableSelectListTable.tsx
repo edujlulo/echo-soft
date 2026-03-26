@@ -10,12 +10,13 @@ import {
 } from "@mui/x-data-grid";
 import { Database } from "@/types/database";
 import { useActiveVetStore } from "@/context/activeVetStore";
+import { Pet } from "@/lib/queries/petImages";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
 
 interface EditableSelectListProps {
-  setFieldConsultation: (
+  setFieldConsultation?: (
     field: keyof ConsultationRow,
     value: string | null,
   ) => void;
@@ -25,10 +26,12 @@ interface EditableSelectListProps {
   templates: TextTemplateRow[];
   loading: boolean;
   error: string | null;
+  setField?: (field: keyof Pet, value: string) => void;
 }
 
 export default function EditableSelectListTable({
   setFieldConsultation,
+  setField,
   selectedTemplate,
   setSelectedTemplate,
   templates,
@@ -112,6 +115,9 @@ export default function EditableSelectListTable({
         ids: new Set(),
       };
 
+  // // ============= Categories of Pet form ==============
+  // const categoriesPetForm = ["owner", "referred_by", "sex", "breed"];
+
   return (
     <>
       <div style={{ height: 500, width: "100%" }}>
@@ -150,7 +156,12 @@ export default function EditableSelectListTable({
               params.row.frase,
             );
 
-            setFieldConsultation(activeCategory as any, newText);
+            if (setField) {
+              setField(activeCategory as any, newText.toUpperCase());
+            } else if (setFieldConsultation) {
+              // solo llamamos si existe
+              setFieldConsultation(activeCategory as any, newText);
+            }
           }}
           sx={{
             border: "1px solid #93c5fd",

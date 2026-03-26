@@ -32,8 +32,6 @@ export default function PetForm({
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.owner ?? ""}
         onChange={(e) => setField("owner", e.target.value)}
-        // onFocus={() => setActiveField("PROPIETARIOS")}
-        // onBlur={() => setActiveField(null)}
       >
         Propietario:
       </LabeledInput>
@@ -50,6 +48,7 @@ export default function PetForm({
       {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
 
       <LabeledInput
+        categoryKey="referred_by"
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.referred_by ?? ""}
@@ -59,6 +58,7 @@ export default function PetForm({
       </LabeledInput>
 
       <LabeledInput
+        categoryKey="species"
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.species ?? ""}
@@ -66,7 +66,9 @@ export default function PetForm({
       >
         Especie:
       </LabeledInput>
+
       <LabeledInput
+        categoryKey="breed"
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.breed ?? ""}
@@ -74,7 +76,9 @@ export default function PetForm({
       >
         Raza:
       </LabeledInput>
+
       <LabeledInput
+        categoryKey="sex"
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.sex ?? ""}

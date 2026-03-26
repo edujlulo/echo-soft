@@ -8,18 +8,21 @@ import { useState } from "react";
 import EditableSelectListModal from "./EditableSelectListModal";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { useTemplateActions } from "@/hooks/useTemplateActions";
+import { Pet } from "@/lib/queries/petImages";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
 interface EditableSelectListProps {
-  setFieldConsultation: (
+  setFieldConsultation?: (
     field: keyof ConsultationRow,
     value: string | null,
   ) => void;
+  setField?: (field: keyof Pet, value: string) => void;
 }
 
 export default function EditableSelectList({
   setFieldConsultation,
+  setField,
 }: EditableSelectListProps) {
   const { getTitle } = useEditableSelectListStore();
 
@@ -62,6 +65,7 @@ export default function EditableSelectList({
         templates={templates}
         loading={templatesLoading}
         error={templatesError}
+        setField={setField}
       />
 
       {/* ======== BUTTONS ======== */}

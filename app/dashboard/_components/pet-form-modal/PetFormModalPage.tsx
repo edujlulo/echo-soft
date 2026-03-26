@@ -22,8 +22,6 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
   const { refreshPets } = usePetFetcher();
   const { setSelectedPet } = useSelectedPetStore();
 
-  const { setFieldConsultation } = useConsultationForm();
-
   const onSuccess = (newPet: Pet) => {
     refreshPets();
     setSelectedPet(newPet);
@@ -92,9 +90,7 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
 
               {/* Right Section */}
               <div>
-                <EditableSelectList
-                  setFieldConsultation={setFieldConsultation}
-                />
+                <EditableSelectList setField={setField} />
               </div>
             </div>
           </div>
