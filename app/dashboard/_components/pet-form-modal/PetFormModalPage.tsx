@@ -9,6 +9,7 @@ import { usePetForm } from "@/hooks/usePetForm";
 import { Database } from "@/types/database";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { usePetFetcher } from "@/hooks/usePetFetcher";
+import { useConsultationForm } from "@/hooks/useConsultationForm";
 
 type PetFormModalProps = {
   isOpen: boolean;
@@ -20,6 +21,8 @@ type Pet = Database["public"]["Tables"]["pets"]["Row"];
 export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
   const { refreshPets } = usePetFetcher();
   const { setSelectedPet } = useSelectedPetStore();
+
+  const { setFieldConsultation } = useConsultationForm();
 
   const onSuccess = (newPet: Pet) => {
     refreshPets();
@@ -89,7 +92,9 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
 
               {/* Right Section */}
               <div>
-                <EditableSelectList />
+                <EditableSelectList
+                  setFieldConsultation={setFieldConsultation}
+                />
               </div>
             </div>
           </div>

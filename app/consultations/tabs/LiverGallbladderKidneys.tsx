@@ -77,7 +77,7 @@ export default function LiverGallbladderKidneys() {
 
         {/* =========== Editable select list section ============ */}
         <div className="w-[650px]">
-          <EditableSelectList />
+          <EditableSelectList setFieldConsultation={setFieldConsultation} />
         </div>
       </div>
     </>

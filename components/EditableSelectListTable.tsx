@@ -2,32 +2,41 @@
 
 import { useConsultationStore } from "@/context/consultationStore";
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
-import { useConsultationForm } from "@/hooks/useConsultationForm";
-import { useEditableSelectList } from "@/hooks/useEditableSelectList";
-import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridRowsProp,
+  GridRowSelectionModel,
+} from "@mui/x-data-grid";
 import { Database } from "@/types/database";
+import { useActiveVetStore } from "@/context/activeVetStore";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
+type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
 
 interface EditableSelectListProps {
   setFieldConsultation: (
     field: keyof ConsultationRow,
     value: string | null,
   ) => void;
+  selectedTemplate: TextTemplateRow | null;
+  setSelectedTemplate: (template: TextTemplateRow | null) => void;
+  initAddTemplate: (vet_id: string) => void;
+  templates: TextTemplateRow[];
+  loading: boolean;
+  error: string | null;
 }
 
 export default function EditableSelectListTable({
   setFieldConsultation,
+  selectedTemplate,
+  setSelectedTemplate,
+  templates,
+  loading,
+  error,
 }: EditableSelectListProps) {
-  const { templates, loading, error } = useEditableSelectList();
-
+  const activeVet = useActiveVetStore((s) => s.activeVet);
   const activeCategory = useEditableSelectListStore((s) => s.activeCategory);
-
-  // const setFieldConsultation = useConsultationStore(
-  //   (s) => s.setFieldConsultation,
-  // );
-
-  // const { setFieldConsultation } = useConsultationForm();
 
   const formConsultation = useConsultationStore((s) => s.formConsultation);
 
@@ -54,6 +63,15 @@ export default function EditableSelectListTable({
       flex: 1,
       editable: false,
       headerAlign: "center",
+      sortable: true,
+      sortComparator: (v1, v2) => {
+        // Si v1 está vacío, se va al final
+        if (!v1) return 1;
+        // Si v2 está vacío, v1 va antes
+        if (!v2) return -1;
+        // Comparación normal alfabética
+        return v1.localeCompare(v2);
+      },
     },
   ];
 
@@ -83,6 +101,17 @@ export default function EditableSelectListTable({
     return phrases.join(SEP);
   }
 
+  // // ======== selectionModel ==========
+  const selectionModel: GridRowSelectionModel = selectedTemplate
+    ? {
+        type: "include",
+        ids: new Set([selectedTemplate.id]),
+      }
+    : {
+        type: "include",
+        ids: new Set(),
+      };
+
   return (
     <>
       <div style={{ height: 500, width: "100%" }}>
@@ -96,6 +125,19 @@ export default function EditableSelectListTable({
           // ✅ importante para teclado
           disableRowSelectionOnClick
           checkboxSelection={false}
+          rowSelectionModel={selectionModel}
+          sortModel={[{ field: "frase", sort: "asc" }]}
+          onRowClick={(params) => {
+            // Ignorar filas vacías
+            if (!params.row.id || params.row.id.toString().startsWith("empty-"))
+              return;
+
+            // Actualizar selectedTemplate con el template seleccionado
+            const template = templates.find((t) => t.id === params.row.id);
+            if (template) {
+              setSelectedTemplate(template);
+            }
+          }}
           onRowDoubleClick={(params) => {
             if (!activeCategory) return;
 
@@ -133,14 +175,17 @@ export default function EditableSelectListTable({
               borderBottom: "1px solid #93c5fd",
             },
 
+            // foco visible para teclado
+            // "& .MuiDataGrid-cell:focus": {
+            //   outline: "1px solid #2563eb",
+            //   backgroundColor: "#bfdbfe",
+            // },
+            // Estilo visual para la fila seleccionada
             "& .MuiDataGrid-row": {
               borderBottom: "1px solid #93c5fd",
-            },
-
-            // foco visible para teclado
-            "& .MuiDataGrid-cell:focus": {
-              outline: "1px solid #2563eb",
-              backgroundColor: "#bfdbfe",
+              "&.Mui-selected, &.Mui-selected:hover": {
+                backgroundColor: "#93c5fd",
+              },
             },
           }}
         />

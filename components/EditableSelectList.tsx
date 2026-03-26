@@ -4,6 +4,10 @@ import Button from "@/components/Button";
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import EditableSelectListTable from "./EditableSelectListTable";
 import { Database } from "@/types/database";
+import { useState } from "react";
+import EditableSelectListModal from "./EditableSelectListModal";
+import { useActiveVetStore } from "@/context/activeVetStore";
+import { useTemplateActions } from "@/hooks/useTemplateActions";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
@@ -19,6 +23,26 @@ export default function EditableSelectList({
 }: EditableSelectListProps) {
   const { getTitle } = useEditableSelectListStore();
 
+  const {
+    selectedTemplate,
+    setSelectedTemplate,
+    initAddTemplate,
+    addTemplate,
+    updateTemplate,
+    deleteTemplate,
+    loading,
+    error,
+    templates,
+    loading: templatesLoading,
+    error: templatesError,
+  } = useTemplateActions();
+
+  // estado del modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // For vet_id
+  const activeVet = useActiveVetStore((s) => s.activeVet);
+
   // ========== RENDER ===========
   return (
     <div className="px-4 py-4 bg-cyan-300 flex flex-col gap-2 justify-center items-center">
@@ -30,14 +54,63 @@ export default function EditableSelectList({
       </p>
 
       {/* ====== TABLE ====== */}
-      <EditableSelectListTable setFieldConsultation={setFieldConsultation} />
+      <EditableSelectListTable
+        setFieldConsultation={setFieldConsultation}
+        selectedTemplate={selectedTemplate}
+        setSelectedTemplate={setSelectedTemplate}
+        initAddTemplate={initAddTemplate}
+        templates={templates}
+        loading={templatesLoading}
+        error={templatesError}
+      />
 
       {/* ======== BUTTONS ======== */}
       <div className="flex flex-row gap-3 mt-4">
-        <Button>Agregar</Button>
-        <Button>Modificar</Button>
-        <Button>Eliminar</Button>
+        <Button
+          onClick={() => {
+            if (!activeVet) return;
+            initAddTemplate(activeVet.vet_id); // inicializa template vacío con vet_id
+            setIsModalOpen(true);
+          }}
+        >
+          Agregar
+        </Button>
+        <Button
+          onClick={() => {
+            if (!selectedTemplate) {
+              alert("Debe seleccionar una frase");
+              return;
+            }
+
+            setIsModalOpen(true);
+          }}
+        >
+          Modificar
+        </Button>
+        <Button
+          onClick={async () => {
+            if (!selectedTemplate) {
+              alert("Debe seleccionar una frase");
+              return;
+            }
+
+            const success = await deleteTemplate();
+            if (!success) return;
+          }}
+        >
+          Eliminar
+        </Button>
       </div>
+
+      {/* ====== MODAL ====== */}
+      <EditableSelectListModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        selectedTemplate={selectedTemplate}
+        setSelectedTemplate={setSelectedTemplate}
+        addTemplate={addTemplate}
+        updateTemplate={updateTemplate}
+      />
     </div>
   );
 }
