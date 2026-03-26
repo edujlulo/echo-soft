@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import { Dialog } from "@headlessui/react";
 import Navbar from "./Navbar";
@@ -23,11 +23,15 @@ export default function EditableSelectListModal({
   addTemplate,
   updateTemplate,
 }: Props) {
+  // Ref for focus into textarea:
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
   return (
     <>
       <Dialog
         open={isModalOpen}
         onClose={() => {}}
+        initialFocus={textareaRef}
         className="fixed inset-0 z-50 flex items-center justify-center"
       >
         {/* Overlay oscuro que bloquea todo lo de atrás */}
@@ -54,6 +58,8 @@ export default function EditableSelectListModal({
 
             <textarea
               className="w-full border rounded p-2 bg-white"
+              ref={textareaRef}
+              autoFocus
               rows={5}
               value={selectedTemplate?.content ?? ""}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -64,6 +70,32 @@ export default function EditableSelectListModal({
                 });
               }}
               placeholder="Escribe algo..."
+              onFocus={(e) => {
+                // poner cursor al final cuando reciba foco
+                const val = e.target.value;
+                e.target.setSelectionRange(val.length, val.length);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault(); // evita un salto de línea
+                  // Ejecutar la misma acción que el botón Aceptar
+                  if (!selectedTemplate) return;
+
+                  (async () => {
+                    let result = null;
+
+                    if (selectedTemplate?.id) {
+                      result = await updateTemplate();
+                    } else {
+                      result = await addTemplate();
+                    }
+
+                    if (result) {
+                      setIsModalOpen(false);
+                    }
+                  })();
+                }
+              }}
             />
           </div>
           <div className="pb-6 flex justify-center gap-3">

@@ -10,6 +10,13 @@ export default function AdrenalUterusOvaries() {
     statusMessageConsultation,
   } = useConsultationForm();
 
+  // FUNCTION FOR FORMAT TEXT FOR DISPLAY
+  const SEP = "\u{241F}"; // separador invisible
+
+  function formatForDisplay(text: string) {
+    return text.replaceAll(SEP, ", "); // separador visible para el usuario
+  }
+
   return (
     <>
       {/* =========== Main content =========== */}
@@ -17,7 +24,8 @@ export default function AdrenalUterusOvaries() {
         {/* =========== Consultation form ============ */}
         <div className="w-[650px] -mt-2 flex flex-col gap-1">
           <ConsultLabeledTextarea
-            value={formConsultation?.adrenal_glands ?? ""}
+            categoryKey="adrenal_glands"
+            value={formatForDisplay(formConsultation?.adrenal_glands ?? "")}
             onChange={(e) =>
               setFieldConsultation("adrenal_glands", e.target.value)
             }
@@ -26,21 +34,24 @@ export default function AdrenalUterusOvaries() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.uterus ?? ""}
+            categoryKey="uterus"
+            value={formatForDisplay(formConsultation?.uterus ?? "")}
             onChange={(e) => setFieldConsultation("uterus", e.target.value)}
           >
             ÚTERO
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.ovaries ?? ""}
+            categoryKey="ovaries"
+            value={formatForDisplay(formConsultation?.ovaries ?? "")}
             onChange={(e) => setFieldConsultation("ovaries", e.target.value)}
           >
             OVARIOS
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.thyroid_glands ?? ""}
+            categoryKey="thyroid_glands"
+            value={formatForDisplay(formConsultation?.thyroid_glands ?? "")}
             onChange={(e) =>
               setFieldConsultation("thyroid_glands", e.target.value)
             }
@@ -49,7 +60,8 @@ export default function AdrenalUterusOvaries() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.uterus_notes ?? ""}
+            categoryKey="uterus_notes"
+            value={formatForDisplay(formConsultation?.uterus_notes ?? "")}
             onChange={(e) =>
               setFieldConsultation("uterus_notes", e.target.value)
             }

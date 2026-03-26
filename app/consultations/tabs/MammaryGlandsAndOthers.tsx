@@ -10,6 +10,13 @@ export default function MammaryGlandsAndOthers() {
     statusMessageConsultation,
   } = useConsultationForm();
 
+  // FUNCTION FOR FORMAT TEXT FOR DISPLAY
+  const SEP = "\u{241F}"; // separador invisible
+
+  function formatForDisplay(text: string) {
+    return text.replaceAll(SEP, ", "); // separador visible para el usuario
+  }
+
   return (
     <>
       {/* =========== Main content =========== */}
@@ -17,8 +24,9 @@ export default function MammaryGlandsAndOthers() {
         {/* =========== Consultation form ============ */}
         <div className="w-[650px] -mt-4 flex flex-col gap-0.5">
           <ConsultLabeledTextarea
+            categoryKey="mammary_glands"
             textareaHeight="h-18"
-            value={formConsultation?.mammary_glands ?? ""}
+            value={formatForDisplay(formConsultation?.mammary_glands ?? "")}
             onChange={(e) =>
               setFieldConsultation("mammary_glands", e.target.value)
             }
@@ -27,16 +35,18 @@ export default function MammaryGlandsAndOthers() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
+            categoryKey="others"
             textareaHeight="h-14"
-            value={formConsultation?.others ?? ""}
+            value={formatForDisplay(formConsultation?.others ?? "")}
             onChange={(e) => setFieldConsultation("others", e.target.value)}
           >
             OTROS
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
+            categoryKey="major_vessels"
             textareaHeight="h-18"
-            value={formConsultation?.major_vessels ?? ""}
+            value={formatForDisplay(formConsultation?.major_vessels ?? "")}
             onChange={(e) =>
               setFieldConsultation("major_vessels", e.target.value)
             }
@@ -45,8 +55,9 @@ export default function MammaryGlandsAndOthers() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
+            categoryKey="abdominal_cavity"
             textareaHeight="h-18"
-            value={formConsultation?.abdominal_cavity ?? ""}
+            value={formatForDisplay(formConsultation?.abdominal_cavity ?? "")}
             onChange={(e) =>
               setFieldConsultation("abdominal_cavity", e.target.value)
             }
@@ -55,8 +66,9 @@ export default function MammaryGlandsAndOthers() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
+            categoryKey="conclusions"
             textareaHeight="h-18"
-            value={formConsultation?.conclusions ?? ""}
+            value={formatForDisplay(formConsultation?.conclusions ?? "")}
             onChange={(e) =>
               setFieldConsultation("conclusions", e.target.value)
             }
@@ -65,8 +77,9 @@ export default function MammaryGlandsAndOthers() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
+            categoryKey="observations"
             textareaHeight="h-14"
-            value={formConsultation?.observations ?? ""}
+            value={formatForDisplay(formConsultation?.observations ?? "")}
             onChange={(e) =>
               setFieldConsultation("observations", e.target.value)
             }
@@ -75,8 +88,9 @@ export default function MammaryGlandsAndOthers() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
+            categoryKey="mammary_notes"
             textareaHeight="h-18"
-            value={formConsultation?.mammary_notes ?? ""}
+            value={formatForDisplay(formConsultation?.mammary_notes ?? "")}
             onChange={(e) =>
               setFieldConsultation("mammary_notes", e.target.value)
             }

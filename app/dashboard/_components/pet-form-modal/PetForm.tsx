@@ -27,6 +27,7 @@ export default function PetForm({
   return (
     <div className="flex flex-col gap-4">
       <LabeledInput
+        categoryKey="owner"
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.owner ?? ""}

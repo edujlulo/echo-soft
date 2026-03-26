@@ -13,6 +13,13 @@ export default function LiverGallbladderKidneys() {
     statusMessageConsultation,
   } = useConsultationForm();
 
+  // FUNCTION FOR FORMAT TEXT FOR DISPLAY
+  const SEP = "\u{241F}"; // separador invisible
+
+  function formatForDisplay(text: string) {
+    return text.replaceAll(SEP, ", "); // separador visible para el usuario
+  }
+
   return (
     <>
       {/* =========== Main content =========== */}
@@ -20,14 +27,16 @@ export default function LiverGallbladderKidneys() {
         {/* =========== Consultation form ============ */}
         <div className="w-[650px] -mt-2 flex flex-col gap-1">
           <ConsultLabeledTextarea
-            value={formConsultation?.liver ?? ""}
+            categoryKey="liver"
+            value={formatForDisplay(formConsultation?.liver ?? "")}
             onChange={(e) => setFieldConsultation("liver", e.target.value)}
           >
             HÍGADO
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.gallbladder ?? ""}
+            categoryKey="gallbladder"
+            value={formatForDisplay(formConsultation?.gallbladder ?? "")}
             onChange={(e) =>
               setFieldConsultation("gallbladder", e.target.value)
             }
@@ -36,7 +45,8 @@ export default function LiverGallbladderKidneys() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.left_kidney ?? ""}
+            categoryKey="left_kidney"
+            value={formatForDisplay(formConsultation?.left_kidney ?? "")}
             onChange={(e) =>
               setFieldConsultation("left_kidney", e.target.value)
             }
@@ -45,7 +55,8 @@ export default function LiverGallbladderKidneys() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.right_kidney ?? ""}
+            categoryKey="right_kidney"
+            value={formatForDisplay(formConsultation?.right_kidney ?? "")}
             onChange={(e) =>
               setFieldConsultation("right_kidney", e.target.value)
             }
@@ -54,7 +65,8 @@ export default function LiverGallbladderKidneys() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.liver_notes ?? ""}
+            categoryKey="liver_notes"
+            value={formatForDisplay(formConsultation?.liver_notes ?? "")}
             onChange={(e) =>
               setFieldConsultation("liver_notes", e.target.value)
             }

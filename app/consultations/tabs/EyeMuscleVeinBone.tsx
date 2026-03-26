@@ -11,6 +11,13 @@ export default function EyeMuscleVeinBone() {
     statusMessageConsultation,
   } = useConsultationForm();
 
+  // FUNCTION FOR FORMAT TEXT FOR DISPLAY
+  const SEP = "\u{241F}"; // separador invisible
+
+  function formatForDisplay(text: string) {
+    return text.replaceAll(SEP, ", "); // separador visible para el usuario
+  }
+
   return (
     <>
       {/* =========== Main content =========== */}
@@ -18,7 +25,8 @@ export default function EyeMuscleVeinBone() {
         {/* =========== Consultation form ============ */}
         <div className="w-[650px] -mt-2 flex flex-col gap-1">
           <ConsultLabeledTextarea
-            value={formConsultation?.ocular_study ?? ""}
+            categoryKey="ocular_study"
+            value={formatForDisplay(formConsultation?.ocular_study ?? "")}
             onChange={(e) =>
               setFieldConsultation("ocular_study", e.target.value)
             }
@@ -27,7 +35,8 @@ export default function EyeMuscleVeinBone() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.muscular_study ?? ""}
+            categoryKey="muscular_study"
+            value={formatForDisplay(formConsultation?.muscular_study ?? "")}
             onChange={(e) =>
               setFieldConsultation("muscular_study", e.target.value)
             }
@@ -36,7 +45,8 @@ export default function EyeMuscleVeinBone() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.thorax_lungs ?? ""}
+            categoryKey="thorax_lungs"
+            value={formatForDisplay(formConsultation?.thorax_lungs ?? "")}
             onChange={(e) =>
               setFieldConsultation("thorax_lungs", e.target.value)
             }
@@ -45,7 +55,8 @@ export default function EyeMuscleVeinBone() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.bones_others ?? ""}
+            categoryKey="bones_others"
+            value={formatForDisplay(formConsultation?.bones_others ?? "")}
             onChange={(e) =>
               setFieldConsultation("bones_others", e.target.value)
             }
@@ -54,7 +65,8 @@ export default function EyeMuscleVeinBone() {
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
-            value={formConsultation?.ocular_notes ?? ""}
+            categoryKey="ocular_notes"
+            value={formatForDisplay(formConsultation?.ocular_notes ?? "")}
             onChange={(e) =>
               setFieldConsultation("ocular_notes", e.target.value)
             }
@@ -77,9 +89,7 @@ export default function EyeMuscleVeinBone() {
 
         {/* =========== Editable select list section ============ */}
         <div className="w-[650px]">
-          <EditableSelectList
-  setFieldConsultation={setFieldConsultation}
-/>
+          <EditableSelectList setFieldConsultation={setFieldConsultation} />
         </div>
       </div>
     </>
