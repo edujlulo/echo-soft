@@ -1,6 +1,10 @@
 import Button from "@/components/Button";
 
-export default function ReportActions() {
+interface Props {
+  setIsQuickModeOpen: (open: boolean) => void;
+}
+
+export default function ReportActions({ setIsQuickModeOpen }: Props) {
   const reportActionsButtonsClassName =
     "font-bold bg-green-200 border-green-400 hover:bg-green-300 hover:border-green-700 focus:outline-none focus:ring-2 focus:ring-green-500";
 
@@ -27,7 +31,12 @@ export default function ReportActions() {
         <div className="flex flex-row gap-2 items-center">
           <Button className={reportActionsButtonsClassName}>Imprimir 2</Button>
           <Button className={reportActionsButtonsClassName}>2</Button>
-          <Button className={reportActionsButtonsClassName}>Modo rápido</Button>
+          <Button
+            className={reportActionsButtonsClassName}
+            onClick={() => setIsQuickModeOpen(true)}
+          >
+            Modo rápido
+          </Button>
           <Button className={reportActionsButtonsClassName}>
             Modo rápido con ayuda
           </Button>
