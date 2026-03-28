@@ -15,18 +15,18 @@ export default function QuickMode({
   setIsQuickModeOpen,
 }: Props) {
   return (
-    <>
+    <div>
       <Dialog
         open={isQuickModeOpen}
         onClose={() => {}}
-        className="fixed inset-0 z-50 flex items-center justify-center overflow-auto"
+        className="fixed inset-0 z-50 flex overflow-x-auto overflow-y-auto"
       >
         {/* Overlay oscuro que bloquea todo lo de atrás */}
         <div className="fixed inset-0 bg-black/20 " aria-hidden="true" />
 
         {/* Panel del modal */}
 
-        <Dialog.Panel className="w-[1500px] h-[700px] flex-shrink-0 overflow-hidden mt-15 bg-amber-50 rounded-md z-50 border border-gray-500 shadow-lg relative">
+        <Dialog.Panel className="w-[1500px] h-[760px] flex flex-col flex-shrink-0 bg-amber-50 rounded-md z-50 border border-gray-500 shadow-lg relative m-auto">
           {/* Botón cerrar */}
           <button
             onClick={() => setIsQuickModeOpen(false)}
@@ -36,21 +36,16 @@ export default function QuickMode({
           </button>
 
           {/* Navbar */}
-          <div className="w-full">
+          <div className="w-full flex-shrink-0">
             <Navbar>Consulta de Ecografía</Navbar>
           </div>
 
-          {/* Content */}
-          <QuickModeContent />
-
-          {/* Close button */}
-          <div className=" flex justify-center gap-3">
-            <Button onClick={() => setIsQuickModeOpen(false)} className="w-23">
-              Cerrar
-            </Button>
+          {/* ========= CONTENT ========= */}
+          <div className="flex-1 min-h-0">
+            <QuickModeContent setIsQuickModeOpen={setIsQuickModeOpen} />
           </div>
         </Dialog.Panel>
       </Dialog>
-    </>
+    </div>
   );
 }

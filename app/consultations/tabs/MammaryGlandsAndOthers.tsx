@@ -20,9 +20,9 @@ export default function MammaryGlandsAndOthers() {
   return (
     <>
       {/* =========== Main content =========== */}
-      <div className="ml-6 flex flex-row gap-4">
+      <div className="min-h-0 ml-6 flex flex-row gap-4">
         {/* =========== Consultation form ============ */}
-        <div className="w-[650px] -mt-4 flex flex-col gap-0.5">
+        <div className="w-[650px] flex flex-col gap-0.5">
           <ConsultLabeledTextarea
             categoryKey="mammary_glands"
             textareaHeight="h-18"

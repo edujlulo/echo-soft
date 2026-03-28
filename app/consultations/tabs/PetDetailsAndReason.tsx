@@ -57,7 +57,7 @@ export default function PetDetailsAndReason({
   return (
     <>
       {/* =========== Main content =========== */}
-      <div className="ml-6 flex flex-row gap-4">
+      <div className="min-h-0 ml-6 flex flex-row gap-4">
         {/* ======== Pet and consultation details section ========== */}
         <div className="flex flex-col gap-2">
           {/* ========== Pet form and image ========== */}

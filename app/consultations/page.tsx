@@ -20,14 +20,14 @@ export default function ConsultationsPage() {
 
   return (
     <>
-      <div className="w-[1600px] h-[800px] bg-gray-300 flex flex-col rounded-md text-sm">
+      <div className="w-[1600px] h-[800px] flex-1 min-h-0  bg-gray-300 flex flex-col rounded-md text-sm">
         {/* NavBar */}
         <div className="w-full">
           <Navbar>Consulta de Ecografía</Navbar>
         </div>
 
         {/* Contenedor principal */}
-        <div className="flex flex-col flex-1">
+        <div className="min-h-0 flex flex-col flex-1">
           {/* Top label-inputs */}
           <div className="mx-4 my-0.5 flex flex-row gap-4">
             <LabeledInput
@@ -64,7 +64,7 @@ export default function ConsultationsPage() {
           </div>
 
           {/* Consultation tabs section */}
-          <div className="flex flex-col flex-1">
+          <div className="mb-2 flex flex-col flex-1 min-h-0 overflow-hidden">
             <ConsultationTabs />
           </div>
         </div>

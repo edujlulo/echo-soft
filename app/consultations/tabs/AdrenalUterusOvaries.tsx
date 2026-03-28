@@ -20,9 +20,9 @@ export default function AdrenalUterusOvaries() {
   return (
     <>
       {/* =========== Main content =========== */}
-      <div className="ml-6 flex flex-row gap-4">
+      <div className="min-h-0 ml-6 flex flex-row gap-4">
         {/* =========== Consultation form ============ */}
-        <div className="w-[650px] -mt-2 flex flex-col gap-1">
+        <div className="w-[650px] flex flex-col gap-1">
           <ConsultLabeledTextarea
             categoryKey="adrenal_glands"
             value={formatForDisplay(formConsultation?.adrenal_glands ?? "")}

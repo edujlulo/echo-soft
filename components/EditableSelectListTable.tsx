@@ -120,12 +120,13 @@ export default function EditableSelectListTable({
 
   return (
     <>
-      <div style={{ height: 500, width: "100%" }}>
+      <div className="flex flex-col min-h-0 w-full h-full">
         <DataGrid
           rows={rows}
           columns={columns}
           loading={loading}
           hideFooter
+          autoHeight={false}
           rowHeight={26}
           columnHeaderHeight={28}
           // ✅ importante para teclado
@@ -164,6 +165,11 @@ export default function EditableSelectListTable({
             }
           }}
           sx={{
+            "& .MuiDataGrid-virtualScroller": {
+              overflow: "auto",
+            },
+            height: "100%",
+            maxHeight: "100%",
             border: "1px solid #93c5fd",
 
             "& .MuiDataGrid-columnHeaders": {

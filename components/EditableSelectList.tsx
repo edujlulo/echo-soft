@@ -48,7 +48,7 @@ export default function EditableSelectList({
 
   // ========== RENDER ===========
   return (
-    <div className="px-4 py-4 bg-cyan-300 flex flex-col gap-2 justify-center items-center">
+    <div className="px-4 py-4 bg-cyan-300 flex flex-col gap-2 h-full overflow-hidden">
       <h1 className="w-full bg-white text-center text-xl text-blue-600 font-semibold">
         {getTitle()}
       </h1>
@@ -57,16 +57,18 @@ export default function EditableSelectList({
       </p>
 
       {/* ====== TABLE ====== */}
-      <EditableSelectListTable
-        setFieldConsultation={setFieldConsultation}
-        selectedTemplate={selectedTemplate}
-        setSelectedTemplate={setSelectedTemplate}
-        initAddTemplate={initAddTemplate}
-        templates={templates}
-        loading={templatesLoading}
-        error={templatesError}
-        setField={setField}
-      />
+      <div className="flex-1 min-h-0 overflow-hidden flex flex-col h-full">
+        <EditableSelectListTable
+          setFieldConsultation={setFieldConsultation}
+          selectedTemplate={selectedTemplate}
+          setSelectedTemplate={setSelectedTemplate}
+          initAddTemplate={initAddTemplate}
+          templates={templates}
+          loading={templatesLoading}
+          error={templatesError}
+          setField={setField}
+        />
+      </div>
 
       {/* ======== BUTTONS ======== */}
       <div className="flex flex-row gap-3 mt-4">

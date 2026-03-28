@@ -24,7 +24,7 @@ export default function ConsultationTabs() {
   };
 
   return (
-    <Box className="mx-4 mb-2 flex-1 bg-amber-50 rounded-t-lg rounded-b-sm">
+    <Box className="min-h-0 mx-4 flex flex-col flex-1 bg-amber-50 rounded-t-lg rounded-b-sm">
       <Tabs
         value={value}
         onChange={handleChange}
@@ -79,7 +79,7 @@ export default function ConsultationTabs() {
         <Tab label="Imágenes" />
       </Tabs>
 
-      <Box className="py-1 px-4">
+      <Box className="min-h-0 pb-2 px-4 overflow-y-auto  flex flex-col">
         {value === 0 && (
           <PetDetailsAndReason
             selectedPet={selectedPet}

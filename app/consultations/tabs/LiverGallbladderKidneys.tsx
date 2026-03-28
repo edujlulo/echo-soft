@@ -23,9 +23,9 @@ export default function LiverGallbladderKidneys() {
   return (
     <>
       {/* =========== Main content =========== */}
-      <div className="ml-6 flex flex-row gap-4">
+      <div className="ml-6 flex flex-row gap-4 overflow-hidden ">
         {/* =========== Consultation form ============ */}
-        <div className="w-[650px] -mt-2 flex flex-col gap-1">
+        <div className="w-[650px] flex flex-col gap-1">
           <ConsultLabeledTextarea
             categoryKey="liver"
             value={formatForDisplay(formConsultation?.liver ?? "")}
