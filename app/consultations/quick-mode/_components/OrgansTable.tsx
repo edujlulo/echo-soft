@@ -11,9 +11,42 @@ export default function OrgansTable() {
     },
   ];
 
-  const rows = Array.from({ length: 30 }, (_, index) => ({
+  const organList = [
+    "MOTIVOS",
+    "EQUIPOS",
+    "VEJIGA URINARIA",
+    "BAZO",
+    "PÁNCREAS",
+    "RIÑÓN IZQUIERDO",
+    "HÍGADO",
+    "ÚTERO",
+    "RIÑÓN DERECHO",
+    "VESÍCULA BILIAR",
+    "ESTÓMAGO",
+    "INTESTINO DELGADO",
+    "INTESTINO GRUESO",
+    "URETRA",
+    "LINFONODOS",
+    "GLÁNDULAS ADRENALES",
+    "PRÓSTATA",
+    "TESTÍCULOS",
+    "OVARIOS",
+    "GLÁNDULA TIROIDES",
+    "GLÁNDULA MAMARIA",
+    "OCULAR",
+    "MUSCULAR",
+    "HUESOS",
+    "TÓRAX, PULMONES",
+    "OTROS",
+    "GRANDES VASOS, VENAS Y ARTERIAS",
+    "CAVIDAD ABDOMINAL",
+    "CONCLUSIONES",
+    "OBSERVACIONES",
+  ];
+
+  const rows = organList.map((organ, index) => ({
     id: index + 1,
-    organ: "",
+    organ,
   }));
 
   return (
