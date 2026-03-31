@@ -3,12 +3,15 @@ import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
 import OrgansTable from "./OrgansTable";
 import DynamicTextarea from "./DynamicTextarea";
+import { useConsultationForm } from "@/hooks/useConsultationForm";
 
 interface Props {
   setIsQuickModeOpen: (open: boolean) => void;
 }
 
 export default function QuickModeContent({ setIsQuickModeOpen }: Props) {
+  const { setFieldConsultation } = useConsultationForm();
+
   return (
     <>
       <div className="h-full flex flex-row gap-4 ">
@@ -19,7 +22,7 @@ export default function QuickModeContent({ setIsQuickModeOpen }: Props) {
 
           {/* ========== EDITABLE SELECT LIST ========== */}
           <div className="flex-1 min-h-0">
-            <EditableSelectList />
+            <EditableSelectList setFieldConsultation={setFieldConsultation} />
           </div>
         </div>
 
