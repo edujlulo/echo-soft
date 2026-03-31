@@ -48,7 +48,7 @@ export default function PetInfoForm({
   return (
     <>
       {/* ========== Pet info form and image ========== */}
-      <div className="-mt-4 flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
         {/* =========== Pet image ========== */}
         <div className="ml-2">
           <PetImage />
