@@ -3,13 +3,16 @@
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import clsx from "clsx";
 import React from "react";
+import { Database } from "@/types/database";
+
+type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
 interface Props extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   children: React.ReactNode;
   labelClassName?: string;
   textareaClassName?: string;
   textareaHeight?: string;
-  categoryKey?: string;
+  categoryKey?: keyof ConsultationRow;
 }
 
 export default function ConsultLabeledTextarea({
@@ -48,7 +51,7 @@ export default function ConsultLabeledTextarea({
           "w-full bg-white border border-blue-200 px-2 pb-0.5 pt-1.5 rounded",
           "focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white",
           textareaHeight ?? "h-24",
-          textareaClassName,
+          textareaClassName
         )}
       />
     </div>

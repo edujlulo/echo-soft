@@ -2,13 +2,16 @@
 
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import React from "react";
+import { Database } from "@/types/database";
+
+type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   children: React.ReactNode;
   labelClassName?: string;
   inputClassName?: string;
   forceUpperCase?: boolean;
-  categoryKey?: string;
+  categoryKey?: keyof ConsultationRow;
 }
 
 export default function LabeledInput({
