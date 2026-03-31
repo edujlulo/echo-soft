@@ -1,52 +1,34 @@
 "use client";
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { consultationCategories } from "@/config/consultationCategories";
+import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 
 export default function OrgansTable() {
+  const setActiveCategory = useEditableSelectListStore(
+    (state) => state.setActiveCategory
+  );
+
+  const setActiveField = useEditableSelectListStore(
+    (state) => state.setActiveField
+  );
+
+  const activeCategory = useEditableSelectListStore(
+    (state) => state.activeCategory
+  );
+
   const columns: GridColDef[] = [
     {
-      field: "organ",
+      field: "label",
       headerName: "ORGANO",
       flex: 1,
     },
   ];
 
-  const organList = [
-    "MOTIVOS",
-    "EQUIPOS",
-    "VEJIGA URINARIA",
-    "BAZO",
-    "PÁNCREAS",
-    "RIÑÓN IZQUIERDO",
-    "HÍGADO",
-    "ÚTERO",
-    "RIÑÓN DERECHO",
-    "VESÍCULA BILIAR",
-    "ESTÓMAGO",
-    "INTESTINO DELGADO",
-    "INTESTINO GRUESO",
-    "URETRA",
-    "LINFONODOS",
-    "GLÁNDULAS ADRENALES",
-    "PRÓSTATA",
-    "TESTÍCULOS",
-    "OVARIOS",
-    "GLÁNDULA TIROIDES",
-    "GLÁNDULA MAMARIA",
-    "OCULAR",
-    "MUSCULAR",
-    "HUESOS",
-    "TÓRAX, PULMONES",
-    "OTROS",
-    "GRANDES VASOS, VENAS Y ARTERIAS",
-    "CAVIDAD ABDOMINAL",
-    "CONCLUSIONES",
-    "OBSERVACIONES",
-  ];
-
-  const rows = organList.map((organ, index) => ({
+  const rows = consultationCategories.map((c, index) => ({
     id: index + 1,
-    organ,
+    label: c.label,
+    key: c.key,
   }));
 
   return (
@@ -58,6 +40,13 @@ export default function OrgansTable() {
       columnHeaderHeight={28}
       disableRowSelectionOnClick
       checkboxSelection={false}
+      onRowClick={(params) => {
+        setActiveCategory(params.row.key);
+        setActiveField(params.row.label);
+      }}
+      getRowClassName={(params) =>
+        params.row.key === activeCategory ? "selected-row" : ""
+      }
       sx={{
         border: "1px solid #93c5fd",
 
@@ -84,6 +73,11 @@ export default function OrgansTable() {
         "& .MuiDataGrid-row": {
           borderBottom: "1px solid #93c5fd",
         },
+
+        "& .MuiDataGrid-row.selected-row, & .MuiDataGrid-row.selected-row:hover":
+          {
+            backgroundColor: "#93c5fd",
+          },
       }}
     />
   );

@@ -2,6 +2,7 @@ import Button from "@/components/Button";
 import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
 import OrgansTable from "./OrgansTable";
+import DynamicTextarea from "./DynamicTextarea";
 
 interface Props {
   setIsQuickModeOpen: (open: boolean) => void;
@@ -14,9 +15,7 @@ export default function QuickModeContent({ setIsQuickModeOpen }: Props) {
         {/* Left section */}
         <div className="h-full  w-[45%] py-2 pl-3 flex flex-col gap-2 ">
           {/* ========== CONSULT LABELED TEXTAREA ========== */}
-          <div>
-            <ConsultLabeledTextarea>MOTIVOS</ConsultLabeledTextarea>
-          </div>
+          <DynamicTextarea />
 
           {/* ========== EDITABLE SELECT LIST ========== */}
           <div className="flex-1 min-h-0">
