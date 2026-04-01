@@ -18,11 +18,13 @@ interface EditableSelectListProps {
     value: string | null,
   ) => void;
   setField?: (field: keyof Pet, value: string) => void;
+  buttonsClassName?: string;
 }
 
 export default function EditableSelectList({
   setFieldConsultation,
   setField,
+  buttonsClassName,
 }: EditableSelectListProps) {
   const { getTitle } = useEditableSelectListStore();
 
@@ -71,7 +73,9 @@ export default function EditableSelectList({
       </div>
 
       {/* ======== BUTTONS ======== */}
-      <div className="flex flex-row gap-3 mt-4">
+      <div
+        className={`mt-4 flex flex-row gap-3 items-center justify-center ${buttonsClassName}`}
+      >
         <Button
           onClick={() => {
             if (!activeVet) return;

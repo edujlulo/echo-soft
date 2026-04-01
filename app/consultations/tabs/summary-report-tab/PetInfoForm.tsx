@@ -121,8 +121,10 @@ export default function PetInfoForm({
                 labelClassName="w-26 font-bold"
                 inputClassName="w-40 bg-white"
                 type="Date"
-                disabled
-                value={selectedConsultation?.consultation_date}
+                value={formConsultation?.consultation_date}
+                onChange={(e) =>
+                  setFieldConsultation("consultation_date", e.target.value)
+                }
               >
                 Fecha:
               </LabeledInput>

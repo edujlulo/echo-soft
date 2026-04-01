@@ -1,5 +1,6 @@
 import LabeledInput from "@/components/LabeledInput";
 import { useConsultationStore } from "@/context/consultationStore";
+import { useConsultationForm } from "@/hooks/useConsultationForm";
 import { Database } from "@/types/database";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
@@ -33,6 +34,8 @@ export default function ConsultationPetForm({
   calculateAge,
 }: ConsultationPetFormProps) {
   const { selectedConsultation } = useConsultationStore();
+
+  const { formConsultation, setFieldConsultation } = useConsultationForm();
 
   return (
     <>
@@ -103,8 +106,10 @@ export default function ConsultationPetForm({
               labelClassName="w-26 font-bold"
               inputClassName="w-40 bg-white"
               type="Date"
-              disabled
-              value={selectedConsultation?.consultation_date}
+              value={formConsultation?.consultation_date}
+              onChange={(e) =>
+                setFieldConsultation("consultation_date", e.target.value)
+              }
             >
               Fecha:
             </LabeledInput>
