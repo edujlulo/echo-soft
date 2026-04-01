@@ -12,7 +12,8 @@ interface Props extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   labelClassName?: string;
   textareaClassName?: string;
   textareaHeight?: string;
-  categoryKey?: keyof ConsultationRow;
+  // categoryKey?: keyof ConsultationRow;
+  categoryKey?: string;
 }
 
 export default function ConsultLabeledTextarea({

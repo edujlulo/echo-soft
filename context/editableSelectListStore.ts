@@ -10,8 +10,9 @@ interface EditableSelectListState {
   setActiveField: (field: string | null) => void;
   getTitle: () => string; // returns the current table title
 
-  activeCategory: keyof ConsultationRow | null;
-  setActiveCategory: (category: keyof ConsultationRow | null) => void;
+  activeCategory: string | null;
+  // setActiveCategory: (category: keyof ConsultationRow | null) => void;
+  setActiveCategory: (field: string | null) => void;
 }
 
 export const useEditableSelectListStore = create<EditableSelectListState>(
@@ -25,7 +26,10 @@ export const useEditableSelectListStore = create<EditableSelectListState>(
       return get().activeField ?? "FRASES"; // default title if no active field
     },
 
-    setActiveCategory: (category: keyof ConsultationRow | null) =>
+    setActiveCategory: (category: string | null) =>
       set({ activeCategory: category }),
+
+    // setActiveCategory: (category: keyof ConsultationRow | null) =>
+    //   set({ activeCategory: category }),
   })
 );

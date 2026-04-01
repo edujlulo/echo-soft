@@ -11,7 +11,7 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   labelClassName?: string;
   inputClassName?: string;
   forceUpperCase?: boolean;
-  categoryKey?: keyof ConsultationRow;
+  categoryKey?: string;
 }
 
 export default function LabeledInput({

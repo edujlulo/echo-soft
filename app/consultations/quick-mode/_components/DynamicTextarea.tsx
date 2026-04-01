@@ -1,6 +1,9 @@
 import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
+import { Database } from "@/types/database";
+
+type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
 export default function DynamicTextarea() {
   const { formConsultation, setFieldConsultation } = useConsultationForm();
@@ -24,12 +27,18 @@ export default function DynamicTextarea() {
         categoryKey={activeCategory ?? undefined}
         value={
           activeCategory
-            ? formatForDisplay(formConsultation?.[activeCategory] ?? "")
+            ? formatForDisplay(
+                formConsultation?.[activeCategory as keyof ConsultationRow] ??
+                  ""
+              )
             : ""
         }
         onChange={(e) => {
           if (!activeCategory) return;
-          setFieldConsultation(activeCategory, e.target.value);
+          setFieldConsultation(
+            activeCategory as keyof ConsultationRow,
+            e.target.value
+          );
         }}
       >
         {activeField ?? "MOTIVOS"}

@@ -1,12 +1,47 @@
 import Button from "@/components/Button";
+import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
+import { useRouter } from "next/navigation";
 
 interface Props {
   setIsQuickModeOpen: (open: boolean) => void;
 }
 
 export default function ReportActions({ setIsQuickModeOpen }: Props) {
+  const router = useRouter();
+
+  const { report } = useConsultationReportBuilder();
+
   const reportActionsButtonsClassName =
     "font-bold bg-green-200 border-green-400 hover:bg-green-300 hover:border-green-700 focus:outline-none focus:ring-2 focus:ring-green-500";
+
+  // Download PDF report
+  const handleDownloadPDF = async () => {
+    const res = await fetch("/api/generate-pdf", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ report }),
+    });
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "report.pdf";
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  };
+
+  // Navigate to PDF report preview
+  const handlePreviewPDF = () => {
+    router.push("/report-preview");
+  };
+  // const handlePreviewPDF = () => {
+  //   window.open("/report-preview", "_blank", "noopener,noreferrer");
+  // };
 
   return (
     <>
@@ -29,8 +64,18 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
         </div>
 
         <div className="flex flex-row gap-2 items-center">
-          <Button className={reportActionsButtonsClassName}>Imprimir 2</Button>
-          <Button className={reportActionsButtonsClassName}>2</Button>
+          <Button
+            onClick={handleDownloadPDF}
+            className={reportActionsButtonsClassName}
+          >
+            Descargar PDF
+          </Button>
+          <Button
+            onClick={handlePreviewPDF}
+            className={reportActionsButtonsClassName}
+          >
+            Vista previa del PDF
+          </Button>
           <Button
             className={reportActionsButtonsClassName}
             onClick={() => setIsQuickModeOpen(true)}
