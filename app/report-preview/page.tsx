@@ -4,15 +4,22 @@ import { useMemo } from "react";
 import { useConsultationStore } from "@/context/consultationStore";
 import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
+import { useSelectedPetStore } from "@/context/selectedPetStore";
 
 export default function ReportPreviewPage() {
   const { report } = useConsultationReportBuilder();
+  const formConsultation = useConsultationStore((s) => s.formConsultation);
+  const selectedPet = useSelectedPetStore((s) => s.selectedPet);
 
   const reportHtml = useMemo(() => {
     if (!report) return "";
 
-    return reportPdfTemplate(report);
-  }, [report]);
+    return reportPdfTemplate({
+      report,
+      formConsultation,
+      selectedPet,
+    });
+  }, [report, formConsultation, selectedPet]);
 
   return (
     <div className="w-full h-screen p-4 bg-gray-100">

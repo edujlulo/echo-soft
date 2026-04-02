@@ -1,4 +1,6 @@
 import Button from "@/components/Button";
+import { useConsultationStore } from "@/context/consultationStore";
+import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
 import { useRouter } from "next/navigation";
 
@@ -10,6 +12,8 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
   const router = useRouter();
 
   const { report } = useConsultationReportBuilder();
+  const formConsultation = useConsultationStore((s) => s.formConsultation);
+  const selectedPet = useSelectedPetStore((s) => s.selectedPet);
 
   const reportActionsButtonsClassName =
     "font-bold bg-green-200 border-green-400 hover:bg-green-300 hover:border-green-700 focus:outline-none focus:ring-2 focus:ring-green-500";
@@ -21,7 +25,11 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ report }),
+      body: JSON.stringify({
+        report,
+        formConsultation,
+        selectedPet,
+      }),
     });
 
     const blob = await res.blob();
