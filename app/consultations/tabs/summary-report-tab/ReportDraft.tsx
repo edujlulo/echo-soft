@@ -12,7 +12,7 @@ export default function ReportDraft() {
 
         <textarea
           value={report}
-          disabled
+          readOnly
           className="w-[700px] h-[560px] bg-white border border-blue-200 px-2 pb-0.5 pt-1.5 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white"
         />
       </div>
