@@ -4,7 +4,7 @@ import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 
 export async function POST(req: Request) {
   try {
-    const { report, formConsultation, selectedPet } = await req.json();
+    const { report, formConsultation, selectedPet, activeVet, activeClinic } = await req.json();
 
     const browser = await puppeteer.launch({
       headless: true,
@@ -16,6 +16,8 @@ export async function POST(req: Request) {
       report,
       formConsultation,
       selectedPet,
+      activeVet, 
+      activeClinic,
     });
     await page.setContent(html, { waitUntil: "domcontentloaded" });
 

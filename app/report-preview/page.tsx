@@ -5,11 +5,15 @@ import { useConsultationStore } from "@/context/consultationStore";
 import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
+import { useActiveVetStore } from "@/context/activeVetStore";
+import { useClinicStore } from "@/context/activeClinicStore";
 
 export default function ReportPreviewPage() {
   const { report } = useConsultationReportBuilder();
   const formConsultation = useConsultationStore((s) => s.formConsultation);
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
+  const activeVet = useActiveVetStore((s) => s.activeVet);
+  const activeClinic = useClinicStore((s) => s.activeClinic);
 
   const reportHtml = useMemo(() => {
     if (!report) return "";
@@ -18,6 +22,8 @@ export default function ReportPreviewPage() {
       report,
       formConsultation,
       selectedPet,
+      activeVet,
+      activeClinic,
     });
   }, [report, formConsultation, selectedPet]);
 
