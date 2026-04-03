@@ -7,6 +7,7 @@ import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuild
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { useClinicStore } from "@/context/activeClinicStore";
+import { useClinicImage } from "@/hooks/useClinicImage";
 
 export default function ReportPreviewPage() {
   const { report } = useConsultationReportBuilder();
@@ -14,6 +15,8 @@ export default function ReportPreviewPage() {
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
   const activeVet = useActiveVetStore((s) => s.activeVet);
   const activeClinic = useClinicStore((s) => s.activeClinic);
+
+  const { image } = useClinicImage();
 
   const reportHtml = useMemo(() => {
     if (!report) return "";
@@ -24,16 +27,14 @@ export default function ReportPreviewPage() {
       selectedPet,
       activeVet,
       activeClinic,
+      image,
     });
-  }, [report, formConsultation, selectedPet]);
+  }, [report, formConsultation, selectedPet, activeVet, activeClinic, image]);
 
   return (
     <div className="w-full h-screen p-4 bg-gray-100">
       <div className="mb-4">
-        <h2 className="text-lg font-bold">Preview del PDF (HTML)</h2>
-        <p className="text-sm text-gray-600">
-          Este es el diseño que se usará para generar el PDF
-        </p>
+        <h2 className="text-lg font-bold">Vista previa del informe</h2>
       </div>
 
       <div className="w-full h-[90%] flex justify-center overflow-auto">

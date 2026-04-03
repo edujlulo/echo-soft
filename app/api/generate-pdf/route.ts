@@ -4,7 +4,14 @@ import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 
 export async function POST(req: Request) {
   try {
-    const { report, formConsultation, selectedPet, activeVet, activeClinic } = await req.json();
+    const {
+      report,
+      formConsultation,
+      selectedPet,
+      activeVet,
+      activeClinic,
+      image,
+    } = await req.json();
 
     const browser = await puppeteer.launch({
       headless: true,
@@ -16,10 +23,27 @@ export async function POST(req: Request) {
       report,
       formConsultation,
       selectedPet,
-      activeVet, 
+      activeVet,
       activeClinic,
+      image,
     });
-    await page.setContent(html, { waitUntil: "domcontentloaded" });
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    // For be sure the image has been uploaded
+    await page.evaluate(async () => {
+      const images = Array.from(document.images);
+
+      await Promise.all(
+        images.map((img) => {
+          if (img.complete) return Promise.resolve();
+
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        }),
+      );
+    });
 
     const pdfBuffer = await page.pdf({
       format: "A4",
@@ -37,7 +61,7 @@ export async function POST(req: Request) {
     console.error(error);
     return NextResponse.json(
       { error: "Error generating PDF" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

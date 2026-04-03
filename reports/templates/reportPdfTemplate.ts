@@ -4,6 +4,7 @@ interface ReportTemplateProps {
   selectedPet: any;
   activeVet: any;
   activeClinic: any;
+  image: any;
 }
 
 export function reportPdfTemplate({
@@ -12,6 +13,7 @@ export function reportPdfTemplate({
   selectedPet,
   activeVet,
   activeClinic,
+  image,
 }: ReportTemplateProps): string {
   return `
     <html>
@@ -19,8 +21,8 @@ export function reportPdfTemplate({
         <style>
           body {
   font-family: Arial, sans-serif;
-  padding: 40px;
   white-space: pre-line;
+  padding-top: 0;
 }
 
 html,
@@ -32,10 +34,35 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  gap: 0;
 }
 
+h2,
+p,
+table {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+/* ============= CLINIC LOGO STYLES ============= */
+.clinic-logo {
+  width: 300px;
+  height: 200px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  margin-top: -300px;
+  margin-bottom: -400px;
+}
+
+/* ============= REPORT TITLE ============= */
 h2 {
   text-align: center;
+  margin: 0;
+  margin-top: -170px;
+  margin-bottom: -100px;
 }
 
 /* ============= PET DETAILS SECTION ============= */
@@ -65,6 +92,36 @@ h2 {
 }
 
 /* =============== FOOTER STYLES ================ */
+
+.footer > div > div:first-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* 🔥 baja la imagen */
+}
+
+.top-footer-section-container {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  width: 100%;
+}
+
+/* PET IMAGE STYLES */
+
+.pet-image {
+  width: 300px;
+  height: 200px;
+  object-fit: contain;
+  align-self: flex-start; /* 🔥 la pega a la izquierda */
+}
+
+.footer-signature-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
 .signature-line {
   width: 45%;
   height: 2px;
@@ -101,61 +158,91 @@ h2 {
         </style>
       </head>
       <body>
-     <div class="page">
+     <!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Echo Soft PDF Playground</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="page">
       <!-- ============= HEADER ============== -->
       <div>
         <!-- CLINIC LOGO -->
         <div>
-          <p>Here will be the clinic logo</p>
+          <img
+  class="clinic-logo"
+  src="${image || ""}"
+  alt="Clinic logo"
+/>
+          <!-- <img class="clinic-logo" src="logointegral.jpg" alt="Clinic logo" /> -->
         </div>
-
         <!-- REPORT TITLE -->
         <div>
-          <h2>${formConsultation?.report_title}</h2>
+          <h2>${formConsultation?.report_title ?? ""}</h2>
         </div>
-
         <!-- PET DETAILS -->
         <table class="pet-details">
           <tr>
-            <td><strong>Dueño:</strong> ${selectedPet?.owner}</td>
-            <td><strong>Mascota:</strong> ${selectedPet?.name}</td>
+            <td><strong>Dueño:</strong> ${selectedPet?.owner ?? ""}</td>
+            <td><strong>Mascota:</strong> ${selectedPet?.name ?? ""}</td>
             <td>
-              <strong>Fecha:</strong> ${formConsultation?.consultation_date}
+              <strong>Fecha:</strong> ${
+                formConsultation?.consultation_date ?? ""
+              }
             </td>
           </tr>
 
           <tr>
-            <td><strong>Especie:</strong> ${selectedPet?.species}</td>
+            <td><strong>Especie:</strong> ${selectedPet?.species ?? ""}</td>
             <td><strong>Raza:</strong> ${selectedPet?.breed ?? ""}</td>
-            <td><strong>Sexo:</strong> ${selectedPet?.sex}</td>
+            <td><strong>Sexo:</strong> ${selectedPet?.sex ?? ""}</td>
           </tr>
 
           <tr>
-            <td><strong>Referido:</strong> ${selectedPet?.referred_by}</td>
-            <td><strong>Edad:</strong> ${selectedPet?.birth_date}</td>
-            <td><strong>Peso:</strong> ${selectedPet?.weight}</td>
+            <td>
+              <strong>Referido:</strong> ${selectedPet?.referred_by ?? ""}
+            </td>
+            <td><strong>Edad:</strong> ${selectedPet?.birth_date ?? ""}</td>
+            <td><strong>Peso:</strong> ${selectedPet?.weight ?? ""}</td>
           </tr>
         </table>
       </div>
       <!-- =============== REPORT =============== -->
-      <p>${report}</p>
+      <p>${report ?? ""}</p>
 
       <!-- ============== FOOTER ============== -->
       <div class="footer">
-        <div class="footer-signature">
-          <div class="signature-line"></div>
+        <div class="top-footer-section-container">
+          <!-- PET IMAGE -->
+          <div class="pet-image-container">
+            <img
+  class="pet-image"
+  src="${image || ""}"
+  alt="Pet image"
+/>
+            <!-- <img class="pet-image" src="bernardo-photo.jpg" alt="Clinic logo" /> -->
+          </div>
 
-          <p>${activeVet.name}</p>
-          <p>${activeVet.registration_number}</p>
-          <p>${activeClinic.name}</p>
+          <!-- SIGNATURE, NAME AND CLINIC NAME -->
+          <div class="footer-signature-container">
+            <div class="signature-line"></div>
+            <p>${activeVet?.name ?? ""}</p>
+            <p>${activeVet?.registration_number ?? ""}</p>
+            <p>${activeClinic?.name ?? ""}</p>
+          </div>
         </div>
-
         <div class="footer-clinic">
-          <p>Dirección: ${activeClinic.address}</p>
-          <p>Teléfonos: ${activeClinic.phone}</p>
+          <p>Dirección: ${activeClinic?.address ?? ""}</p>
+          <p>Teléfonos: ${activeClinic?.phone ?? ""}</p>
         </div>
       </div>
     </div>
+  </body>
+</html>
+
   </body>
     </html>
   `;

@@ -1,6 +1,9 @@
 import Button from "@/components/Button";
+import { useClinicStore } from "@/context/activeClinicStore";
+import { useActiveVetStore } from "@/context/activeVetStore";
 import { useConsultationStore } from "@/context/consultationStore";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
+import { useClinicImage } from "@/hooks/useClinicImage";
 import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
 import { useRouter } from "next/navigation";
 
@@ -14,6 +17,9 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
   const { report } = useConsultationReportBuilder();
   const formConsultation = useConsultationStore((s) => s.formConsultation);
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
+  const activeVet = useActiveVetStore((s) => s.activeVet);
+  const activeClinic = useClinicStore((s) => s.activeClinic);
+  const { image } = useClinicImage();
 
   const reportActionsButtonsClassName =
     "font-bold bg-green-200 border-green-400 hover:bg-green-300 hover:border-green-700 focus:outline-none focus:ring-2 focus:ring-green-500";
@@ -29,6 +35,9 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
         report,
         formConsultation,
         selectedPet,
+        activeVet,
+        activeClinic,
+        image,
       }),
     });
 
@@ -37,7 +46,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "report.pdf";
+    a.download = "Ecosoft-report.pdf";
     a.click();
 
     window.URL.revokeObjectURL(url);
