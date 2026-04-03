@@ -8,6 +8,7 @@ import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { useClinicStore } from "@/context/activeClinicStore";
 import { useClinicImage } from "@/hooks/useClinicImage";
+import { usePetImages } from "@/hooks/usePetImages";
 
 export default function ReportPreviewPage() {
   const { report } = useConsultationReportBuilder();
@@ -17,6 +18,7 @@ export default function ReportPreviewPage() {
   const activeClinic = useClinicStore((s) => s.activeClinic);
 
   const { image } = useClinicImage();
+  const { images } = usePetImages();
 
   const reportHtml = useMemo(() => {
     if (!report) return "";
@@ -28,8 +30,19 @@ export default function ReportPreviewPage() {
       activeVet,
       activeClinic,
       image,
+      images: {
+        profile: images.profile ?? undefined,
+      },
     });
-  }, [report, formConsultation, selectedPet, activeVet, activeClinic, image]);
+  }, [
+    report,
+    formConsultation,
+    selectedPet,
+    activeVet,
+    activeClinic,
+    image,
+    images,
+  ]);
 
   return (
     <div className="w-full h-screen p-4 bg-gray-100">

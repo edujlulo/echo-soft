@@ -11,6 +11,7 @@ export async function POST(req: Request) {
       activeVet,
       activeClinic,
       image,
+      images,
     } = await req.json();
 
     const browser = await puppeteer.launch({
@@ -26,6 +27,7 @@ export async function POST(req: Request) {
       activeVet,
       activeClinic,
       image,
+      images,
     });
     await page.setContent(html, { waitUntil: "networkidle0" });
 

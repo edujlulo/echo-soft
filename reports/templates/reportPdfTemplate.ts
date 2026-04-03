@@ -5,6 +5,9 @@ interface ReportTemplateProps {
   activeVet: any;
   activeClinic: any;
   image: any;
+  images: {
+    profile?: string;
+  };
 }
 
 export function reportPdfTemplate({
@@ -14,55 +17,52 @@ export function reportPdfTemplate({
   activeVet,
   activeClinic,
   image,
+  images,
 }: ReportTemplateProps): string {
+  // ============ TO CHECK STYLES BUGS ============
+  // * {
+  //   outline: 1px solid red;
+  // }
+
   return `
     <html>
       <head>
         <style>
           body {
   font-family: Arial, sans-serif;
-  white-space: pre-line;
+  padding-right: 30px;
+  padding-left: 30px;
+  padding-bottom: 10px;
   padding-top: 0;
 }
 
-html,
-body {
+html, body {
   height: 100%;
 }
 
 .page {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-h2,
-p,
-table {
-  margin-top: 0;
-  margin-bottom: 0;
-  padding: 0;
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 120px; /* espacio reservado para el footer */
 }
 
 /* ============= CLINIC LOGO STYLES ============= */
 .clinic-logo {
-  width: 300px;
-  height: 200px;
-  object-fit: contain;
+  max-width: 300px;
+  max-height: 200px;
+  width: auto;
+  height: auto;
   display: block;
-  margin: 0 auto;
-  padding: 0;
-  margin-top: -300px;
-  margin-bottom: -400px;
+  margin: 0 auto 10px auto;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 /* ============= REPORT TITLE ============= */
-h2 {
+h3 {
   text-align: center;
   margin: 0;
-  margin-top: -170px;
-  margin-bottom: -100px;
+  margin-bottom: 10px;
 }
 
 /* ============= PET DETAILS SECTION ============= */
@@ -72,7 +72,7 @@ h2 {
   border-radius: 6px;
   border-collapse: separate;
   border-spacing: 0;
-  margin-bottom: 25px;
+  margin-bottom: -15px;
   font-size: 14px;
 }
 
@@ -89,6 +89,12 @@ h2 {
 /* Opcional: mejorar legibilidad */
 .pet-details strong {
   color: black;
+}
+
+/* =============== REPORT TEXT ================ */
+.report-text {
+  white-space: pre-line;
+  margin-bottom: 40px;
 }
 
 /* =============== FOOTER STYLES ================ */
@@ -109,10 +115,12 @@ h2 {
 /* PET IMAGE STYLES */
 
 .pet-image {
-  width: 300px;
-  height: 200px;
-  object-fit: contain;
-  align-self: flex-start; /* 🔥 la pega a la izquierda */
+  max-width: 150px;
+  max-height: 250px;
+  width: auto;
+  height: auto;
+  display: block;
+  margin-bottom: 5px;
 }
 
 .footer-signature-container {
@@ -130,8 +138,10 @@ h2 {
 }
 
 .footer {
-  margin-top: auto; /* 🔥 esto empuja el footer abajo */
-  page-break-inside: avoid;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 /* BLOQUE FIRMA (centrado) */
@@ -157,14 +167,6 @@ h2 {
 }
         </style>
       </head>
-      <body>
-     <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Echo Soft PDF Playground</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
 
   <body>
     <div class="page">
@@ -181,7 +183,7 @@ h2 {
         </div>
         <!-- REPORT TITLE -->
         <div>
-          <h2>${formConsultation?.report_title ?? ""}</h2>
+          <h3>${formConsultation?.report_title ?? ""}</h3>
         </div>
         <!-- PET DETAILS -->
         <table class="pet-details">
@@ -211,7 +213,9 @@ h2 {
         </table>
       </div>
       <!-- =============== REPORT =============== -->
+      <div class="report-text">
       <p>${report ?? ""}</p>
+      </div>
 
       <!-- ============== FOOTER ============== -->
       <div class="footer">
@@ -219,10 +223,10 @@ h2 {
           <!-- PET IMAGE -->
           <div class="pet-image-container">
             <img
-  class="pet-image"
-  src="${image || ""}"
-  alt="Pet image"
-/>
+              class="pet-image"
+               src="${images?.profile || ""}"
+               alt="Pet image"
+              />
             <!-- <img class="pet-image" src="bernardo-photo.jpg" alt="Clinic logo" /> -->
           </div>
 
@@ -242,8 +246,5 @@ h2 {
     </div>
   </body>
 </html>
-
-  </body>
-    </html>
   `;
 }

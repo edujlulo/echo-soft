@@ -5,6 +5,7 @@ import { useConsultationStore } from "@/context/consultationStore";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useClinicImage } from "@/hooks/useClinicImage";
 import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
+import { usePetImages } from "@/hooks/usePetImages";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -20,6 +21,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
   const activeVet = useActiveVetStore((s) => s.activeVet);
   const activeClinic = useClinicStore((s) => s.activeClinic);
   const { image } = useClinicImage();
+  const { images } = usePetImages();
 
   const reportActionsButtonsClassName =
     "font-bold bg-green-200 border-green-400 hover:bg-green-300 hover:border-green-700 focus:outline-none focus:ring-2 focus:ring-green-500";
@@ -38,6 +40,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
         activeVet,
         activeClinic,
         image,
+        images,
       }),
     });
 
