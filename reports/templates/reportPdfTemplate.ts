@@ -42,7 +42,6 @@ html, body {
 
 .page {
   position: relative;
-  min-height: 100vh;
   padding-bottom: 120px; /* espacio reservado para el footer */
 }
 
@@ -217,32 +216,7 @@ h3 {
       <p>${report ?? ""}</p>
       </div>
 
-      <!-- ============== FOOTER ============== -->
-      <div class="footer">
-        <div class="top-footer-section-container">
-          <!-- PET IMAGE -->
-          <div class="pet-image-container">
-            <img
-              class="pet-image"
-               src="${images?.profile || ""}"
-               alt="Pet image"
-              />
-            <!-- <img class="pet-image" src="bernardo-photo.jpg" alt="Clinic logo" /> -->
-          </div>
-
-          <!-- SIGNATURE, NAME AND CLINIC NAME -->
-          <div class="footer-signature-container">
-            <div class="signature-line"></div>
-            <p>${activeVet?.name ?? ""}</p>
-            <p>${activeVet?.registration_number ?? ""}</p>
-            <p>${activeClinic?.name ?? ""}</p>
-          </div>
-        </div>
-        <div class="footer-clinic">
-          <p>Dirección: ${activeClinic?.address ?? ""}</p>
-          <p>Teléfonos: ${activeClinic?.phone ?? ""}</p>
-        </div>
-      </div>
+      
     </div>
   </body>
 </html>
