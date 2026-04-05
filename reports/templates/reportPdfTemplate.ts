@@ -32,17 +32,18 @@ export function reportPdfTemplate({
   font-family: Arial, sans-serif;
   padding-right: 30px;
   padding-left: 30px;
-  padding-bottom: 10px;
+  padding-bottom: 0;
   padding-top: 0;
+  margin-bottom: 0;
 }
 
-html, body {
-  height: 100%;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 .page {
   position: relative;
-  padding-bottom: 120px; /* espacio reservado para el footer */
+  break-inside: avoid;
 }
 
 /* ============= CLINIC LOGO STYLES ============= */
@@ -71,7 +72,7 @@ h3 {
   border-radius: 6px;
   border-collapse: separate;
   border-spacing: 0;
-  margin-bottom: -15px;
+  margin-bottom: 0;
   font-size: 14px;
 }
 
@@ -93,7 +94,7 @@ h3 {
 /* =============== REPORT TEXT ================ */
 .report-text {
   white-space: pre-line;
-  margin-bottom: 40px;
+  margin-bottom: 0;
 }
 
 /* =============== FOOTER STYLES ================ */
@@ -119,7 +120,6 @@ h3 {
   width: auto;
   height: auto;
   display: block;
-  margin-bottom: 5px;
 }
 
 .footer-signature-container {
@@ -134,35 +134,6 @@ h3 {
   height: 2px;
   background-color: black;
   margin: 0 auto 8px auto; /* centra horizontalmente */
-}
-
-.footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
-/* BLOQUE FIRMA (centrado) */
-.footer-signature {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.footer-signature p {
-  margin: 2px 0;
-  font-size: 14px;
-}
-
-/* BLOQUE CLÍNICA (izquierda y en negrita) */
-.footer-clinic {
-  text-align: left;
-  font-weight: bold;
-  font-size: 13px;
-}
-
-.footer-clinic p {
-  margin: 2px 0;
 }
         </style>
       </head>
@@ -213,10 +184,8 @@ h3 {
       </div>
       <!-- =============== REPORT =============== -->
       <div class="report-text">
-      <p>${report ?? ""}</p>
+      ${report ?? ""}
       </div>
-
-      
     </div>
   </body>
 </html>

@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 import puppeteer from "puppeteer";
 import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 
+async function toBase64(url: string) {
+  const res = await fetch(url);
+  const buffer = await res.arrayBuffer();
+  return `data:image/jpeg;base64,${Buffer.from(buffer).toString("base64")}`;
+}
+
 export async function POST(req: Request) {
   try {
     const {
@@ -13,6 +19,10 @@ export async function POST(req: Request) {
       image,
       images,
     } = await req.json();
+
+    const profileBase64 = images?.profile
+      ? await toBase64(images.profile)
+      : null;
 
     const browser = await puppeteer.launch({
       headless: true,
@@ -61,6 +71,7 @@ export async function POST(req: Request) {
       footerTemplate: `
         <div style="
           width: 100%;
+          height: 80px;
           font-size: 10px;
           padding: 0 30px;
           box-sizing: border-box;
@@ -75,8 +86,8 @@ export async function POST(req: Request) {
             <!-- LEFT: PET IMAGE -->
             <div>
               ${
-                images?.profile
-                  ? `<img src="${images.profile}" style="height: 60px; object-fit: contain;" />`
+                profileBase64
+                  ? `<img src="${profileBase64}" style="height: 60px; object-fit: contain;" />`
                   : ``
               }
             </div>
@@ -95,8 +106,8 @@ export async function POST(req: Request) {
 
             <!-- RIGHT: CLINIC INFO -->
             <div style="text-align: right; max-width: 200px; margin-bottom: 25px">
-              <div>${activeClinic?.address ?? ""}</div>
-              <div>${activeClinic?.phone ?? ""}</div>
+              <div>Dirección: ${activeClinic?.address ?? ""}</div>
+              <div>Teléfono: ${activeClinic?.phone ?? ""}</div>
             </div>
 
           </div>
@@ -106,7 +117,7 @@ export async function POST(req: Request) {
       // 🔥 CLAVE para que no se solape
       margin: {
         top: "30px",
-        bottom: "120px",
+        bottom: "160px",
         left: "30px",
         right: "30px",
       },

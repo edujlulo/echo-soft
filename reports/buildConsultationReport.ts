@@ -19,7 +19,7 @@ const ORGAN_MAP: { key: keyof ConsultationRow; label: string }[] = [
   { key: "ovaries", label: "OVARIOS" },
   { key: "colon", label: "COLON" },
   { key: "small_intestine", label: "INTESTINO DELGADO" },
-  { key: "lymph_nodes", label: "GANGLIOS LINFATICOS" },
+  { key: "lymph_nodes", label: "LINFONODOS" },
   { key: "major_vessels", label: "GRANDES VASOS" },
   { key: "thyroid_glands", label: "GLANDULAS TIROIDES" },
   { key: "adrenal_glands", label: "GLANDULAS ADRENALES" },
@@ -36,7 +36,7 @@ const ORGAN_MAP: { key: keyof ConsultationRow; label: string }[] = [
  * Construye el informe clínico basado en formConsultation
  */
 export function buildConsultationReport(
-  consultation: ConsultationRow | null
+  consultation: ConsultationRow | null,
 ): string {
   if (!consultation) return "";
 
