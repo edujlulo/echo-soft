@@ -110,82 +110,82 @@ export async function POST(req: Request) {
     });
 
     // =========== FOR DEBUG ==============
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-    });
+    // const pdfBuffer = await page.pdf({
+    //   format: "A4",
+    // });
     // =========== FOR DEBUG ==============
 
     // =============================== REAL PAGE.PDF PDFBUFFER ===================================
-    // let pdfBuffer;
+    let pdfBuffer;
 
-    // try {
-    //   pdfBuffer = await page.pdf({
-    //     format: "A4",
-    //     printBackground: true,
+    try {
+      pdfBuffer = await page.pdf({
+        format: "A4",
+        printBackground: true,
 
-    //     // 🔥 ACTIVAR HEADER/FOOTER NATIVO
-    //     displayHeaderFooter: true,
+        // 🔥 ACTIVAR HEADER/FOOTER NATIVO
+        displayHeaderFooter: true,
 
-    //     headerTemplate: `<div></div>`,
+        headerTemplate: `<div></div>`,
 
-    //     footerTemplate: `
-    //     <div style="
-    //       width: 100%;
-    //       height: 80px;
-    //       font-size: 10px;
-    //       padding: 0 30px;
-    //       box-sizing: border-box;
-    //     ">
-    //       <div style="
-    //         width: 100%;
-    //         display: flex;
-    //         justify-content: space-between;
-    //         align-items: flex-end;
-    //       ">
+        footerTemplate: `
+        <div style="
+          width: 100%;
+          height: 80px;
+          font-size: 10px;
+          padding: 0 30px;
+          box-sizing: border-box;
+        ">
+          <div style="
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+          ">
 
-    //         <!-- LEFT: PET IMAGE -->
-    //         <div>
-    //           ${
-    //             profileBase64
-    //               ? `<img src="${profileBase64}" style="height: 60px; object-fit: contain;" />`
-    //               : ``
-    //           }
-    //         </div>
+            <!-- LEFT: PET IMAGE -->
+            <div>
+              ${
+                profileBase64
+                  ? `<img src="${profileBase64}" style="height: 60px; object-fit: contain;" />`
+                  : ``
+              }
+            </div>
 
-    //         <!-- CENTER: SIGNATURE -->
-    //         <div style="text-align: center; margin-bottom: 25px">
-    //           <div style="
-    //             border-top: 1px solid black;
-    //             width: 150px;
-    //             margin: 5px auto 5px auto;
-    //           "></div>
-    //           <div>${activeVet?.name ?? ""}</div>
-    //           <div>${activeVet?.registration_number ?? ""}</div>
-    //           <div>${activeClinic?.name ?? ""}</div>
-    //         </div>
+            <!-- CENTER: SIGNATURE -->
+            <div style="text-align: center; margin-bottom: 25px">
+              <div style="
+                border-top: 1px solid black;
+                width: 150px;
+                margin: 5px auto 5px auto;
+              "></div>
+              <div>${activeVet?.name ?? ""}</div>
+              <div>${activeVet?.registration_number ?? ""}</div>
+              <div>${activeClinic?.name ?? ""}</div>
+            </div>
 
-    //         <!-- RIGHT: CLINIC INFO -->
-    //         <div style="text-align: right; max-width: 200px; margin-bottom: 25px">
-    //           <div>Dirección: ${activeClinic?.address ?? ""}</div>
-    //           <div>Teléfono: ${activeClinic?.phone ?? ""}</div>
-    //         </div>
+            <!-- RIGHT: CLINIC INFO -->
+            <div style="text-align: right; max-width: 200px; margin-bottom: 25px">
+              <div>Dirección: ${activeClinic?.address ?? ""}</div>
+              <div>Teléfono: ${activeClinic?.phone ?? ""}</div>
+            </div>
 
-    //       </div>
-    //     </div>
-    //   `,
+          </div>
+        </div>
+      `,
 
-    //     // 🔥 CLAVE para que no se solape
-    //     margin: {
-    //       top: "30px",
-    //       bottom: "160px",
-    //       left: "30px",
-    //       right: "30px",
-    //     },
-    //   });
-    // } catch (err) {
-    //   console.error("PDF generation failed:", err);
-    //   throw err;
-    // }
+        // 🔥 CLAVE para que no se solape
+        margin: {
+          top: "30px",
+          bottom: "160px",
+          left: "30px",
+          right: "30px",
+        },
+      });
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      throw err;
+    }
 
     // Console logs:
     console.log("PDF size:", pdfBuffer.length);
