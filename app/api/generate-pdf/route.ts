@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 // import puppeteer from "puppeteer-core";
 // import puppeteer from "puppeteer";
-// import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
+import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 
 export const runtime = "nodejs";
 
@@ -71,25 +71,25 @@ export async function POST(req: Request) {
     page.on("error", (err) => console.error("PAGE ERROR:", err));
 
     // =========== FOR DEBUG ==============
-    const html = `
-  <html>
-    <body>
-      <h1>This is a test PDF</h1>
-    </body>
-  </html>
-`;
+    //     const html = `
+    //   <html>
+    //     <body>
+    //       <h1>This is a test PDF</h1>
+    //     </body>
+    //   </html>
+    // `;
     // =========== FOR DEBUG ==============
 
     // ========== REAL HTML PDF REPORT TEMPLATE ============
-    // const html = reportPdfTemplate({
-    //   report,
-    //   formConsultation,
-    //   selectedPet,
-    //   activeVet,
-    //   activeClinic,
-    //   image,
-    //   images,
-    // });
+    const html = reportPdfTemplate({
+      report,
+      formConsultation,
+      selectedPet,
+      activeVet,
+      activeClinic,
+      image,
+      images,
+    });
 
     await page.setContent(html, { waitUntil: "load" });
 
