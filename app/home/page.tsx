@@ -136,8 +136,8 @@ export default function HomePage() {
 
         {/* Fourth Section */}
         <div className="flex flex-col items-center justify-center text-center -translate-y-4 scale-y-115 scale-x-110 ">
-          <p className="text-3xl font-bold m-0">VERSIÓN CLÍNICAS</p>
-          <p className="text-4xl font-bold mt-2">07/03/2026</p>
+          <p className="text-3xl font-bold m-0">VERSIÓN WEB</p>
+          <p className="text-4xl font-bold mt-2">06/04/2026</p>
           <div className="mt-5">
             <p className="bg-[#3399ff] w-[320px] rounded-t-md m-0">
               Fecha en que se actualizo el exe:

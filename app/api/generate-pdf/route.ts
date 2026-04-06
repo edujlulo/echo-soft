@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+// import puppeteer from "puppeteer-core";
 // import puppeteer from "puppeteer";
 // import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 
@@ -41,13 +41,16 @@ export async function POST(req: Request) {
 
     if (process.env.NODE_ENV === "production") {
       const chromium = (await import("@sparticuz/chromium")).default;
+      const puppeteer = await import("puppeteer-core");
 
       browser = await puppeteer.launch({
-        args: chromium.args,
+        args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
         executablePath: await chromium.executablePath(),
         headless: true,
       });
     } else {
+      const puppeteer = await import("puppeteer");
+
       browser = await puppeteer.launch({
         headless: true,
       });

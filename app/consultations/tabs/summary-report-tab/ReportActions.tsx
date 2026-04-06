@@ -44,6 +44,11 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
       }),
     });
 
+    if (!res.ok) {
+      console.error("Failed to generate PDF");
+      return;
+    }
+
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
 
