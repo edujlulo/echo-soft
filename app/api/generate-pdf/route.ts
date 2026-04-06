@@ -1,11 +1,24 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+// import puppeteer from "puppeteer";
 import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
 
 async function toBase64(url: string) {
-  const res = await fetch(url);
-  const buffer = await res.arrayBuffer();
-  return `data:image/jpeg;base64,${Buffer.from(buffer).toString("base64")}`;
+  try {
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      console.error("Image fetch failed:", url);
+      return null;
+    }
+
+    const buffer = await res.arrayBuffer();
+    return `data:image/jpeg;base64,${Buffer.from(buffer).toString("base64")}`;
+  } catch (e) {
+    console.error("Image error:", e);
+    return null;
+  }
 }
 
 export async function POST(req: Request) {
@@ -24,12 +37,23 @@ export async function POST(req: Request) {
       ? await toBase64(images.profile)
       : null;
 
+    //   // Before:
+    // const browser = await puppeteer.launch({
+    //   headless: true,
+    //   args: ["--no-sandbox", "--disable-setuid-sandbox"], // 🔥 importante en servidores
+    // });
+
+    // // For allow to work on production:
     const browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"], // 🔥 importante en servidores
     });
 
     const page = await browser.newPage();
+
+    page.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
+    page.on("error", (err) => console.error("PAGE ERROR:", err));
 
     const html = reportPdfTemplate({
       report,
@@ -59,16 +83,19 @@ export async function POST(req: Request) {
       );
     });
 
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
+    let pdfBuffer;
 
-      // 🔥 ACTIVAR HEADER/FOOTER NATIVO
-      displayHeaderFooter: true,
+    try {
+      pdfBuffer = await page.pdf({
+        format: "A4",
+        printBackground: true,
 
-      headerTemplate: `<div></div>`,
+        // 🔥 ACTIVAR HEADER/FOOTER NATIVO
+        displayHeaderFooter: true,
 
-      footerTemplate: `
+        headerTemplate: `<div></div>`,
+
+        footerTemplate: `
         <div style="
           width: 100%;
           height: 80px;
@@ -114,14 +141,24 @@ export async function POST(req: Request) {
         </div>
       `,
 
-      // 🔥 CLAVE para que no se solape
-      margin: {
-        top: "30px",
-        bottom: "160px",
-        left: "30px",
-        right: "30px",
-      },
-    });
+        // 🔥 CLAVE para que no se solape
+        margin: {
+          top: "30px",
+          bottom: "160px",
+          left: "30px",
+          right: "30px",
+        },
+      });
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      throw err;
+    }
+
+    // Console logs:
+    console.log("PDF size:", pdfBuffer.length);
+    console.log("Profile base64 exists:", !!profileBase64);
+    console.log("HTML length:", html.length);
+    console.log("Image URL:", images?.profile);
 
     await browser.close();
 
