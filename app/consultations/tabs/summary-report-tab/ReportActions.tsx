@@ -45,7 +45,8 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
     });
 
     if (!res.ok) {
-      console.error("Failed to generate PDF");
+      const errorText = await res.text();
+      console.error("Failed to generate PDF:", errorText);
       return;
     }
 

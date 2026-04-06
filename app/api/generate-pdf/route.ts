@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 // import puppeteer from "puppeteer";
 // import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 
+export const runtime = "nodejs";
+
 async function toBase64(url: string) {
   try {
     const res = await fetch(url);
@@ -39,21 +41,28 @@ export async function POST(req: Request) {
     // // For allow to work on production:
     let browser;
 
-    if (process.env.NODE_ENV === "production") {
-      const chromium = (await import("@sparticuz/chromium")).default;
-      const puppeteer = await import("puppeteer-core");
+    const isProd = process.env.VERCEL === "1";
 
-      browser = await puppeteer.launch({
-        args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
-        executablePath: await chromium.executablePath(),
-        headless: true,
-      });
-    } else {
-      const puppeteer = await import("puppeteer");
+    try {
+      if (isProd) {
+        const chromium = (await import("@sparticuz/chromium")).default;
+        const puppeteer = (await import("puppeteer-core")).default;
 
-      browser = await puppeteer.launch({
-        headless: true,
-      });
+        browser = await puppeteer.launch({
+          args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
+          executablePath: await chromium.executablePath(),
+          headless: true,
+        });
+      } else {
+        const puppeteer = (await import("puppeteer")).default;
+
+        browser = await puppeteer.launch({
+          headless: true,
+        });
+      }
+    } catch (err) {
+      console.error("Browser launch failed:", err);
+      throw err;
     }
 
     const page = await browser.newPage();
@@ -192,10 +201,11 @@ export async function POST(req: Request) {
         "Content-Disposition": "attachment; filename=report.pdf",
       },
     });
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    console.error("FULL ERROR:", error);
+
     return NextResponse.json(
-      { error: "Error generating PDF" },
+      { error: error?.message || "Error generating PDF" },
       { status: 500 },
     );
   }
