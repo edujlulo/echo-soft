@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
+import puppeteer from "puppeteer";
 // import puppeteer from "puppeteer";
-import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
-import chromium from "@sparticuz/chromium";
-import puppeteer from "puppeteer-core";
+// import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 
 async function toBase64(url: string) {
   try {
@@ -37,35 +36,50 @@ export async function POST(req: Request) {
       ? await toBase64(images.profile)
       : null;
 
-    //   // Before:
-    // const browser = await puppeteer.launch({
-    //   headless: true,
-    //   args: ["--no-sandbox", "--disable-setuid-sandbox"], // 🔥 importante en servidores
-    // });
-
     // // For allow to work on production:
-    const browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath(),
-      headless: true,
-    });
+    let browser;
+
+    if (process.env.NODE_ENV === "production") {
+      const chromium = (await import("@sparticuz/chromium")).default;
+
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        executablePath: await chromium.executablePath(),
+        headless: true,
+      });
+    } else {
+      browser = await puppeteer.launch({
+        headless: true,
+      });
+    }
 
     const page = await browser.newPage();
 
     page.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
     page.on("error", (err) => console.error("PAGE ERROR:", err));
 
-    const html = reportPdfTemplate({
-      report,
-      formConsultation,
-      selectedPet,
-      activeVet,
-      activeClinic,
-      image,
-      images,
-    });
+    // =========== FOR DEBUG ==============
+    const html = `
+  <html>
+    <body>
+      <h1>This is a test PDF</h1>
+    </body>
+  </html>
+`;
+    // =========== FOR DEBUG ==============
 
-    await page.setContent(html, { waitUntil: "networkidle0" });
+    // ========== REAL HTML PDF REPORT TEMPLATE ============
+    // const html = reportPdfTemplate({
+    //   report,
+    //   formConsultation,
+    //   selectedPet,
+    //   activeVet,
+    //   activeClinic,
+    //   image,
+    //   images,
+    // });
+
+    await page.setContent(html, { waitUntil: "load" });
 
     // ✅ asegurar que TODAS las imágenes cargan
     await page.evaluate(async () => {
@@ -83,76 +97,83 @@ export async function POST(req: Request) {
       );
     });
 
-    let pdfBuffer;
+    // =========== FOR DEBUG ==============
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+    });
+    // =========== FOR DEBUG ==============
 
-    try {
-      pdfBuffer = await page.pdf({
-        format: "A4",
-        printBackground: true,
+    // =============================== REAL PAGE.PDF PDFBUFFER ===================================
+    // let pdfBuffer;
 
-        // 🔥 ACTIVAR HEADER/FOOTER NATIVO
-        displayHeaderFooter: true,
+    // try {
+    //   pdfBuffer = await page.pdf({
+    //     format: "A4",
+    //     printBackground: true,
 
-        headerTemplate: `<div></div>`,
+    //     // 🔥 ACTIVAR HEADER/FOOTER NATIVO
+    //     displayHeaderFooter: true,
 
-        footerTemplate: `
-        <div style="
-          width: 100%;
-          height: 80px;
-          font-size: 10px;
-          padding: 0 30px;
-          box-sizing: border-box;
-        ">
-          <div style="
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-          ">
+    //     headerTemplate: `<div></div>`,
 
-            <!-- LEFT: PET IMAGE -->
-            <div>
-              ${
-                profileBase64
-                  ? `<img src="${profileBase64}" style="height: 60px; object-fit: contain;" />`
-                  : ``
-              }
-            </div>
+    //     footerTemplate: `
+    //     <div style="
+    //       width: 100%;
+    //       height: 80px;
+    //       font-size: 10px;
+    //       padding: 0 30px;
+    //       box-sizing: border-box;
+    //     ">
+    //       <div style="
+    //         width: 100%;
+    //         display: flex;
+    //         justify-content: space-between;
+    //         align-items: flex-end;
+    //       ">
 
-            <!-- CENTER: SIGNATURE -->
-            <div style="text-align: center; margin-bottom: 25px">
-              <div style="
-                border-top: 1px solid black;
-                width: 150px;
-                margin: 5px auto 5px auto;
-              "></div>
-              <div>${activeVet?.name ?? ""}</div>
-              <div>${activeVet?.registration_number ?? ""}</div>
-              <div>${activeClinic?.name ?? ""}</div>
-            </div>
+    //         <!-- LEFT: PET IMAGE -->
+    //         <div>
+    //           ${
+    //             profileBase64
+    //               ? `<img src="${profileBase64}" style="height: 60px; object-fit: contain;" />`
+    //               : ``
+    //           }
+    //         </div>
 
-            <!-- RIGHT: CLINIC INFO -->
-            <div style="text-align: right; max-width: 200px; margin-bottom: 25px">
-              <div>Dirección: ${activeClinic?.address ?? ""}</div>
-              <div>Teléfono: ${activeClinic?.phone ?? ""}</div>
-            </div>
+    //         <!-- CENTER: SIGNATURE -->
+    //         <div style="text-align: center; margin-bottom: 25px">
+    //           <div style="
+    //             border-top: 1px solid black;
+    //             width: 150px;
+    //             margin: 5px auto 5px auto;
+    //           "></div>
+    //           <div>${activeVet?.name ?? ""}</div>
+    //           <div>${activeVet?.registration_number ?? ""}</div>
+    //           <div>${activeClinic?.name ?? ""}</div>
+    //         </div>
 
-          </div>
-        </div>
-      `,
+    //         <!-- RIGHT: CLINIC INFO -->
+    //         <div style="text-align: right; max-width: 200px; margin-bottom: 25px">
+    //           <div>Dirección: ${activeClinic?.address ?? ""}</div>
+    //           <div>Teléfono: ${activeClinic?.phone ?? ""}</div>
+    //         </div>
 
-        // 🔥 CLAVE para que no se solape
-        margin: {
-          top: "30px",
-          bottom: "160px",
-          left: "30px",
-          right: "30px",
-        },
-      });
-    } catch (err) {
-      console.error("PDF generation failed:", err);
-      throw err;
-    }
+    //       </div>
+    //     </div>
+    //   `,
+
+    //     // 🔥 CLAVE para que no se solape
+    //     margin: {
+    //       top: "30px",
+    //       bottom: "160px",
+    //       left: "30px",
+    //       right: "30px",
+    //     },
+    //   });
+    // } catch (err) {
+    //   console.error("PDF generation failed:", err);
+    //   throw err;
+    // }
 
     // Console logs:
     console.log("PDF size:", pdfBuffer.length);
@@ -162,7 +183,7 @@ export async function POST(req: Request) {
 
     await browser.close();
 
-    return new NextResponse(Buffer.from(pdfBuffer), {
+    return new Response(Buffer.from(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": "attachment; filename=report.pdf",
