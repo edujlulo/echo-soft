@@ -7,6 +7,7 @@ import { useClinicImage } from "@/hooks/useClinicImage";
 import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
 import { usePetImages } from "@/hooks/usePetImages";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface Props {
   setIsQuickModeOpen: (open: boolean) => void;
@@ -14,6 +15,7 @@ interface Props {
 
 export default function ReportActions({ setIsQuickModeOpen }: Props) {
   const router = useRouter();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const { report } = useConsultationReportBuilder();
   const formConsultation = useConsultationStore((s) => s.formConsultation);
@@ -28,37 +30,45 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
 
   // Download PDF report
   const handleDownloadPDF = async () => {
-    const res = await fetch("/api/generate-pdf", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        report,
-        formConsultation,
-        selectedPet,
-        activeVet,
-        activeClinic,
-        image,
-        images,
-      }),
-    });
+    try {
+      setIsDownloading(true);
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error("Failed to generate PDF:", errorText);
-      return;
+      const res = await fetch("/api/generate-pdf", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          report,
+          formConsultation,
+          selectedPet,
+          activeVet,
+          activeClinic,
+          image,
+          images,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Failed to generate PDF:", errorText);
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Ecosoft-report.pdf";
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsDownloading(false);
     }
-
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Ecosoft-report.pdf";
-    a.click();
-
-    window.URL.revokeObjectURL(url);
   };
 
   // Navigate to PDF report preview
@@ -92,9 +102,19 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
         <div className="flex flex-row gap-2 items-center">
           <Button
             onClick={handleDownloadPDF}
-            className={reportActionsButtonsClassName}
+            disabled={isDownloading}
+            className={`${reportActionsButtonsClassName} ${
+              isDownloading ? "opacity-50 cursor-not-allowed" : ""
+            } w-43`}
           >
-            Descargar PDF
+            {isDownloading ? (
+              <span className="flex items-center gap-2">
+                <span className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full" />
+                Generando PDF...
+              </span>
+            ) : (
+              "Descargar PDF"
+            )}
           </Button>
           <Button
             onClick={handlePreviewPDF}
