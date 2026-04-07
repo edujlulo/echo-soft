@@ -79,7 +79,7 @@ export default function ConsultationTabs() {
         <Tab label="Imágenes" />
       </Tabs>
 
-      <Box className="min-h-0 pb-2 px-4 overflow-y-auto  flex flex-col">
+      <Box className="min-h-0 pb-2 px-4 overflow-y-auto flex flex-col">
         {value === 0 && (
           <PetDetailsAndReason
             selectedPet={selectedPet}
