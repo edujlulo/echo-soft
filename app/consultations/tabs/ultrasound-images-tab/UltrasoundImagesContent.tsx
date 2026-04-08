@@ -1,40 +1,56 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import PhotoAlbum from "react-photo-album";
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import UltrasoundImagesGrid from "./UltrasoundImagesGrid";
 
-import "react-photo-album/styles.css";
 import "yet-another-react-lightbox/styles.css";
+import UltrasoundImagesActions from "./UltrasoundImagesActions";
 
 export default function UltrasoundImagesContent() {
   const [index, setIndex] = useState(-1);
 
   const images = useMemo(() => {
-    return Array.from({ length: 20 }, (_, i) => ({
+    return Array.from({ length: 25 }, (_, i) => ({
+      id: i + 1,
       src: `https://picsum.photos/seed/${i + 1}/800/800`,
-      width: 1,
-      height: 1,
+      alt: `Ultrasound image ${i + 1}`,
     }));
   }, []);
 
-  return (
-    <div className="w-full">
-      <PhotoAlbum
-        layout="rows"
-        photos={images}
-        spacing={8}
-        onClick={({ index }) => setIndex(index)}
-      />
+  function openLightbox(imageIndex: number) {
+    setIndex(imageIndex);
+  }
 
-      <Lightbox
-        open={index >= 0}
-        close={() => setIndex(-1)}
-        index={index}
-        slides={images}
-        plugins={[Zoom]}
-      />
+  return (
+    <div className="h-full min-h-0 flex flex-row gap-4">
+      {/* === LEFT === */}
+      <div className="w-[1150px] h-full overflow-y-auto">
+        <UltrasoundImagesGrid images={images} onZoom={openLightbox} />
+
+        <Lightbox
+          open={index >= 0}
+          close={() => setIndex(-1)}
+          index={index}
+          slides={images.map((image) => ({
+            src: image.src,
+          }))}
+          plugins={[Zoom]}
+        />
+      </div>
+
+      {/* === RIGHT === */}
+      <div className="flex flex-col">
+        <div className="w-full flex justify-start">
+          <p className="pl-4 pt-4 text-lg text-gray-600">
+            {images.length} imágenes
+          </p>
+        </div>
+        <div className="h-full pb-18 flex">
+          <UltrasoundImagesActions />
+        </div>
+      </div>
     </div>
   );
 }
