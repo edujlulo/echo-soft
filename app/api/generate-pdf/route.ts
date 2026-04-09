@@ -22,6 +22,47 @@ async function toBase64(url: string) {
   }
 }
 
+interface PdfUltrasoundImage {
+  id: string;
+  src: string;
+  alt?: string;
+  fileName?: string | null;
+}
+
+interface PdfUltrasoundImageBase64 {
+  id: string;
+  src: string;
+  alt: string;
+  fileName: string | null;
+}
+
+async function toBase64ImageList(
+  images: PdfUltrasoundImage[] | undefined,
+): Promise<PdfUltrasoundImageBase64[]> {
+  if (!images || images.length === 0) {
+    return [];
+  }
+
+  const results = await Promise.all(
+    images.map(async (img) => {
+      const base64 = await toBase64(img.src);
+
+      if (!base64) {
+        return null;
+      }
+
+      return {
+        id: img.id,
+        src: base64,
+        alt: img.alt ?? "Ultrasound image",
+        fileName: img.fileName ?? null,
+      };
+    }),
+  );
+
+  return results.filter((img): img is PdfUltrasoundImageBase64 => img !== null);
+}
+
 export async function POST(req: Request) {
   try {
     const {
@@ -32,11 +73,14 @@ export async function POST(req: Request) {
       activeClinic,
       image,
       images,
+      ultrasoundImages,
     } = await req.json();
 
     const profileBase64 = images?.profile
       ? await toBase64(images.profile)
       : null;
+
+    const ultrasoundImagesBase64 = await toBase64ImageList(ultrasoundImages);
 
     // // For allow to work on production:
     let browser;
@@ -89,6 +133,7 @@ export async function POST(req: Request) {
       activeClinic,
       image,
       images,
+      ultrasoundImages: ultrasoundImagesBase64,
     });
 
     await page.setContent(html, { waitUntil: "load" });

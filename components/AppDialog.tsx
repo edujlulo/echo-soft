@@ -90,6 +90,8 @@ export default function AppDialog({
       ? "w-32 bg-red-600 hover:bg-red-700 text-white"
       : "w-32";
 
+  const isLoadingButtonClassName = isLoading ? "w-50" : "";
+
   const shouldRenderDefaultFooter =
     showFooter && !footer && (confirmLabel || showCancelButton);
 
@@ -152,7 +154,7 @@ export default function AppDialog({
                 type="button"
                 onClick={handleConfirm}
                 disabled={isLoading}
-                className={confirmButtonClassName}
+                className={`${confirmButtonClassName} ${isLoadingButtonClassName}`}
               >
                 {isLoading ? (
                   <span className="inline-flex items-center justify-center gap-2">

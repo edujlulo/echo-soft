@@ -1,3 +1,10 @@
+interface ReportTemplateUltrasoundImage {
+  id: string;
+  src: string;
+  alt?: string;
+  fileName?: string | null;
+}
+
 interface ReportTemplateProps {
   report: string;
   formConsultation: any;
@@ -8,6 +15,7 @@ interface ReportTemplateProps {
   images: {
     profile?: string;
   };
+  ultrasoundImages?: ReportTemplateUltrasoundImage[];
 }
 
 export function reportPdfTemplate({
@@ -18,7 +26,55 @@ export function reportPdfTemplate({
   activeClinic,
   image,
   images,
+  ultrasoundImages = [],
 }: ReportTemplateProps): string {
+  function chunkArray<T>(items: T[], size: number): T[][] {
+    const chunks: T[][] = [];
+
+    for (let i = 0; i < items.length; i += size) {
+      chunks.push(items.slice(i, i + size));
+    }
+
+    return chunks;
+  }
+
+  const ultrasoundPages = chunkArray(ultrasoundImages, 6);
+
+  const ultrasoundPagesHtml = ultrasoundPages
+    .map((pageImages, pageIndex) => {
+      const emptySlots = Math.max(0, 6 - pageImages.length);
+      const emptySlotsHtml = Array.from({ length: emptySlots })
+        .map(() => `<div class="ultrasound-slot ultrasound-slot-empty"></div>`)
+        .join("");
+
+      const imagesHtml = pageImages
+        .map(
+          (img) => `
+          <div class="ultrasound-slot">
+            <div class="ultrasound-image-frame">
+              <img
+                class="ultrasound-image"
+                src="${img.src}"
+                alt="${img.alt ?? "Ultrasound image"}"
+              />
+            </div>
+          </div>
+        `,
+        )
+        .join("");
+
+      return `
+      <div class="ultrasound-page ${pageIndex > 0 ? "page-break" : ""}">
+        <div class="ultrasound-page-title">Imágenes de ecografía</div>
+        <div class="ultrasound-grid">
+          ${imagesHtml}
+          ${emptySlotsHtml}
+        </div>
+      </div>
+    `;
+    })
+    .join("");
+
   // ============ TO CHECK STYLES BUGS ============
   // * {
   //   outline: 1px solid red;
@@ -95,6 +151,60 @@ h3 {
 .report-text {
   white-space: pre-line;
   margin-bottom: 0;
+}
+
+.ultrasound-page {
+  width: 100%;
+  margin-top: 24px;
+  break-inside: avoid;
+}
+
+.page-break {
+  break-before: page;
+}
+
+.ultrasound-page-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 14px 0;
+  text-align: center;
+}
+
+.ultrasound-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 16px;
+  width: 100%;
+}
+
+.ultrasound-slot {
+  width: 100%;
+  break-inside: avoid;
+}
+
+.ultrasound-image-frame {
+  width: 100%;
+  height: 210px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.ultrasound-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: white;
+  display: block;
+}
+
+.ultrasound-slot-empty .ultrasound-image-frame {
+  border: none;
+  background: transparent;
 }
 
 /* =============== FOOTER STYLES ================ */
@@ -186,6 +296,8 @@ h3 {
       <div class="report-text">
       ${report ?? ""}
       </div>
+
+      ${ultrasoundPagesHtml}
     </div>
   </body>
 </html>

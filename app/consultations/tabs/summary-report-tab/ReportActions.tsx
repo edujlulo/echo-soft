@@ -8,6 +8,7 @@ import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuild
 import { usePetImages } from "@/hooks/usePetImages";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { fetchUltrasoundImagesByConsultation } from "@/lib/queries/ultrasoundImages";
 
 interface Props {
   setIsQuickModeOpen: (open: boolean) => void;
@@ -19,6 +20,9 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
 
   const { report } = useConsultationReportBuilder();
   const formConsultation = useConsultationStore((s) => s.formConsultation);
+  const consultationId = useConsultationStore(
+    (s) => s.selectedConsultation?.consultation_id,
+  );
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
   const activeVet = useActiveVetStore((s) => s.activeVet);
   const activeClinic = useClinicStore((s) => s.activeClinic);
@@ -33,6 +37,10 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
     try {
       setIsDownloading(true);
 
+      const ultrasoundImages = consultationId
+        ? await fetchUltrasoundImagesByConsultation(consultationId)
+        : [];
+
       const res = await fetch("/api/generate-pdf", {
         method: "POST",
         headers: {
@@ -46,6 +54,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
           activeClinic,
           image,
           images,
+          ultrasoundImages,
         }),
       });
 

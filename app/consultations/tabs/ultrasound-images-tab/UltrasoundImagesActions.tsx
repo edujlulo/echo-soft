@@ -102,20 +102,27 @@ export default function UltrasoundImagesActions({ onUploadComplete }: Props) {
         type="button"
         onClick={handleOpenFilePicker}
         disabled={isUploading || isDeletingAllImages}
+        className={isUploading ? "bg-blue-300 border-blue-500!" : ""}
       >
-        {isUploading
-          ? "Subiendo imágenes..."
-          : "Copiar imágenes desde la carpeta"}
+        {isUploading ? (
+          <span className="inline-flex items-center justify-center gap-2">
+            <span className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            <span>Subiendo imágenes...</span>
+          </span>
+        ) : (
+          "Copiar imágenes desde la carpeta"
+        )}
       </Button>
 
       <Button
         type="button"
         onClick={handleOpenDeleteAllDialog}
         disabled={isDeletingAllImages || isUploading}
+        className={isDeletingAllImages ? "bg-red-300 border-red-500!" : ""}
       >
         {isDeletingAllImages ? (
           <span className="inline-flex items-center justify-center gap-2">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
             <span>Borrando imágenes...</span>
           </span>
         ) : (
