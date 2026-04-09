@@ -6,17 +6,17 @@ import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useClinicImage } from "@/hooks/useClinicImage";
 import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
 import { usePetImages } from "@/hooks/usePetImages";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { fetchUltrasoundImagesByConsultation } from "@/lib/queries/ultrasoundImages";
+import ReportPreviewDialog from "./ReportPreviewDialog";
 
 interface Props {
   setIsQuickModeOpen: (open: boolean) => void;
 }
 
 export default function ReportActions({ setIsQuickModeOpen }: Props) {
-  const router = useRouter();
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isReportPreviewOpen, setIsReportPreviewOpen] = useState(false);
 
   const { report } = useConsultationReportBuilder();
   const formConsultation = useConsultationStore((s) => s.formConsultation);
@@ -80,9 +80,9 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
     }
   };
 
-  // Navigate to PDF report preview
+  // Open report preview dialog
   const handlePreviewPDF = () => {
-    router.push("/report-preview");
+    setIsReportPreviewOpen(true);
   };
   // const handlePreviewPDF = () => {
   //   window.open("/report-preview", "_blank", "noopener,noreferrer");
@@ -143,6 +143,10 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
           <Button className={reportActionsButtonsClassName}>Solo ayuda</Button>
         </div>
       </div>
+      <ReportPreviewDialog
+        isOpen={isReportPreviewOpen}
+        onClose={() => setIsReportPreviewOpen(false)}
+      />
     </>
   );
 }
