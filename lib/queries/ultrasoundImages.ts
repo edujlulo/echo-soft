@@ -39,6 +39,18 @@ export interface PreparedImageFile {
   extension: string;
 }
 
+export interface UltrasoundImageListItem {
+  id: UltrasoundImageRow["id"];
+  src: string;
+  alt: string;
+  fileName: string | null;
+  storagePath: string;
+  width: number | null;
+  height: number | null;
+  uploadedAt: string | null;
+  sortOrder: number | null;
+}
+
 function sanitizeFileName(fileName: string): string {
   return fileName.trim().replace(/\s+/g, " ");
 }
@@ -222,4 +234,155 @@ export async function createUltrasoundImage(
 
     throw error;
   }
+}
+
+// ========= HELPERS AND FUNCTIONS FOR DELETE IMAGES ==========
+function chunkArray<T>(items: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size));
+  }
+
+  return chunks;
+}
+
+export async function fetchUltrasoundImageRowsByConsultation(
+  consultationId: string,
+): Promise<UltrasoundImageRow[]> {
+  const { data, error } = await supabase
+    .from("ultrasound_images")
+    .select("*")
+    .eq("consultation_id", consultationId)
+    .is("deleted_at", null)
+    .order("sort_order", { ascending: true, nullsFirst: false })
+    .order("uploaded_at", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch ultrasound image rows: ${error.message}`);
+  }
+
+  return (data ?? []) as UltrasoundImageRow[];
+}
+
+export async function fetchUltrasoundImageRowById(
+  imageId: string,
+): Promise<UltrasoundImageRow | null> {
+  const { data, error } = await supabase
+    .from("ultrasound_images")
+    .select("*")
+    .eq("id", imageId)
+    .is("deleted_at", null)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to fetch ultrasound image row: ${error.message}`);
+  }
+
+  return (data as UltrasoundImageRow | null) ?? null;
+}
+
+export async function deleteUltrasoundImageRowsByIds(
+  imageIds: string[],
+): Promise<void> {
+  if (imageIds.length === 0) return;
+
+  const { error } = await supabase
+    .from("ultrasound_images")
+    .delete()
+    .in("id", imageIds);
+
+  if (error) {
+    throw new Error(`Database delete failed: ${error.message}`);
+  }
+}
+
+export async function deleteUltrasoundImageFilesFromStorage(
+  storagePaths: string[],
+): Promise<void> {
+  if (storagePaths.length === 0) return;
+
+  const pathChunks = chunkArray(storagePaths, 100);
+
+  for (const chunk of pathChunks) {
+    const { error } = await supabase.storage
+      .from(ULTRASOUND_IMAGES_BUCKET)
+      .remove(chunk);
+
+    if (error) {
+      throw new Error(`Storage cleanup failed: ${error.message}`);
+    }
+  }
+}
+
+export async function deleteSingleUltrasoundImage(
+  imageId: string,
+): Promise<void> {
+  const row = await fetchUltrasoundImageRowById(imageId);
+
+  if (!row) {
+    return;
+  }
+
+  await deleteUltrasoundImageFilesFromStorage([row.storage_path]);
+  await deleteUltrasoundImageRowsByIds([row.id]);
+}
+
+export async function deleteAllUltrasoundImagesByConsultation(
+  consultationId: string,
+): Promise<number> {
+  const rows = await fetchUltrasoundImageRowsByConsultation(consultationId);
+
+  if (rows.length === 0) {
+    return 0;
+  }
+
+  const imageIds = rows.map((row) => row.id);
+  const storagePaths = rows.map((row) => row.storage_path);
+
+  await deleteUltrasoundImageFilesFromStorage(storagePaths);
+  await deleteUltrasoundImageRowsByIds(imageIds);
+
+  return rows.length;
+}
+
+// ============= FETCH ULTRASOUND IMAGES BY CONSULTATION ==============
+export async function fetchUltrasoundImagesByConsultation(
+  consultationId: string,
+): Promise<UltrasoundImageListItem[]> {
+  const { data: rows, error } = await supabase
+    .from("ultrasound_images")
+    .select("*")
+    .eq("consultation_id", consultationId)
+    .is("deleted_at", null)
+    .order("sort_order", { ascending: true, nullsFirst: false })
+    .order("uploaded_at", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch ultrasound images: ${error.message}`);
+  }
+
+  if (!rows || rows.length === 0) {
+    return [];
+  }
+
+  const paths = rows.map((row) => row.storage_path);
+
+  return rows.map((row) => {
+    const { data } = supabase.storage
+      .from(ULTRASOUND_IMAGES_BUCKET)
+      .getPublicUrl(row.storage_path);
+
+    return {
+      id: row.id,
+      src: data.publicUrl,
+      alt: row.file_name ?? "Ultrasound image",
+      fileName: row.file_name,
+      storagePath: row.storage_path,
+      width: row.width,
+      height: row.height,
+      uploadedAt: row.uploaded_at,
+      sortOrder: row.sort_order,
+    };
+  });
 }

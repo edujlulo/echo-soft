@@ -38,7 +38,7 @@ export default function EditableSelectListModal({
         <div className="fixed inset-0 bg-black/20 " aria-hidden="true" />
 
         {/* Panel del modal */}
-        <Dialog.Panel className="bg-gray-400 rounded-md w-200 z-50 border border-gray-500 shadow-lg relative">
+        <Dialog.Panel className="bg-gray-300 rounded-md w-200 z-50 border border-gray-500 shadow-lg relative">
           {/* Botón cerrar */}
           <button
             onClick={() => setIsModalOpen(false)}
