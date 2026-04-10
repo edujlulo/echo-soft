@@ -26,9 +26,25 @@ export default function PetButtons() {
       >
         Modificar Mascota
       </Button>
-      <Button onClick={() => window.alert("Acción en construcción")}>
-        Borrar Mascota
-      </Button>
+      <div className="flex flex-col items-center">
+        <Button
+          disabled
+          className="
+      bg-gray-200 
+      border-gray-300 
+      text-gray-500 
+      cursor-not-allowed 
+      hover:bg-gray-200 
+      hover:border-gray-300
+      opacity-80
+      w-38
+    "
+        >
+          Borrar Mascota
+        </Button>
+
+        <span className="text-xs text-gray-500 mt-0.5 ml-1">En desarrollo</span>
+      </div>
     </div>
   );
 }

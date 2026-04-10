@@ -20,9 +20,7 @@ export default function DashboardBottom() {
         {/* Central section */}
         <div className="w-full h-full flex flex-col gap-1 items-center justify-center">
           {/* ====== COMPARATIVE BUTTON ======== */}
-          <div>
-            <Button>Comparativo 1</Button>
-          </div>
+          <div>{/* <Button>Comparativo 1</Button> */}</div>
           <div className="w-full flex flex-row gap-4 justify-center items-center">
             {/* ======= PET BUTTONS ======= */}
             <PetButtons />

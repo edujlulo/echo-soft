@@ -33,7 +33,9 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
     "font-bold bg-green-200 border-green-400 hover:bg-green-300 hover:border-green-700 focus:outline-none focus:ring-2 focus:ring-green-500";
 
   // Download PDF report
-  const handleDownloadPDF = async () => {
+  type PdfLayoutMode = "grid-6" | "single";
+
+  const handleDownloadPDF = async (layoutMode: PdfLayoutMode = "grid-6") => {
     try {
       setIsDownloading(true);
 
@@ -55,6 +57,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
           image,
           images,
           ultrasoundImages,
+          ultrasoundLayout: layoutMode,
         }),
       });
 
@@ -69,7 +72,10 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
 
       const a = document.createElement("a");
       a.href = url;
-      a.download = "Ecosoft-report.pdf";
+      a.download =
+        layoutMode === "single"
+          ? "Ecosoft-report-1-image-per-page.pdf"
+          : "Ecosoft-report.pdf";
       a.click();
 
       window.URL.revokeObjectURL(url);
@@ -78,6 +84,14 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
     } finally {
       setIsDownloading(false);
     }
+  };
+
+  const handleDownloadPDFSixPerPage = () => {
+    handleDownloadPDF("grid-6");
+  };
+
+  const handleDownloadPDFOnePerPage = () => {
+    handleDownloadPDF("single");
   };
 
   // Open report preview dialog
@@ -90,57 +104,61 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
 
   return (
     <>
-      <div className="flex flex-row gap-2">
-        <div className="ml-10 flex flex-col gap-1">
-          <Button className={reportActionsButtonsClassName}>
-            Sumario carta
-          </Button>
-          <Button className={reportActionsButtonsClassName}>
-            Sumario oficio
-          </Button>
-        </div>
-        <div className="mr-105 flex flex-col gap-1">
-          <Button className={reportActionsButtonsClassName}>
-            Una imagen por hoja
-          </Button>
-          <Button className={reportActionsButtonsClassName}>
-            Una imagen por hoja
-          </Button>
-        </div>
-
-        <div className="flex flex-row gap-2 items-center">
-          <Button
-            onClick={handleDownloadPDF}
-            disabled={isDownloading}
-            className={`${reportActionsButtonsClassName} ${
-              isDownloading ? "opacity-50 cursor-not-allowed" : ""
-            } w-43`}
-          >
-            {isDownloading ? (
-              <span className="flex items-center gap-2">
-                <span className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full" />
-                Generando PDF...
-              </span>
-            ) : (
-              "Descargar PDF"
-            )}
-          </Button>
+      <div className="mt-4 flex flex-row gap-2 ">
+        <div className="ml-3 flex">
           <Button
             onClick={handlePreviewPDF}
             className={reportActionsButtonsClassName}
           >
             Vista previa del PDF
           </Button>
+        </div>
+        <Button
+          onClick={handleDownloadPDFSixPerPage}
+          disabled={isDownloading}
+          className={`${reportActionsButtonsClassName} ${
+            isDownloading ? "opacity-50 cursor-not-allowed" : ""
+          } w-72`}
+        >
+          {isDownloading ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full" />
+              Generando PDF...
+            </span>
+          ) : (
+            "Descargar PDF - 6 imágenes por hoja"
+          )}
+        </Button>
+        <div className="mr-60 flex">
+          <Button
+            onClick={handleDownloadPDFOnePerPage}
+            disabled={isDownloading}
+            className={`${reportActionsButtonsClassName} ${
+              isDownloading ? "opacity-50 cursor-not-allowed" : ""
+            } w-72`}
+          >
+            {isDownloading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full" />
+                Generando PDF...
+              </span>
+            ) : (
+              "Descargar PDF - 1 imagen por hoja"
+            )}
+          </Button>
+        </div>
+
+        <div className="flex flex-row gap-2 items-center">
           <Button
             className={reportActionsButtonsClassName}
             onClick={() => setIsQuickModeOpen(true)}
           >
             Modo rápido
           </Button>
-          <Button className={reportActionsButtonsClassName}>
+          {/* <Button className={reportActionsButtonsClassName}>
             Modo rápido con ayuda
           </Button>
-          <Button className={reportActionsButtonsClassName}>Solo ayuda</Button>
+          <Button className={reportActionsButtonsClassName}>Solo ayuda</Button> */}
         </div>
       </div>
       <ReportPreviewDialog

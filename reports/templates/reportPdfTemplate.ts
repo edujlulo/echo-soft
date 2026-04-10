@@ -16,6 +16,7 @@ interface ReportTemplateProps {
     profile?: string;
   };
   ultrasoundImages?: ReportTemplateUltrasoundImage[];
+  ultrasoundLayout?: "grid-6" | "single";
 }
 
 export function reportPdfTemplate({
@@ -27,6 +28,7 @@ export function reportPdfTemplate({
   image,
   images,
   ultrasoundImages = [],
+  ultrasoundLayout = "grid-6",
 }: ReportTemplateProps): string {
   function chunkArray<T>(items: T[], size: number): T[][] {
     const chunks: T[][] = [];
@@ -38,20 +40,33 @@ export function reportPdfTemplate({
     return chunks;
   }
 
-  const ultrasoundPages = chunkArray(ultrasoundImages, 6);
+  const imagesPerPage = ultrasoundLayout === "single" ? 1 : 6;
+  const ultrasoundPages = chunkArray(ultrasoundImages, imagesPerPage);
 
   const ultrasoundPagesHtml = ultrasoundPages
     .map((pageImages, pageIndex) => {
-      const emptySlots = Math.max(0, 6 - pageImages.length);
-      const emptySlotsHtml = Array.from({ length: emptySlots })
-        .map(() => `<div class="ultrasound-slot ultrasound-slot-empty"></div>`)
-        .join("");
+      const isSingleLayout = ultrasoundLayout === "single";
+      const emptySlots = isSingleLayout
+        ? 0
+        : Math.max(0, 6 - pageImages.length);
+
+      const emptySlotsHtml = isSingleLayout
+        ? ""
+        : Array.from({ length: emptySlots })
+            .map(
+              () => `<div class="ultrasound-slot ultrasound-slot-empty"></div>`,
+            )
+            .join("");
 
       const imagesHtml = pageImages
         .map(
           (img) => `
-          <div class="ultrasound-slot">
-            <div class="ultrasound-image-frame">
+          <div class="ultrasound-slot ${
+            isSingleLayout ? "ultrasound-slot-single" : ""
+          }">
+            <div class="ultrasound-image-frame ${
+              isSingleLayout ? "ultrasound-image-frame-single" : ""
+            }">
               <img
                 class="ultrasound-image"
                 src="${img.src}"
@@ -64,9 +79,13 @@ export function reportPdfTemplate({
         .join("");
 
       return `
-      <div class="ultrasound-page ${pageIndex > 0 ? "page-break" : ""}">
+      <div class="ultrasound-page ${pageIndex > 0 ? "page-break" : ""} ${
+        isSingleLayout ? "ultrasound-page-single" : ""
+      }">
         <div class="ultrasound-page-title">Imágenes de ecografía</div>
-        <div class="ultrasound-grid">
+        <div class="${
+          isSingleLayout ? "ultrasound-grid-single" : "ultrasound-grid"
+        }">
           ${imagesHtml}
           ${emptySlotsHtml}
         </div>
@@ -159,6 +178,10 @@ h3 {
   break-inside: avoid;
 }
 
+.ultrasound-page-single {
+  min-height: 0;
+}
+
 .page-break {
   break-before: page;
 }
@@ -177,9 +200,20 @@ h3 {
   width: 100%;
 }
 
+.ultrasound-grid-single {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 .ultrasound-slot {
   width: 100%;
   break-inside: avoid;
+}
+
+.ultrasound-slot-single {
+  width: 100%;
 }
 
 .ultrasound-image-frame {
@@ -190,6 +224,18 @@ h3 {
   overflow: hidden;
   display: flex;
   align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.ultrasound-image-frame-single {
+  width: 100%;
+  height: 760px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
   justify-content: center;
   background: white;
 }

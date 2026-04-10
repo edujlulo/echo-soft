@@ -48,10 +48,32 @@ export default function PetImage() {
           }}
         />
 
-        <Button onClick={() => window.alert("Acción en construcción")}>
+        <Button
+          disabled
+          className="
+      bg-gray-200 
+      border-gray-300 
+      text-gray-500 
+      cursor-not-allowed 
+      hover:bg-gray-200 
+      hover:border-gray-300
+      opacity-80
+    "
+        >
           Zoom
         </Button>
-        <Button onClick={() => window.alert("Acción en construcción")}>
+        <Button
+          disabled
+          className="
+      bg-gray-200 
+      border-gray-300 
+      text-gray-500 
+      cursor-not-allowed 
+      hover:bg-gray-200 
+      hover:border-gray-300
+      opacity-80
+    "
+        >
           X
         </Button>
       </div>

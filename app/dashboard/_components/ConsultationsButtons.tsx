@@ -23,7 +23,7 @@ export default function ConsultationsButtons() {
   };
 
   return (
-    <div className="flex flex-col gap-1 justify-center items-center">
+    <div className="-mt-2 flex flex-col gap-1 justify-center items-center">
       <Button
         className="w-33"
         onClick={() => {
@@ -54,9 +54,63 @@ export default function ConsultationsButtons() {
       >
         Crear Ecografía
       </Button>
-      <Button className="w-33">Desde memoria</Button>
-      <Button className="w-33">Borrar Consulta</Button>
-      <Button className="w-33">Historial Médico</Button>
+      <div className="flex flex-col items-center">
+        <Button
+          disabled
+          className="
+      bg-gray-200 
+      border-gray-300 
+      text-gray-500 
+      cursor-not-allowed 
+      hover:bg-gray-200 
+      hover:border-gray-300
+      opacity-80
+      w-33
+    "
+        >
+          Desde memoria
+        </Button>
+
+        {/* <span className="text-xs text-gray-500 mt-0.5 ml-1">En desarrollo</span> */}
+      </div>
+      <div className="flex flex-col items-center">
+        <Button
+          disabled
+          className="
+      bg-gray-200 
+      border-gray-300 
+      text-gray-500 
+      cursor-not-allowed 
+      hover:bg-gray-200 
+      hover:border-gray-300
+      opacity-80
+      w-33
+    "
+        >
+          Borrar Consulta
+        </Button>
+
+        {/* <span className="text-xs text-gray-500 mt-0.5 ml-1">En desarrollo</span> */}
+      </div>
+      <div className="flex flex-col items-center">
+        <Button
+          disabled
+          className="
+      bg-gray-200 
+      border-gray-300 
+      text-gray-500 
+      cursor-not-allowed 
+      hover:bg-gray-200 
+      hover:border-gray-300
+      opacity-80
+      w-33
+    "
+        >
+          Historial Médico
+        </Button>
+
+        <span className="text-xs text-gray-500 mt-0.5 ml-1">En desarrollo</span>
+      </div>
       <Button
         onClick={navigateToHome}
         className="flex w-20 mt-1 items-center justify-center px-3 py-1 font-bold bg-green-300 border border-gray-50 hover:bg-green-400"

@@ -74,6 +74,7 @@ export async function POST(req: Request) {
       image,
       images,
       ultrasoundImages,
+      ultrasoundLayout,
     } = await req.json();
 
     const profileBase64 = images?.profile
@@ -114,16 +115,6 @@ export async function POST(req: Request) {
     page.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
     page.on("error", (err) => console.error("PAGE ERROR:", err));
 
-    // =========== FOR DEBUG ==============
-    //     const html = `
-    //   <html>
-    //     <body>
-    //       <h1>This is a test PDF</h1>
-    //     </body>
-    //   </html>
-    // `;
-    // =========== FOR DEBUG ==============
-
     // ========== REAL HTML PDF REPORT TEMPLATE ============
     const html = reportPdfTemplate({
       report,
@@ -134,6 +125,7 @@ export async function POST(req: Request) {
       image,
       images,
       ultrasoundImages: ultrasoundImagesBase64,
+      ultrasoundLayout,
     });
 
     await page.setContent(html, { waitUntil: "load" });
@@ -153,12 +145,6 @@ export async function POST(req: Request) {
         }),
       );
     });
-
-    // =========== FOR DEBUG ==============
-    // const pdfBuffer = await page.pdf({
-    //   format: "A4",
-    // });
-    // =========== FOR DEBUG ==============
 
     // =============================== REAL PAGE.PDF PDFBUFFER ===================================
     let pdfBuffer;
@@ -231,12 +217,6 @@ export async function POST(req: Request) {
       console.error("PDF generation failed:", err);
       throw err;
     }
-
-    // Console logs:
-    console.log("PDF size:", pdfBuffer.length);
-    console.log("Profile base64 exists:", !!profileBase64);
-    console.log("HTML length:", html.length);
-    console.log("Image URL:", images?.profile);
 
     await browser.close();
 
