@@ -6,6 +6,8 @@ type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
  * Mapa de campos → etiquetas del informe
  */
 const ORGAN_MAP: { key: keyof ConsultationRow; label: string }[] = [
+  { key: "reason_for_ultrasound", label: "MOTIVO DEL EXAMEN ECOGRÁFICO" },
+  { key: "equipment_used", label: "EQUIPO UTILIZADO" },
   { key: "liver", label: "HIGADO" },
   { key: "spleen", label: "BAZO" },
   { key: "stomach", label: "ESTOMAGO" },
