@@ -30,6 +30,81 @@ export function reportPdfTemplate({
   ultrasoundImages = [],
   ultrasoundLayout = "grid-6",
 }: ReportTemplateProps): string {
+  function parseDate(value: unknown): Date | null {
+    if (!value || typeof value !== "string") return null;
+
+    const normalized = value.trim();
+
+    if (!normalized) return null;
+
+    const dateOnlyMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+    if (dateOnlyMatch) {
+      const [, year, month, day] = dateOnlyMatch;
+      const parsed = new Date(Number(year), Number(month) - 1, Number(day));
+
+      if (Number.isNaN(parsed.getTime())) return null;
+
+      return parsed;
+    }
+
+    const parsed = new Date(normalized);
+
+    if (Number.isNaN(parsed.getTime())) return null;
+
+    return parsed;
+  }
+
+  function formatDateDDMMYYYY(value: unknown): string {
+    const date = parseDate(value);
+
+    if (!date) return "";
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear());
+
+    return `${day}/${month}/${year}`;
+  }
+
+  function formatPetAge(value: unknown): string {
+    const birthDate = parseDate(value);
+
+    if (!birthDate) return "";
+
+    const today = new Date();
+
+    let years = today.getFullYear() - birthDate.getFullYear();
+    let months = today.getMonth() - birthDate.getMonth();
+
+    if (today.getDate() < birthDate.getDate()) {
+      months -= 1;
+    }
+
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+
+    if (years < 0) return "";
+
+    if (years === 0 && months === 0) {
+      return "0 months";
+    }
+
+    const parts: string[] = [];
+
+    if (years > 0) {
+      parts.push(`${years} ${years === 1 ? "año" : "años"}`);
+    }
+
+    if (months > 0) {
+      parts.push(`${months} ${months === 1 ? "mes" : "meses"}`);
+    }
+
+    return parts.join(" ");
+  }
+
   function chunkArray<T>(items: T[], size: number): T[][] {
     const chunks: T[][] = [];
 
@@ -54,7 +129,7 @@ export function reportPdfTemplate({
         ? ""
         : Array.from({ length: emptySlots })
             .map(
-              () => `<div class="ultrasound-slot ultrasound-slot-empty"></div>`,
+              () => `<div class="ultrasound-slot ultrasound-slot-empty"></div>`
             )
             .join("");
 
@@ -74,7 +149,7 @@ export function reportPdfTemplate({
               />
             </div>
           </div>
-        `,
+        `
         )
         .join("");
 
@@ -317,9 +392,9 @@ h3 {
             <td><strong>Dueño:</strong> ${selectedPet?.owner ?? ""}</td>
             <td><strong>Mascota:</strong> ${selectedPet?.name ?? ""}</td>
             <td>
-              <strong>Fecha:</strong> ${
-                formConsultation?.consultation_date ?? ""
-              }
+               <strong>Fecha:</strong> ${formatDateDDMMYYYY(
+                 formConsultation?.consultation_date
+               )}
             </td>
           </tr>
 
@@ -333,8 +408,12 @@ h3 {
             <td>
               <strong>Referido:</strong> ${selectedPet?.referred_by ?? ""}
             </td>
-            <td><strong>Edad:</strong> ${selectedPet?.birth_date ?? ""}</td>
-            <td><strong>Peso:</strong> ${selectedPet?.weight ?? ""}</td>
+            <td><strong>Edad:</strong> ${formatPetAge(
+              selectedPet?.birth_date
+            )}</td>
+            <td><strong>Peso:</strong> ${selectedPet?.weight ?? ""} ${
+    selectedPet?.weight ? "kg" : ""
+  }</td>
           </tr>
         </table>
       </div>

@@ -1,13 +1,22 @@
 "use client";
 
 import Button from "@/components/Button";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { usePetImages } from "@/hooks/usePetImages";
+import Lightbox from "yet-another-react-lightbox";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import "yet-another-react-lightbox/styles.css";
 
 export default function PetImage() {
   const { images, loading, handleUpload } = usePetImages();
 
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
+
   const profileInputRef = useRef<HTMLInputElement>(null);
+
+  const profileImageSrc = images.profile || "/images/blank-petimage.jpg";
+  const hasRealProfileImage =
+    !!images.profile && images.profile !== "/images/blank-petimage.jpg";
 
   return (
     <div className="flex flex-col gap-1 justify-center items-center">
@@ -20,7 +29,7 @@ export default function PetImage() {
           </div>
         ) : (
           <img
-            src={images.profile || "/images/blank-petimage.jpg"}
+            src={profileImageSrc}
             alt="Pet profile photo"
             className="w-[140px] h-[120px] object-contain"
           />
@@ -49,16 +58,22 @@ export default function PetImage() {
         />
 
         <Button
-          disabled
-          className="
-      bg-gray-200 
-      border-gray-300 
-      text-gray-500 
-      cursor-not-allowed 
-      hover:bg-gray-200 
-      hover:border-gray-300
-      opacity-80
-    "
+          type="button"
+          onClick={() => setIsZoomOpen(true)}
+          disabled={!hasRealProfileImage || loading.profile}
+          className={
+            !hasRealProfileImage || loading.profile
+              ? `
+        bg-gray-200
+        border-gray-300
+        text-gray-500
+        cursor-not-allowed
+        hover:bg-gray-200
+        hover:border-gray-300
+        opacity-80
+      `
+              : ""
+          }
         >
           Zoom
         </Button>
@@ -77,6 +92,21 @@ export default function PetImage() {
           X
         </Button>
       </div>
+      <Lightbox
+        open={isZoomOpen}
+        close={() => setIsZoomOpen(false)}
+        index={0}
+        slides={[
+          {
+            src: profileImageSrc,
+          },
+        ]}
+        plugins={[Zoom]}
+        render={{
+          buttonPrev: () => null,
+          buttonNext: () => null,
+        }}
+      />
     </div>
   );
 }

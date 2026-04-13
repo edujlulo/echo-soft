@@ -66,7 +66,7 @@ export default function UltrasoundImagesContent() {
   const [index, setIndex] = useState(-1);
 
   const consultationId = useConsultationStore(
-    (s) => s.selectedConsultation?.consultation_id,
+    (s) => s.selectedConsultation?.consultation_id
   );
 
   const { images, isLoadingImages, fetchUltrasoundImages, fetchError } =
