@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useConsultationStore } from "@/context/consultationStore";
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import {
@@ -18,7 +19,7 @@ type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
 interface EditableSelectListProps {
   setFieldConsultation?: (
     field: keyof ConsultationRow,
-    value: string | null,
+    value: string | null
   ) => void;
   selectedTemplate: TextTemplateRow | null;
   setSelectedTemplate: (template: TextTemplateRow | null) => void;
@@ -46,44 +47,47 @@ export default function EditableSelectListTable({
   // =========================
   // FILAS
   // =========================
-  const rows: GridRowsProp = [
-    ...templates.map((t) => ({ id: t.id, frase: t.content })),
-    ...Array.from({ length: Math.max(0, 20 - templates.length) }).map(
-      (_, i) => ({
-        id: `empty-${i}`,
-        frase: "",
-      }),
-    ),
-  ];
+  const rows: GridRowsProp = useMemo(
+    () => [
+      ...templates.map((t) => ({ id: t.id, frase: t.content })),
+      ...Array.from({ length: Math.max(0, 20 - templates.length) }).map(
+        (_, i) => ({
+          id: `empty-${i}`,
+          frase: "",
+        })
+      ),
+    ],
+    [templates]
+  );
 
   // =========================
   // COLUMNAS
   // =========================
-  const columns: GridColDef[] = [
-    {
-      field: "frase",
-      headerName: "Frase",
-      flex: 1,
-      editable: false,
-      headerAlign: "center",
-      sortable: true,
-      sortComparator: (v1, v2) => {
-        // Si v1 está vacío, se va al final
-        if (!v1) return 1;
-        // Si v2 está vacío, v1 va antes
-        if (!v2) return -1;
-        // Comparación normal alfabética
-        return v1.localeCompare(v2);
+  const columns: GridColDef[] = useMemo(
+    () => [
+      {
+        field: "frase",
+        headerName: "Frase",
+        flex: 1,
+        editable: false,
+        headerAlign: "center",
+        sortable: true,
+        sortComparator: (v1, v2) => {
+          if (!v1) return 1;
+          if (!v2) return -1;
+          return v1.localeCompare(v2);
+        },
       },
-    },
-  ];
+    ],
+    []
+  );
 
   // =========================
   // HELPER FUNCTION FOR PHRASES TOGGLE
   // =========================
   function togglePhraseWithInvisibleSeparator(
     currentText: string,
-    phrase: string,
+    phrase: string
   ): string {
     const SEP = "\u{241F}";
 
@@ -105,15 +109,19 @@ export default function EditableSelectListTable({
   }
 
   // // ======== selectionModel ==========
-  const selectionModel: GridRowSelectionModel = selectedTemplate
-    ? {
-        type: "include",
-        ids: new Set([selectedTemplate.id]),
-      }
-    : {
-        type: "include",
-        ids: new Set(),
-      };
+  const selectionModel: GridRowSelectionModel = useMemo(
+    () =>
+      selectedTemplate
+        ? {
+            type: "include",
+            ids: new Set([selectedTemplate.id]),
+          }
+        : {
+            type: "include",
+            ids: new Set(),
+          },
+    [selectedTemplate]
+  );
 
   // // ============= Categories of Pet form ==============
   // const categoriesPetForm = ["owner", "referred_by", "sex", "breed"];
@@ -133,7 +141,11 @@ export default function EditableSelectListTable({
           disableRowSelectionOnClick
           checkboxSelection={false}
           rowSelectionModel={selectionModel}
-          sortModel={[{ field: "frase", sort: "asc" }]}
+          initialState={{
+            sorting: {
+              sortModel: [{ field: "frase", sort: "asc" }],
+            },
+          }}
           onRowClick={(params) => {
             // Ignorar filas vacías
             if (!params.row.id || params.row.id.toString().startsWith("empty-"))
@@ -154,7 +166,7 @@ export default function EditableSelectListTable({
               ] ?? "";
             const newText = togglePhraseWithInvisibleSeparator(
               currentText,
-              params.row.frase,
+              params.row.frase
             );
 
             if (setField) {
