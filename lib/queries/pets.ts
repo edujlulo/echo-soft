@@ -17,6 +17,22 @@ export const addPetQuery = async (pet: PetInsert) => {
   return data; // retorna el registro insertado
 };
 
+export async function getNextRecordNumberByVet(vetId: string): Promise<number> {
+  const { data, error } = await supabase
+    .from("pets")
+    .select("record_number")
+    .eq("vet_id", vetId)
+    .order("record_number", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  const highestRecordNumber = data?.record_number ?? 0;
+
+  return highestRecordNumber + 1;
+}
+
 // ======== UPDATE PET ==========
 export async function updatePet(petId: string, data: PetUpdate) {
   const { data: updated, error } = await supabase
