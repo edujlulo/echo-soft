@@ -27,6 +27,7 @@ interface PetDetailsAndReasonProps {
   isSaving: boolean;
   statusMessage: string | null;
   calculateAge: CalculateAgeFn;
+  setIsFullTemplatesDialogOpen: (open: boolean) => void;
 }
 
 export default function PetInfoForm({
@@ -35,6 +36,7 @@ export default function PetInfoForm({
   isSaving,
   statusMessage,
   calculateAge,
+  setIsFullTemplatesDialogOpen,
 }: PetDetailsAndReasonProps) {
   const { selectedConsultation } = useConsultationStore();
 
@@ -163,7 +165,9 @@ export default function PetInfoForm({
 
           {/* ======= Actions buttons ========= */}
           <div>
-            <PetInfoFormActions />
+            <PetInfoFormActions
+              setIsFullTemplatesDialogOpen={setIsFullTemplatesDialogOpen}
+            />
           </div>
         </div>
       </div>

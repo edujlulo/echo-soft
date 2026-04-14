@@ -4,6 +4,7 @@ import PetInfoForm from "./PetInfoForm";
 import ReportActions from "./ReportActions";
 import { Database } from "@/types/database";
 import QuickMode from "../../quick-mode/QuickMode";
+import FullReportTemplatesDialog from "../../full-report-templates-dialog/FullReportTemplatesDialog";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
 type NewPet = Omit<
@@ -39,6 +40,8 @@ export default function SummaryReportContent({
 }: PetDetailsAndReasonProps) {
   // ========= QUICK MODE MODAL OPEN STATE ===========
   const [isQuickModeOpen, setIsQuickModeOpen] = useState(false);
+  const [isFullTemplatesDialogOpen, setIsFullTemplatesDialogOpen] =
+    useState(false);
 
   return (
     <>
@@ -60,6 +63,7 @@ export default function SummaryReportContent({
               isSaving={isSaving}
               statusMessage={statusMessage}
               calculateAge={calculateAge}
+              setIsFullTemplatesDialogOpen={setIsFullTemplatesDialogOpen}
             />
           </div>
         </div>
@@ -75,6 +79,12 @@ export default function SummaryReportContent({
       <QuickMode
         isQuickModeOpen={isQuickModeOpen}
         setIsQuickModeOpen={setIsQuickModeOpen}
+      />
+
+      {/* ============ FULL REPORT TEMPLATES DIALOG ============= */}
+      <FullReportTemplatesDialog
+        isFullTemplatesDialogOpen={isFullTemplatesDialogOpen}
+        setIsFullTemplatesDialogOpen={setIsFullTemplatesDialogOpen}
       />
     </>
   );
