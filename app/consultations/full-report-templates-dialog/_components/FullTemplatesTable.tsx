@@ -1,23 +1,40 @@
 "use client";
 
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { Database } from "@/types/database";
 
-export default function FullTemplatesTable() {
+type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
+
+interface Props {
+  templates: TextTemplateRow[];
+  selectedTemplateId: string | null;
+  onSelectTemplate: (templateId: string) => void;
+  loading?: boolean;
+}
+
+export default function FullTemplatesTable({
+  templates,
+  selectedTemplateId,
+  onSelectTemplate,
+  loading = false,
+}: Props) {
   const columns: GridColDef[] = [
     {
       field: "label",
-      headerName: "Plantilla",
+      headerName: "Template",
       flex: 1,
     },
   ];
 
-  // EMPTY ROWS:
-  const EMPTY_ROW_COUNT = 40;
-
-  const rows = Array.from({ length: EMPTY_ROW_COUNT }, (_, index) => ({
-    id: index + 1,
-    label: "",
+  const rows = templates.map((template) => ({
+    id: template.id,
+    label: template.label ?? "",
   }));
+
+  const rowSelectionModel: GridRowSelectionModel = {
+    type: "include",
+    ids: new Set(selectedTemplateId ? [selectedTemplateId] : []),
+  };
 
   return (
     <div className="h-full w-[38%] min-w-0">
@@ -27,8 +44,12 @@ export default function FullTemplatesTable() {
         hideFooter
         rowHeight={26}
         columnHeaderHeight={28}
-        disableRowSelectionOnClick
         checkboxSelection={false}
+        loading={loading}
+        rowSelectionModel={rowSelectionModel}
+        onRowClick={(params) => {
+          onSelectTemplate(String(params.id));
+        }}
         sx={{
           width: "100%",
           height: "100%",
@@ -56,9 +77,10 @@ export default function FullTemplatesTable() {
 
           "& .MuiDataGrid-row": {
             borderBottom: "1px solid #93c5fd",
+            cursor: "pointer",
           },
 
-          "& .MuiDataGrid-row.selected-row, & .MuiDataGrid-row.selected-row:hover":
+          "& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover":
             {
               backgroundColor: "#93c5fd",
             },
