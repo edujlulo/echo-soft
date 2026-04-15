@@ -8,7 +8,7 @@ type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
 interface Props {
   templates: TextTemplateRow[];
   selectedTemplateId: string | null;
-  onSelectTemplate: (templateId: string) => void;
+  onSelectTemplate: (templateId: string) => Promise<void>;
   loading?: boolean;
 }
 
@@ -23,13 +23,26 @@ export default function FullTemplatesTable({
       field: "label",
       headerName: "Template",
       flex: 1,
+      sortable: false,
+      filterable: false,
     },
   ];
 
-  const rows = templates.map((template) => ({
+  const filledRows = templates.map((template) => ({
     id: template.id,
     label: template.label ?? "",
+    isEmpty: false,
   }));
+
+  const emptyRowsCount = Math.max(0, 26 - filledRows.length);
+
+  const emptyRows = Array.from({ length: emptyRowsCount }, (_, index) => ({
+    id: `empty-${index}`,
+    label: "",
+    isEmpty: true,
+  }));
+
+  const rows = [...filledRows, ...emptyRows];
 
   const rowSelectionModel: GridRowSelectionModel = {
     type: "include",
@@ -48,6 +61,7 @@ export default function FullTemplatesTable({
         loading={loading}
         rowSelectionModel={rowSelectionModel}
         onRowClick={(params) => {
+          if (params.row.isEmpty) return;
           onSelectTemplate(String(params.id));
         }}
         sx={{

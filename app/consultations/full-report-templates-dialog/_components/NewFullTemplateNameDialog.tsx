@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import Button from "@/components/Button";
 import Navbar from "@/components/Navbar";
@@ -11,19 +11,38 @@ type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
 interface Props {
   isNewTemplateNameDialogOpen: boolean;
   setIsNewTemplateNameDialogOpen: (open: boolean) => void;
+  mode: "create" | "rename";
+  initialValue: string;
   onCreateTemplate: (label: string) => Promise<TextTemplateRow | null>;
-  isCreatingTemplate: boolean;
+  onRenameTemplate: (label: string) => Promise<TextTemplateRow | null>;
+  isSubmitting: boolean;
 }
 
 export default function NewFullTemplateNameDialog({
   isNewTemplateNameDialogOpen,
   setIsNewTemplateNameDialogOpen,
+  mode,
+  initialValue,
   onCreateTemplate,
-  isCreatingTemplate,
+  onRenameTemplate,
+  isSubmitting,
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [templateName, setTemplateName] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isNewTemplateNameDialogOpen) return;
+
+    if (mode === "rename") {
+      setTemplateName(initialValue ?? "");
+      setError(null);
+      return;
+    }
+
+    setTemplateName("");
+    setError(null);
+  }, [isNewTemplateNameDialogOpen, mode, initialValue]);
 
   function handleClose() {
     setTemplateName("");
@@ -31,17 +50,20 @@ export default function NewFullTemplateNameDialog({
     setIsNewTemplateNameDialogOpen(false);
   }
 
-  async function handleCreateTemplate() {
+  async function handleSubmit() {
     const trimmedName = templateName.trim();
 
     if (!trimmedName) {
-      setError("You must type a template name.");
+      setError("Debe escribir un nombre para la plantilla.");
       return;
     }
 
-    const createdTemplate = await onCreateTemplate(trimmedName);
+    const result =
+      mode === "rename"
+        ? await onRenameTemplate(trimmedName)
+        : await onCreateTemplate(trimmedName);
 
-    if (!createdTemplate) {
+    if (!result) {
       return;
     }
 
@@ -66,19 +88,21 @@ export default function NewFullTemplateNameDialog({
         </button>
 
         <div className="w-full">
-          <Navbar>Create template</Navbar>
+          <Navbar>Crear plantillas</Navbar>
         </div>
 
         <div className="py-4 px-20 flex flex-col gap-2 justify-center items-center">
           <Dialog.Title className="text-lg font-semibold mb-2">
-            New template name
+            {mode === "rename"
+              ? "Modificar nombre de la plantilla"
+              : "Nombre de la nueva plantilla"}
           </Dialog.Title>
 
           <input
             ref={inputRef}
             value={templateName}
             onChange={(e) => {
-              setTemplateName(e.target.value);
+              setTemplateName(e.target.value.toUpperCase());
               if (error) {
                 setError(null);
               }
@@ -86,12 +110,12 @@ export default function NewFullTemplateNameDialog({
             onKeyDown={async (e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                await handleCreateTemplate();
+                await handleSubmit();
               }
             }}
             className="w-full border rounded p-2 bg-white"
             autoFocus
-            placeholder="Type a name..."
+            placeholder="Escribe algo..."
             onFocus={(e) => {
               const value = e.target.value;
               e.target.setSelectionRange(value.length, value.length);
@@ -105,15 +129,21 @@ export default function NewFullTemplateNameDialog({
 
         <div className="pb-6 flex justify-center gap-8">
           <Button
-            onClick={handleCreateTemplate}
+            onClick={handleSubmit}
             className="w-30"
-            disabled={isCreatingTemplate}
+            disabled={isSubmitting}
           >
-            {isCreatingTemplate ? "Creating..." : "Create template"}
+            {isSubmitting
+              ? mode === "rename"
+                ? "Guardando..."
+                : "Creando..."
+              : mode === "rename"
+              ? "Aceptar"
+              : "Crear plantilla"}
           </Button>
 
           <Button onClick={handleClose} className="w-23">
-            Cancel
+            Cancelar
           </Button>
         </div>
       </Dialog.Panel>

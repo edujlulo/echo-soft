@@ -27,14 +27,6 @@ export default function FullReportTemplatesDialog({
         {/* Panel del modal */}
 
         <Dialog.Panel className="w-[1200px] h-[760px] flex flex-col flex-shrink-0 bg-amber-50 rounded-md z-50 border border-gray-500 shadow-lg relative m-auto">
-          {/* Botón cerrar */}
-          <button
-            onClick={() => setIsFullTemplatesDialogOpen(false)}
-            className="pt-0.5 absolute top-2 right-2 w-8 h-6 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-md shadow-md border border-gray-500 transition-colors text-2xl"
-          >
-            ×
-          </button>
-
           {/* Navbar */}
           <div className="w-full flex-shrink-0">
             <Navbar>Plantillas</Navbar>

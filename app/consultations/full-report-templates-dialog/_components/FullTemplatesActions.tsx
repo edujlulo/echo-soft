@@ -4,25 +4,33 @@ import Button from "@/components/Button";
 import React from "react";
 
 interface Props {
-  setIsFullTemplatesDialogOpen: (open: boolean) => void;
-  setIsNewTemplateNameDialogOpen: (open: boolean) => void;
+  onDeleteSelectedTemplate: () => Promise<boolean>;
+  onCloseDialog: () => Promise<void>;
+  onOpenCreateDialog: () => void;
+  onOpenRenameDialog: () => void;
 }
 
 export default function FullTemplatesActions({
-  setIsFullTemplatesDialogOpen,
-  setIsNewTemplateNameDialogOpen,
+  onDeleteSelectedTemplate,
+  onCloseDialog,
+  onOpenCreateDialog,
+  onOpenRenameDialog,
 }: Props) {
   return (
     <div className="py-3 flex flex-row gap-3 justify-center items-center">
-      <Button>Eliminar plantilla</Button>
-      <Button onClick={() => setIsNewTemplateNameDialogOpen(true)}>
+      <Button
+        onClick={async () => {
+          await onDeleteSelectedTemplate();
+        }}
+      >
+        Eliminar plantilla
+      </Button>
+      <Button onClick={onOpenCreateDialog}>
         Crear una plantilla nueva a partir de este informe
       </Button>
+      <Button onClick={onOpenRenameDialog}>Modificar nombre</Button>
       <Button>Añadir plantilla seleccionada al informe</Button>
-      <Button
-        onClick={() => setIsFullTemplatesDialogOpen(false)}
-        className="w-23"
-      >
+      <Button onClick={onCloseDialog} className="w-23">
         Salir
       </Button>
     </div>
