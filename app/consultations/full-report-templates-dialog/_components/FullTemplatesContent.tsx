@@ -4,6 +4,8 @@ import Button from "@/components/Button";
 import FullTemplatesTable from "./FullTemplatesTable";
 import FullTemplatesTextarea from "./FullTemplatesTextarea";
 import FullTemplatesActions from "./FullTemplatesActions";
+import { useState } from "react";
+import NewFullTemplateNameDialog from "./NewFullTemplateNameDialog";
 
 interface Props {
   setIsFullTemplatesDialogOpen: (open: boolean) => void;
@@ -12,6 +14,9 @@ interface Props {
 export default function FullTemplatesContent({
   setIsFullTemplatesDialogOpen,
 }: Props) {
+  const [isNewTemplateNameDialogOpen, setIsNewTemplateNameDialogOpen] =
+    useState(false);
+
   return (
     <div className="h-full w-full min-h-0 px-10 pt-4 pb-4 flex flex-col gap-4 ">
       <div className="h-full w-full min-h-0 flex flex-col gap-2">
@@ -28,8 +33,15 @@ export default function FullTemplatesContent({
         {/* ========== FULL TEMPLATES ACTIONS BUTTONS =========== */}
         <FullTemplatesActions
           setIsFullTemplatesDialogOpen={setIsFullTemplatesDialogOpen}
+          setIsNewTemplateNameDialogOpen={setIsNewTemplateNameDialogOpen}
         />
       </div>
+
+      {/* =========== NEW FULL TEMPLATE NAME DIALOG ============= */}
+      <NewFullTemplateNameDialog
+        isNewTemplateNameDialogOpen={isNewTemplateNameDialogOpen}
+        setIsNewTemplateNameDialogOpen={setIsNewTemplateNameDialogOpen}
+      />
     </div>
   );
 }
