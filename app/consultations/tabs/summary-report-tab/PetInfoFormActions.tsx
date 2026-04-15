@@ -1,4 +1,5 @@
 import Button from "@/components/Button";
+import { useState } from "react";
 
 interface Props {
   setIsFullTemplatesDialogOpen: (open: boolean) => void;
@@ -7,11 +8,29 @@ interface Props {
 export default function PetInfoFormActions({
   setIsFullTemplatesDialogOpen,
 }: Props) {
+  const [isOn, setIsOn] = useState(false);
+
   return (
     <>
       <div className="mt-4 flex flex-row gap-40">
         {/* ====== Left section ====== */}
-        <div className="ml-4 mt-6 flex flex-col gap-1.5 justify-center">
+        <div className="ml-4 mt-6 flex flex-col gap-2 justify-center">
+          {/* TOGGLE BUTTON FOR FULL REPORT TEMPLATE MODE */}
+          <div className="flex flex-row gap-2">
+            <p className="font-bold">Modo plantilla completa (edición libre)</p>
+            <button
+              onClick={() => setIsOn(!isOn)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                isOn ? "bg-blue-600" : "bg-gray-300"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                  isOn ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
           <div className="flex flex-row gap-1.5">
             <Button onClick={() => setIsFullTemplatesDialogOpen(true)}>
               Plantillas
