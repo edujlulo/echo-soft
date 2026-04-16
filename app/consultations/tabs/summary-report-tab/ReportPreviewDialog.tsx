@@ -10,7 +10,6 @@ import { useActiveVetStore } from "@/context/activeVetStore";
 import { useClinicStore } from "@/context/activeClinicStore";
 import { useClinicImage } from "@/hooks/useClinicImage";
 import { usePetImages } from "@/hooks/usePetImages";
-import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
 import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 import { fetchUltrasoundImagesByConsultation } from "@/lib/queries/ultrasoundImages";
 import type { UltrasoundImageListItem } from "@/lib/queries/ultrasoundImages";
@@ -18,10 +17,14 @@ import type { UltrasoundImageListItem } from "@/lib/queries/ultrasoundImages";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  report: string;
 }
 
-export default function ReportPreviewDialog({ isOpen, onClose }: Props) {
-  const { report } = useConsultationReportBuilder();
+export default function ReportPreviewDialog({
+  isOpen,
+  onClose,
+  report,
+}: Props) {
   const formConsultation = useConsultationStore((s) => s.formConsultation);
   const consultationId = useConsultationStore(
     (s) => s.selectedConsultation?.consultation_id,

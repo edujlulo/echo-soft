@@ -7,7 +7,7 @@ export default function PetButtons() {
   const { selectedPet, startCreating, startEditing } = useSelectedPetStore();
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="mb-2 flex flex-col gap-7">
       <Button className="w-38" onClick={() => startCreating()}>
         Nueva Mascota
       </Button>
@@ -42,8 +42,6 @@ export default function PetButtons() {
         >
           Borrar Mascota
         </Button>
-
-        <span className="text-xs text-gray-500 mt-0.5 ml-1">En desarrollo</span>
       </div>
     </div>
   );

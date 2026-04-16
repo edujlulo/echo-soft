@@ -1,20 +1,50 @@
-import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
+"use client";
+
+import { useConsultationStore } from "@/context/consultationStore";
+import { useFinalReport } from "@/hooks/useFinalReport";
+import { useManualReportDraftSave } from "@/hooks/useManualReportDraftSave";
+import { useEffect } from "react";
 
 export default function ReportDraft() {
-  const { report } = useConsultationReportBuilder();
+  const { reportMode, finalReport } = useFinalReport();
+  const setManualReportDraft = useConsultationStore(
+    (state) => state.setManualReportDraft,
+  );
+
+  const { isSavingManualReportDraft, flushManualReportDraftSave } =
+    useManualReportDraftSave();
+
+  const isEditable = reportMode === "full-template";
+
+  useEffect(() => {
+    return () => {
+      void flushManualReportDraftSave();
+    };
+  }, [flushManualReportDraftSave]);
 
   return (
     <>
-      <div className=" px-2 flex flex-col gap-1 items-start text-sm">
+      <div className="px-2 flex flex-col gap-1 items-start text-sm">
         <label className="w-full font-bold text-blue-950 items-center justify-center text-center text-lg">
           Informe creado desde plantilla o memoria
         </label>
 
         <textarea
-          value={report}
-          readOnly
+          value={finalReport}
+          onChange={(e) => {
+            if (!isEditable) return;
+            setManualReportDraft(e.target.value);
+          }}
+          readOnly={!isEditable}
           className="w-[700px] h-[560px] bg-white border border-blue-200 px-2 pb-0.5 pt-1.5 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white"
         />
+        {isEditable ? (
+          <p className="px-1 text-sm text-blue-900">
+            {isSavingManualReportDraft
+              ? "Guardando informe..."
+              : "Informe listo"}
+          </p>
+        ) : null}
       </div>
     </>
   );

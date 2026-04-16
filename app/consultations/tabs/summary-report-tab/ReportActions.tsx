@@ -4,7 +4,7 @@ import { useActiveVetStore } from "@/context/activeVetStore";
 import { useConsultationStore } from "@/context/consultationStore";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useClinicImage } from "@/hooks/useClinicImage";
-import { useConsultationReportBuilder } from "@/hooks/useConsultationReportBuilder";
+import { useFinalReport } from "@/hooks/useFinalReport";
 import { usePetImages } from "@/hooks/usePetImages";
 import { useState } from "react";
 import { fetchUltrasoundImagesByConsultation } from "@/lib/queries/ultrasoundImages";
@@ -18,7 +18,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isReportPreviewOpen, setIsReportPreviewOpen] = useState(false);
 
-  const { report } = useConsultationReportBuilder();
+  const { finalReport } = useFinalReport();
   const formConsultation = useConsultationStore((s) => s.formConsultation);
   const consultationId = useConsultationStore(
     (s) => s.selectedConsultation?.consultation_id,
@@ -49,7 +49,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          report,
+          report: finalReport,
           formConsultation,
           selectedPet,
           activeVet,
@@ -164,6 +164,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
       <ReportPreviewDialog
         isOpen={isReportPreviewOpen}
         onClose={() => setIsReportPreviewOpen(false)}
+        report={finalReport}
       />
     </>
   );

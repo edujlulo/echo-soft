@@ -8,6 +8,7 @@ interface Props {
   onCloseDialog: () => Promise<void>;
   onOpenCreateDialog: () => void;
   onOpenRenameDialog: () => void;
+  onAddSelectedTemplateToReport: () => Promise<void>;
 }
 
 export default function FullTemplatesActions({
@@ -15,6 +16,7 @@ export default function FullTemplatesActions({
   onCloseDialog,
   onOpenCreateDialog,
   onOpenRenameDialog,
+  onAddSelectedTemplateToReport,
 }: Props) {
   return (
     <div className="py-3 flex flex-row gap-3 justify-center items-center">
@@ -29,7 +31,13 @@ export default function FullTemplatesActions({
         Crear una plantilla nueva a partir de este informe
       </Button>
       <Button onClick={onOpenRenameDialog}>Modificar nombre</Button>
-      <Button>Añadir plantilla seleccionada al informe</Button>
+      <Button
+        onClick={async () => {
+          await onAddSelectedTemplateToReport();
+        }}
+      >
+        Añadir plantilla seleccionada al informe
+      </Button>
       <Button onClick={onCloseDialog} className="w-23">
         Salir
       </Button>

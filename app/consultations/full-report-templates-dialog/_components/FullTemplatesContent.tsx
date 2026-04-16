@@ -6,6 +6,8 @@ import FullTemplatesTextarea from "./FullTemplatesTextarea";
 import FullTemplatesActions from "./FullTemplatesActions";
 import NewFullTemplateNameDialog from "./NewFullTemplateNameDialog";
 import { useFullReportTemplates } from "@/hooks/useFullReportTemplates";
+import { useConsultationStore } from "@/context/consultationStore";
+import { updateConsultation } from "@/lib/queries/consultations";
 
 interface Props {
   setIsFullTemplatesDialogOpen: (open: boolean) => void;
@@ -19,6 +21,17 @@ export default function FullTemplatesContent({
   const [templateNameDialogMode, setTemplateNameDialogMode] = useState<
     "create" | "rename"
   >("create");
+
+  const setReportMode = useConsultationStore((state) => state.setReportMode);
+  const loadManualReportDraft = useConsultationStore(
+    (state) => state.loadManualReportDraft,
+  );
+  const selectedConsultation = useConsultationStore(
+    (state) => state.selectedConsultation,
+  );
+  const setSelectedConsultation = useConsultationStore(
+    (state) => state.setSelectedConsultation,
+  );
 
   const {
     templates,
@@ -38,6 +51,36 @@ export default function FullTemplatesContent({
 
   async function handleCloseDialog() {
     await flushSelectedTemplateContentSave();
+    setIsFullTemplatesDialogOpen(false);
+  }
+
+  async function handleAddSelectedTemplateToReport() {
+    if (!selectedTemplate) {
+      alert("Debe seleccionar una plantilla.");
+      return;
+    }
+
+    await flushSelectedTemplateContentSave();
+
+    loadManualReportDraft(draftContent);
+    setReportMode("full-template");
+
+    if (selectedConsultation?.consultation_id) {
+      try {
+        const updated = await updateConsultation(
+          selectedConsultation.consultation_id,
+          {
+            report_mode: "full-template",
+            manual_report_draft: draftContent,
+          },
+        );
+
+        setSelectedConsultation(updated);
+      } catch (error) {
+        console.error("Failed to attach template to consultation:", error);
+      }
+    }
+
     setIsFullTemplatesDialogOpen(false);
   }
 
@@ -90,6 +133,7 @@ export default function FullTemplatesContent({
             setTemplateNameDialogMode("rename");
             setIsNewTemplateNameDialogOpen(true);
           }}
+          onAddSelectedTemplateToReport={handleAddSelectedTemplateToReport}
         />
       </div>
 

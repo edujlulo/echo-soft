@@ -1,5 +1,6 @@
 import Button from "@/components/Button";
-import { useState } from "react";
+import { useConsultationStore } from "@/context/consultationStore";
+import { updateConsultation } from "@/lib/queries/consultations";
 
 interface Props {
   setIsFullTemplatesDialogOpen: (open: boolean) => void;
@@ -8,7 +9,37 @@ interface Props {
 export default function PetInfoFormActions({
   setIsFullTemplatesDialogOpen,
 }: Props) {
-  const [isOn, setIsOn] = useState(false);
+  const reportMode = useConsultationStore((state) => state.reportMode);
+  const setReportMode = useConsultationStore((state) => state.setReportMode);
+  const selectedConsultation = useConsultationStore(
+    (state) => state.selectedConsultation,
+  );
+  const setSelectedConsultation = useConsultationStore(
+    (state) => state.setSelectedConsultation,
+  );
+
+  const isOn = reportMode === "full-template";
+
+  async function handleToggleReportMode() {
+    const nextMode = isOn ? "organs" : "full-template";
+
+    setReportMode(nextMode);
+
+    if (!selectedConsultation?.consultation_id) return;
+
+    try {
+      const updated = await updateConsultation(
+        selectedConsultation.consultation_id,
+        {
+          report_mode: nextMode,
+        },
+      );
+
+      setSelectedConsultation(updated);
+    } catch (error) {
+      console.error("Failed to update report mode:", error);
+    }
+  }
 
   return (
     <>
@@ -19,7 +50,9 @@ export default function PetInfoFormActions({
           <div className="flex flex-row gap-2">
             <p className="font-bold">Modo plantilla completa (edición libre)</p>
             <button
-              onClick={() => setIsOn(!isOn)}
+              onClick={() => {
+                void handleToggleReportMode();
+              }}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
                 isOn ? "bg-blue-600" : "bg-gray-300"
               }`}

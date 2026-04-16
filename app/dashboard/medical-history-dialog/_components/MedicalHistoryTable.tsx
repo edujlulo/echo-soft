@@ -3,38 +3,18 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { Database } from "@/types/database";
 
-type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
-
-interface Props {
-  templates: TextTemplateRow[];
-  selectedTemplateId: string | null;
-  onSelectTemplate: (templateId: string) => Promise<void>;
-  loading?: boolean;
-}
-
-export default function FullTemplatesTable({
-  templates,
-  selectedTemplateId,
-  onSelectTemplate,
-  loading = false,
-}: Props) {
+export default function MedicalHistoryTable() {
   const columns: GridColDef[] = [
     {
       field: "label",
-      headerName: "Plantilla",
+      headerName: "Veterinario",
       flex: 1,
       sortable: false,
       filterable: false,
     },
   ];
 
-  const filledRows = templates.map((template) => ({
-    id: template.id,
-    label: template.label ?? "",
-    isEmpty: false,
-  }));
-
-  const emptyRowsCount = Math.max(0, 26 - filledRows.length);
+  const emptyRowsCount = Math.max(0, 26);
 
   const emptyRows = Array.from({ length: emptyRowsCount }, (_, index) => ({
     id: `empty-${index}`,
@@ -42,15 +22,10 @@ export default function FullTemplatesTable({
     isEmpty: true,
   }));
 
-  const rows = [...filledRows, ...emptyRows];
-
-  const rowSelectionModel: GridRowSelectionModel = {
-    type: "include",
-    ids: new Set(selectedTemplateId ? [selectedTemplateId] : []),
-  };
+  const rows = [...emptyRows];
 
   return (
-    <div className="h-full w-[38%] min-w-0">
+    <div className="h-full w-full min-h-0 min-w-0 overflow-hidden">
       <DataGrid
         rows={rows}
         columns={columns}
@@ -58,12 +33,6 @@ export default function FullTemplatesTable({
         rowHeight={26}
         columnHeaderHeight={28}
         checkboxSelection={false}
-        loading={loading}
-        rowSelectionModel={rowSelectionModel}
-        onRowClick={(params) => {
-          if (params.row.isEmpty) return;
-          onSelectTemplate(String(params.id));
-        }}
         sx={{
           width: "100%",
           height: "100%",
