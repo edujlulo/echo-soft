@@ -14,31 +14,30 @@ export default function MedicalHistoryContent({
   setIsMedicalHistoryDialogOpen,
 }: Props) {
   return (
-    <div className="flex h-full mx-2 min-h-0 flex-col gap-1 p-2">
+    <div className="mx-2 flex h-full min-h-0 flex-col gap-1 p-2">
       {/* ===== PET INFO FORM ==== */}
       <div className="flex-shrink-0">
         <MedicalHistoryPetInfoForm />
       </div>
 
-      <div className="flex flex-1 min-h-0 flex-row gap-2">
+      <div className="flex min-h-0 flex-1 flex-row gap-2">
         {/* ===== TEXTAREA ==== */}
-        <div className="flex min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 min-h-0">
           <MedicalHistoryTextarea />
         </div>
 
-        {/* ===== TABLE ==== */}
-        <div className="flex min-w-0 flex-1">
-          <MedicalHistoryTable />
-        </div>
-      </div>
-
-      <div className="flex-shrink-0">
-        <div className="flex flex-row gap-2">
-          {/* ===== IMAGES ROW ==== */}
-          <MedicalHistoryImagesRow />
+        <div className="flex min-w-0 min-h-0 flex-1 flex-col gap-1">
+          {/* ===== TABLE ==== */}
+          <div className="min-w-0 min-h-0 flex-1 overflow-hidden">
+            <MedicalHistoryTable />
+          </div>
 
           {/* ===== ACTIONS BUTTONS ==== */}
-          <MedicalHistoryActions />
+          <div className="min-w-0 flex-shrink-0">
+            <MedicalHistoryActions
+              setIsMedicalHistoryDialogOpen={setIsMedicalHistoryDialogOpen}
+            />
+          </div>
         </div>
       </div>
     </div>

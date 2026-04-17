@@ -11,8 +11,8 @@ import { useActiveVetStore } from "@/context/activeVetStore";
 export default function ConsultationsPage() {
   const router = useRouter();
 
-  const { activeVet } = useActiveVetStore();
-  const { selectedPet } = useSelectedPetStore();
+  const activeVet = useActiveVetStore((s) => s.activeVet);
+  const selectedPet = useSelectedPetStore((s) => s.selectedPet);
 
   const navigateToDashboard = () => {
     router.push("/dashboard");

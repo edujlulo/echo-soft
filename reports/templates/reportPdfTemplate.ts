@@ -105,6 +105,24 @@ export function reportPdfTemplate({
     return parts.join(" ");
   }
 
+  function escapeHtml(value: string): string {
+    return value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function formatReportHtml(value: string): string {
+    const escaped = escapeHtml(value);
+
+    return escaped.replace(
+      /(^|\n\n)([A-ZÁÉÍÓÚÜÑ ]+):/g,
+      "$1<strong>$2:</strong>"
+    );
+  }
+
   function chunkArray<T>(items: T[], size: number): T[][] {
     const chunks: T[][] = [];
 
@@ -114,6 +132,8 @@ export function reportPdfTemplate({
 
     return chunks;
   }
+
+  const formattedReportHtml = formatReportHtml(report ?? "");
 
   const imagesPerPage = ultrasoundLayout === "single" ? 1 : 6;
   const ultrasoundPages = chunkArray(ultrasoundImages, imagesPerPage);
@@ -419,7 +439,7 @@ h3 {
       </div>
       <!-- =============== REPORT =============== -->
       <div class="report-text">
-      ${report ?? ""}
+      ${formattedReportHtml}
       </div>
 
       ${ultrasoundPagesHtml}

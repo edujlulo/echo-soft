@@ -21,7 +21,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
   const { finalReport } = useFinalReport();
   const formConsultation = useConsultationStore((s) => s.formConsultation);
   const consultationId = useConsultationStore(
-    (s) => s.selectedConsultation?.consultation_id,
+    (s) => s.selectedConsultation?.consultation_id
   );
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
   const activeVet = useActiveVetStore((s) => s.activeVet);
@@ -104,7 +104,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
 
   return (
     <>
-      <div className="mt-4 flex flex-row gap-2 ">
+      <div className="mt-6 flex flex-row gap-2 ">
         <div className="ml-3 flex">
           <Button
             onClick={handlePreviewPDF}

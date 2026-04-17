@@ -75,7 +75,7 @@ export default function SummaryReportContent({
         </div>
       </div>
 
-      {/* ============ QUICK MODE MODAL ============= */}
+      {/* ============ QUICK MODE DIALOG ============= */}
       <QuickMode
         isQuickModeOpen={isQuickModeOpen}
         setIsQuickModeOpen={setIsQuickModeOpen}

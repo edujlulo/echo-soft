@@ -24,13 +24,17 @@ export default function FullTemplatesContent({
 
   const setReportMode = useConsultationStore((state) => state.setReportMode);
   const loadManualReportDraft = useConsultationStore(
-    (state) => state.loadManualReportDraft,
+    (state) => state.loadManualReportDraft
+  );
+  const reportMode = useConsultationStore((state) => state.reportMode);
+  const manualReportDraft = useConsultationStore(
+    (state) => state.manualReportDraft
   );
   const selectedConsultation = useConsultationStore(
-    (state) => state.selectedConsultation,
+    (state) => state.selectedConsultation
   );
   const setSelectedConsultation = useConsultationStore(
-    (state) => state.setSelectedConsultation,
+    (state) => state.setSelectedConsultation
   );
 
   const {
@@ -54,6 +58,24 @@ export default function FullTemplatesContent({
     setIsFullTemplatesDialogOpen(false);
   }
 
+  function buildNextManualReportDraft(
+    currentReport: string,
+    templateToAdd: string
+  ): string {
+    const trimmedCurrentReport = currentReport.trim();
+    const trimmedTemplateToAdd = templateToAdd.trim();
+
+    if (!trimmedCurrentReport) {
+      return trimmedTemplateToAdd;
+    }
+
+    if (!trimmedTemplateToAdd) {
+      return trimmedCurrentReport;
+    }
+
+    return `${trimmedCurrentReport}\n\n${trimmedTemplateToAdd}`;
+  }
+
   async function handleAddSelectedTemplateToReport() {
     if (!selectedTemplate) {
       alert("Debe seleccionar una plantilla.");
@@ -62,7 +84,12 @@ export default function FullTemplatesContent({
 
     await flushSelectedTemplateContentSave();
 
-    loadManualReportDraft(draftContent);
+    const nextManualReportDraft =
+      reportMode === "full-template"
+        ? buildNextManualReportDraft(manualReportDraft, draftContent)
+        : draftContent.trim();
+
+    loadManualReportDraft(nextManualReportDraft);
     setReportMode("full-template");
 
     if (selectedConsultation?.consultation_id) {
@@ -71,8 +98,8 @@ export default function FullTemplatesContent({
           selectedConsultation.consultation_id,
           {
             report_mode: "full-template",
-            manual_report_draft: draftContent,
-          },
+            manual_report_draft: nextManualReportDraft,
+          }
         );
 
         setSelectedConsultation(updated);
