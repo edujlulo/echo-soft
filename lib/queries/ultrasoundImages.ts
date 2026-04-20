@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase/client";
 import { Database } from "@/types/database";
+import * as tus from "tus-js-client";
 
 type UltrasoundImageRow =
   Database["public"]["Tables"]["ultrasound_images"]["Row"];
@@ -7,6 +8,25 @@ type UltrasoundImageInsert =
   Database["public"]["Tables"]["ultrasound_images"]["Insert"];
 
 const ULTRASOUND_IMAGES_BUCKET = "ultrasound-images";
+
+function getSupabaseStorageTusEndpoint(): string {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  if (!supabaseUrl) {
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable.");
+  }
+
+  const url = new URL(supabaseUrl);
+  const hostnameParts = url.hostname.split(".");
+
+  const projectId = hostnameParts[0];
+
+  if (!projectId) {
+    throw new Error("Could not determine Supabase project ID.");
+  }
+
+  return `https://${projectId}.storage.supabase.co/storage/v1/upload/resumable`;
+}
 
 const ALLOWED_IMAGE_MIME_TYPES = new Set([
   "image/jpeg",
@@ -37,6 +57,11 @@ export interface PreparedImageFile {
   width: UltrasoundImageRow["width"];
   height: UltrasoundImageRow["height"];
   extension: string;
+}
+
+export interface UploadProgressInfo {
+  bytesUploaded: number;
+  bytesTotal: number;
 }
 
 export interface UltrasoundImageListItem {
@@ -80,14 +105,14 @@ export function isSupportedImageFile(file: File): boolean {
 export function buildUltrasoundImageStoragePath(
   consultationId: string,
   imageId: string,
-  extension: string,
+  extension: string
 ): string {
   const normalizedExtension = extension ? extension.toLowerCase() : "jpg";
   return `${consultationId}/${imageId}.${normalizedExtension}`;
 }
 
 export async function getImageDimensions(
-  file: File,
+  file: File
 ): Promise<{ width: number | null; height: number | null }> {
   return new Promise((resolve) => {
     const objectUrl = URL.createObjectURL(file);
@@ -112,14 +137,14 @@ export async function getImageDimensions(
 
 export async function prepareUltrasoundImageFile(
   file: File,
-  consultationId: string,
+  consultationId: string
 ): Promise<PreparedImageFile> {
   const imageId = crypto.randomUUID();
   const extension = getFileExtension(file) || "jpg";
   const storagePath = buildUltrasoundImageStoragePath(
     consultationId,
     imageId,
-    extension,
+    extension
   );
   const dimensions = await getImageDimensions(file);
 
@@ -138,22 +163,79 @@ export async function prepareUltrasoundImageFile(
 
 export async function uploadUltrasoundImageFileToStorage(
   preparedFile: PreparedImageFile,
+  onProgress?: (progress: UploadProgressInfo) => void
 ): Promise<void> {
-  const { error } = await supabase.storage
-    .from(ULTRASOUND_IMAGES_BUCKET)
-    .upload(preparedFile.storagePath, preparedFile.file, {
-      cacheControl: "3600",
-      upsert: false,
-      contentType: preparedFile.mimeType,
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+
+  if (sessionError) {
+    throw new Error(`Failed to get Supabase session: ${sessionError.message}`);
+  }
+
+  const accessToken = session?.access_token;
+
+  if (!accessToken) {
+    throw new Error("Missing Supabase access token.");
+  }
+
+  const endpoint = getSupabaseStorageTusEndpoint();
+
+  await new Promise<void>((resolve, reject) => {
+    const upload = new tus.Upload(preparedFile.file, {
+      endpoint,
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        "x-upsert": "false",
+      },
+      uploadDataDuringCreation: true,
+      removeFingerprintOnSuccess: true,
+      chunkSize: 6 * 1024 * 1024,
+      metadata: {
+        bucketName: ULTRASOUND_IMAGES_BUCKET,
+        objectName: preparedFile.storagePath,
+        contentType: preparedFile.mimeType || "application/octet-stream",
+        cacheControl: "3600",
+      },
+      onError(error) {
+        reject(new Error(`Storage upload failed: ${error.message}`));
+      },
+      onProgress(bytesUploaded, bytesTotal) {
+        onProgress?.({
+          bytesUploaded,
+          bytesTotal,
+        });
+      },
+      onSuccess() {
+        resolve();
+      },
     });
 
-  if (error) {
-    throw new Error(`Storage upload failed: ${error.message}`);
-  }
+    upload
+      .findPreviousUploads()
+      .then((previousUploads) => {
+        if (previousUploads.length > 0) {
+          upload.resumeFromPreviousUpload(previousUploads[0]);
+        }
+
+        upload.start();
+      })
+      .catch((error) => {
+        reject(
+          new Error(
+            error instanceof Error
+              ? error.message
+              : "Failed to initialize resumable upload."
+          )
+        );
+      });
+  });
 }
 
 export async function deleteUltrasoundImageFileFromStorage(
-  storagePath: string,
+  storagePath: string
 ): Promise<void> {
   const { error } = await supabase.storage
     .from(ULTRASOUND_IMAGES_BUCKET)
@@ -166,7 +248,7 @@ export async function deleteUltrasoundImageFileFromStorage(
 
 export async function insertUltrasoundImageRow(
   preparedFile: PreparedImageFile,
-  context: UploadUltrasoundImageContext,
+  context: UploadUltrasoundImageContext
 ): Promise<UltrasoundImageRow> {
   const metadataFromContext: Record<string, unknown> =
     context.metadata &&
@@ -215,13 +297,14 @@ export async function insertUltrasoundImageRow(
 export async function createUltrasoundImage(
   file: File,
   context: UploadUltrasoundImageContext,
+  onProgress?: (progress: UploadProgressInfo) => void
 ): Promise<UltrasoundImageRow> {
   const preparedFile = await prepareUltrasoundImageFile(
     file,
-    context.consultationId,
+    context.consultationId
   );
 
-  await uploadUltrasoundImageFileToStorage(preparedFile);
+  await uploadUltrasoundImageFileToStorage(preparedFile, onProgress);
 
   try {
     return await insertUltrasoundImageRow(preparedFile, context);
@@ -248,7 +331,7 @@ function chunkArray<T>(items: T[], size: number): T[][] {
 }
 
 export async function fetchUltrasoundImageRowsByConsultation(
-  consultationId: string,
+  consultationId: string
 ): Promise<UltrasoundImageRow[]> {
   const { data, error } = await supabase
     .from("ultrasound_images")
@@ -266,7 +349,7 @@ export async function fetchUltrasoundImageRowsByConsultation(
 }
 
 export async function fetchUltrasoundImageRowById(
-  imageId: string,
+  imageId: string
 ): Promise<UltrasoundImageRow | null> {
   const { data, error } = await supabase
     .from("ultrasound_images")
@@ -283,7 +366,7 @@ export async function fetchUltrasoundImageRowById(
 }
 
 export async function deleteUltrasoundImageRowsByIds(
-  imageIds: string[],
+  imageIds: string[]
 ): Promise<void> {
   if (imageIds.length === 0) return;
 
@@ -298,7 +381,7 @@ export async function deleteUltrasoundImageRowsByIds(
 }
 
 export async function deleteUltrasoundImageFilesFromStorage(
-  storagePaths: string[],
+  storagePaths: string[]
 ): Promise<void> {
   if (storagePaths.length === 0) return;
 
@@ -316,7 +399,7 @@ export async function deleteUltrasoundImageFilesFromStorage(
 }
 
 export async function deleteSingleUltrasoundImage(
-  imageId: string,
+  imageId: string
 ): Promise<void> {
   const row = await fetchUltrasoundImageRowById(imageId);
 
@@ -329,7 +412,7 @@ export async function deleteSingleUltrasoundImage(
 }
 
 export async function deleteAllUltrasoundImagesByConsultation(
-  consultationId: string,
+  consultationId: string
 ): Promise<number> {
   const rows = await fetchUltrasoundImageRowsByConsultation(consultationId);
 
@@ -348,7 +431,7 @@ export async function deleteAllUltrasoundImagesByConsultation(
 
 // ============= FETCH ULTRASOUND IMAGES BY CONSULTATION ==============
 export async function fetchUltrasoundImagesByConsultation(
-  consultationId: string,
+  consultationId: string
 ): Promise<UltrasoundImageListItem[]> {
   const { data: rows, error } = await supabase
     .from("ultrasound_images")

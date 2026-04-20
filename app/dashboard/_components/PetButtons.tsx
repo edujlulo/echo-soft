@@ -1,10 +1,15 @@
 "use client";
 
+import AppDialog from "@/components/AppDialog";
 import Button from "@/components/Button";
 import { emptyPet, useSelectedPetStore } from "@/context/selectedPetStore";
+import { useState } from "react";
 
 export default function PetButtons() {
   const { selectedPet, startCreating, startEditing } = useSelectedPetStore();
+
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
 
   return (
     <div className="mb-2 flex flex-col gap-7">
@@ -17,7 +22,8 @@ export default function PetButtons() {
             !selectedPet ||
             JSON.stringify(selectedPet) === JSON.stringify(emptyPet)
           ) {
-            window.alert("Por favor seleccione una mascota");
+            setDialogMessage("Por favor seleccione una mascota");
+            setIsAlertDialogOpen(true);
             return;
           }
 
@@ -43,6 +49,20 @@ export default function PetButtons() {
           Borrar Mascota
         </Button>
       </div>
+
+      {/* ========== ALERTS DIALOG ============ */}
+      <AppDialog
+        isOpen={isAlertDialogOpen}
+        onClose={() => setIsAlertDialogOpen(false)}
+        navbarTitle="Aviso"
+        description={dialogMessage}
+        showCloseButton
+        showFooter
+        showCancelButton={false}
+        confirmLabel="Aceptar"
+        onConfirm={() => setIsAlertDialogOpen(false)}
+        widthClassName="w-[420px]"
+      />
     </div>
   );
 }

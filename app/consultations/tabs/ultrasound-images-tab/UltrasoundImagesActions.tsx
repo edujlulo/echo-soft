@@ -2,34 +2,42 @@
 
 import { useRef, useState } from "react";
 import Button from "@/components/Button";
-import { useUltrasoundImages } from "@/hooks/useUltrasoundImages";
 import { useClinicStore } from "@/context/activeClinicStore";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useConsultationStore } from "@/context/consultationStore";
 import AppDialog from "@/components/AppDialog";
+import {
+  type UploadUltrasoundImagesParams,
+  type UploadUltrasoundImagesResult,
+} from "@/hooks/useUltrasoundImages";
 
 interface Props {
   onUploadComplete?: () => Promise<void> | void;
+  uploadUltrasoundImages: (
+    params: UploadUltrasoundImagesParams
+  ) => Promise<UploadUltrasoundImagesResult>;
+  deleteAllUltrasoundImages: (consultationId: string) => Promise<number | void>;
+  isUploading: boolean;
+  isDeletingAllImages: boolean;
 }
 
-export default function UltrasoundImagesActions({ onUploadComplete }: Props) {
+export default function UltrasoundImagesActions({
+  onUploadComplete,
+  uploadUltrasoundImages,
+  deleteAllUltrasoundImages,
+  isUploading,
+  isDeletingAllImages,
+}: Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
-
-  const {
-    uploadUltrasoundImages,
-    deleteAllUltrasoundImages,
-    isUploading,
-    isDeletingAllImages,
-  } = useUltrasoundImages();
 
   const clinicId = useClinicStore((s) => s.activeClinic?.clinic_id);
   const vetId = useActiveVetStore((s) => s.activeVet?.vet_id);
   const petId = useSelectedPetStore((s) => s.selectedPet?.pet_id);
   const consultationId = useConsultationStore(
-    (s) => s.selectedConsultation?.consultation_id,
+    (s) => s.selectedConsultation?.consultation_id
   );
 
   function handleOpenFilePicker() {
@@ -56,7 +64,7 @@ export default function UltrasoundImagesActions({ onUploadComplete }: Props) {
   }
 
   async function handleFilesSelected(
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) {
     const files = event.target.files;
 

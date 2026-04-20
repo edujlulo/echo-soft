@@ -7,6 +7,7 @@ import {
   deleteSingleUltrasoundImage,
   fetchUltrasoundImagesByConsultation,
   isSupportedImageFile,
+  type UploadProgressInfo,
   type UploadUltrasoundImageContext,
   type UltrasoundImageListItem,
 } from "@/lib/queries/ultrasoundImages";
@@ -15,7 +16,18 @@ import { Database } from "@/types/database";
 type UltrasoundImageRow =
   Database["public"]["Tables"]["ultrasound_images"]["Row"];
 
-export interface UploadUltrasoundImagesParams extends UploadUltrasoundImageContext {
+export interface UploadProgressState {
+  isVisible: boolean;
+  percentage: number;
+  uploadedBytes: number;
+  totalBytes: number;
+  currentFileName: string | null;
+  currentFileIndex: number;
+  totalFiles: number;
+}
+
+export interface UploadUltrasoundImagesParams
+  extends UploadUltrasoundImageContext {
   files: File[] | FileList;
   startingSortOrder?: number;
 }
@@ -36,6 +48,15 @@ function normalizeFiles(files: File[] | FileList): File[] {
 
 export function useUltrasoundImages() {
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<UploadProgressState>({
+    isVisible: false,
+    percentage: 0,
+    uploadedBytes: 0,
+    totalBytes: 0,
+    currentFileName: null,
+    currentFileIndex: 0,
+    totalFiles: 0,
+  });
   const [error, setError] = useState<string | null>(null);
   const [images, setImages] = useState<UltrasoundImageListItem[]>([]);
   const [isLoadingImages, setIsLoadingImages] = useState(false);
@@ -45,7 +66,7 @@ export function useUltrasoundImages() {
 
   const uploadUltrasoundImages = useCallback(
     async (
-      params: UploadUltrasoundImagesParams,
+      params: UploadUltrasoundImagesParams
     ): Promise<UploadUltrasoundImagesResult> => {
       const {
         files,
@@ -62,7 +83,25 @@ export function useUltrasoundImages() {
       setIsUploading(true);
       setError(null);
 
+      setUploadProgress({
+        isVisible: true,
+        percentage: 0,
+        uploadedBytes: 0,
+        totalBytes: 0,
+        currentFileName: null,
+        currentFileIndex: 0,
+        totalFiles: 0,
+      });
+
       const normalizedFiles = normalizeFiles(files);
+
+      const totalFiles = normalizedFiles.length;
+      const totalBytes = normalizedFiles.reduce(
+        (sum, file) => sum + (file.size ?? 0),
+        0
+      );
+
+      let uploadedBytesSoFar = 0;
 
       if (normalizedFiles.length === 0) {
         setIsUploading(false);
@@ -74,6 +113,20 @@ export function useUltrasoundImages() {
 
       try {
         for (const [index, file] of normalizedFiles.entries()) {
+          setUploadProgress((current) => ({
+            ...current,
+            isVisible: true,
+            currentFileName: file.name,
+            currentFileIndex: index + 1,
+            totalFiles,
+            totalBytes,
+            uploadedBytes: uploadedBytesSoFar,
+            percentage:
+              totalBytes > 0
+                ? Math.round((uploadedBytesSoFar / totalBytes) * 100)
+                : 0,
+          }));
+
           if (!isSupportedImageFile(file)) {
             failed.push({
               fileName: file.name,
@@ -83,18 +136,53 @@ export function useUltrasoundImages() {
           }
 
           try {
-            const insertedRow = await createUltrasoundImage(file, {
-              clinicId,
-              vetId,
-              petId,
-              consultationId,
-              source,
-              notes,
-              sortOrder: startingSortOrder + index,
-              metadata,
-            });
+            const insertedRow = await createUltrasoundImage(
+              file,
+              {
+                clinicId,
+                vetId,
+                petId,
+                consultationId,
+                source,
+                notes,
+                sortOrder: startingSortOrder + index,
+                metadata,
+              },
+              ({ bytesUploaded, bytesTotal }: UploadProgressInfo) => {
+                const totalUploadedBytes = uploadedBytesSoFar + bytesUploaded;
+
+                setUploadProgress((current) => ({
+                  ...current,
+                  isVisible: true,
+                  currentFileName: file.name,
+                  currentFileIndex: index + 1,
+                  totalFiles,
+                  uploadedBytes: totalUploadedBytes,
+                  totalBytes,
+                  percentage:
+                    totalBytes > 0
+                      ? Math.min(
+                          100,
+                          Math.round((totalUploadedBytes / totalBytes) * 100)
+                        )
+                      : 0,
+                }));
+              }
+            );
 
             uploaded.push(insertedRow);
+
+            uploadedBytesSoFar += file.size ?? 0;
+
+            setUploadProgress((current) => ({
+              ...current,
+              uploadedBytes: uploadedBytesSoFar,
+              totalBytes,
+              percentage:
+                totalBytes > 0
+                  ? Math.round((uploadedBytesSoFar / totalBytes) * 100)
+                  : 100,
+            }));
           } catch (uploadError) {
             const message =
               uploadError instanceof Error
@@ -123,10 +211,28 @@ export function useUltrasoundImages() {
         setError(message);
         throw unexpectedError;
       } finally {
+        setUploadProgress((current) => ({
+          ...current,
+          percentage: 100,
+          uploadedBytes: current.totalBytes,
+        }));
+
         setIsUploading(false);
+
+        setTimeout(() => {
+          setUploadProgress({
+            isVisible: false,
+            percentage: 0,
+            uploadedBytes: 0,
+            totalBytes: 0,
+            currentFileName: null,
+            currentFileIndex: 0,
+            totalFiles: 0,
+          });
+        }, 400);
       }
     },
-    [],
+    []
   );
 
   // ============= FETCH ULTRASOUND IMAGES ==============
@@ -136,8 +242,9 @@ export function useUltrasoundImages() {
       setFetchError(null);
 
       try {
-        const fetchedImages =
-          await fetchUltrasoundImagesByConsultation(consultationId);
+        const fetchedImages = await fetchUltrasoundImagesByConsultation(
+          consultationId
+        );
 
         setImages(fetchedImages);
         return fetchedImages;
@@ -153,7 +260,7 @@ export function useUltrasoundImages() {
         setIsLoadingImages(false);
       }
     },
-    [],
+    []
   );
 
   // ============= DELETE ULTRASOUND IMAGES ==============
@@ -165,7 +272,7 @@ export function useUltrasoundImages() {
       await deleteSingleUltrasoundImage(imageId);
 
       setImages((currentImages) =>
-        currentImages.filter((image) => image.id !== imageId),
+        currentImages.filter((image) => image.id !== imageId)
       );
     } catch (deleteError) {
       const message =
@@ -200,7 +307,7 @@ export function useUltrasoundImages() {
         setIsDeletingAllImages(false);
       }
     },
-    [],
+    []
   );
 
   return useMemo(
@@ -216,6 +323,7 @@ export function useUltrasoundImages() {
       fetchUltrasoundImages,
       deleteUltrasoundImage,
       deleteAllUltrasoundImages,
+      uploadProgress,
       clearUltrasoundImagesError: () => setError(null),
     }),
     [
@@ -230,6 +338,7 @@ export function useUltrasoundImages() {
       fetchUltrasoundImages,
       deleteUltrasoundImage,
       deleteAllUltrasoundImages,
-    ],
+      uploadProgress,
+    ]
   );
 }

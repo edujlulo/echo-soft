@@ -1,12 +1,46 @@
 "use client";
 
-import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useEffect, useMemo, useState } from "react";
+
+import { useSelectedPetStore } from "@/context/selectedPetStore";
+import { useConsultationStore } from "@/context/consultationStore";
+import { useConsultations } from "@/hooks/useConsultations";
+
 import { Database } from "@/types/database";
 
+type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
+
 export default function MedicalHistoryTable() {
+  const { consultationsByPet, loadingConsultations } = useConsultations();
+
+  const selectedPet = useSelectedPetStore((s) => s.selectedPet);
+
+  const { selectedConsultation, setSelectedConsultation, loadFromSelected } =
+    useConsultationStore();
+
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+
+  // ======== COLUMNS ========
   const columns: GridColDef[] = [
     {
-      field: "label",
+      field: "consultation_date",
+      headerName: "Fecha",
+      width: 110,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => {
+        if (!params.value) return "";
+
+        const date = new Date(params.value);
+
+        if (isNaN(date.getTime())) return "";
+
+        return date.toLocaleDateString("en-GB");
+      },
+    },
+    {
+      field: "vet_name",
       headerName: "Veterinario",
       flex: 1,
       sortable: false,
@@ -14,25 +48,84 @@ export default function MedicalHistoryTable() {
     },
   ];
 
-  const emptyRowsCount = Math.max(0, 26);
+  // ========= ROWS ==========
+  const emptyRowsCount = 26;
 
-  const emptyRows = Array.from({ length: emptyRowsCount }, (_, index) => ({
-    id: `empty-${index}`,
-    label: "",
-    isEmpty: true,
-  }));
+  const rows = useMemo(() => {
+    const consultationRows =
+      consultationsByPet?.map((c: ConsultationRow) => ({
+        id: c.consultation_id,
+        consultation_date: c.consultation_date?.slice(0, 10),
+        vet_name: c.vet_name ?? "",
+        isEmpty: false,
+      })) ?? [];
 
-  const rows = [...emptyRows];
+    const missingRows = Math.max(0, emptyRowsCount - consultationRows.length);
+
+    const emptyRows = Array.from({ length: missingRows }, (_, index) => ({
+      id: `empty-${index}`,
+      consultation_date: "",
+      vet_name: "",
+      isEmpty: true,
+    }));
+
+    return [...consultationRows, ...emptyRows];
+  }, [consultationsByPet]);
+
+  // === FOR CLEAN SELECCION IF SELECTEDPET CHANGE ===
+  useEffect(() => {
+    setSelectedRowId(null);
+    setSelectedConsultation(null);
+    loadFromSelected(null);
+  }, [selectedPet, setSelectedConsultation, loadFromSelected]);
+
+  // ===== FOR SELECTION OF A CONSULTATION ON TABLE =====
+  const selectConsultation = (id: string) => {
+    const consultation =
+      consultationsByPet?.find(
+        (c: ConsultationRow) => c.consultation_id === id
+      ) ?? null;
+
+    setSelectedRowId(id);
+    setSelectedConsultation(consultation);
+    loadFromSelected(consultation);
+  };
+
+  const handleRowClick = (params: any) => {
+    if (String(params.id).startsWith("empty")) return;
+
+    selectConsultation(params.id);
+  };
+
+  const handleKeyDown = (params: any, event: any) => {
+    if (event.key === "Enter" || event.key === " ") {
+      if (String(params.id).startsWith("empty")) return;
+
+      selectConsultation(params.id);
+      event.preventDefault();
+    }
+  };
+
+  // ==== SYNCHRONIZATION OF SELECTEDCONSULTATION ====
+  useEffect(() => {
+    setSelectedRowId(selectedConsultation?.consultation_id ?? null);
+  }, [selectedConsultation]);
 
   return (
     <div className="h-full w-full min-h-0 min-w-0 overflow-hidden">
       <DataGrid
         rows={rows}
         columns={columns}
+        loading={loadingConsultations}
         hideFooter
         rowHeight={26}
         columnHeaderHeight={28}
         checkboxSelection={false}
+        onRowClick={handleRowClick}
+        onCellKeyDown={handleKeyDown}
+        getRowClassName={(params) =>
+          selectedRowId === params.id ? "selected-row" : ""
+        }
         sx={{
           width: "100%",
           height: "100%",
@@ -47,10 +140,17 @@ export default function MedicalHistoryTable() {
             backgroundColor: "#dbeafe",
             color: "#172554",
             borderRight: "1px solid #93c5fd",
+            justifyContent: "center",
+          },
+
+          "& .MuiDataGrid-columnHeaderTitleContainer": {
+            justifyContent: "center",
           },
 
           "& .MuiDataGrid-columnHeaderTitle": {
             fontWeight: "bold",
+            width: "100%",
+            textAlign: "center",
           },
 
           "& .MuiDataGrid-cell": {
@@ -63,10 +163,18 @@ export default function MedicalHistoryTable() {
             cursor: "pointer",
           },
 
-          "& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover":
-            {
-              backgroundColor: "#93c5fd",
-            },
+          "& .Mui-selected": {
+            backgroundColor: "#ffffff !important",
+          },
+
+          "& .selected-row": {
+            backgroundColor: "#1e3a8a !important",
+            color: "#f0f9ff",
+          },
+
+          "& .MuiDataGrid-cell:focus": {
+            outline: "3px solid #1e3a8a",
+          },
         }}
       />
     </div>

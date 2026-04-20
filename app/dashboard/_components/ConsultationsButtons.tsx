@@ -7,10 +7,13 @@ import { useConsultations } from "@/hooks/useConsultations";
 import { useRouter } from "next/navigation";
 import MedicalHistoryDialog from "../medical-history-dialog/MedicalHistoryDialog";
 import { useState } from "react";
+import AppDialog from "@/components/AppDialog";
 
 export default function ConsultationsButtons() {
   const [isMedicalHistoryDialogOpen, setIsMedicalHistoryDialogOpen] =
     useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
 
   const router = useRouter();
 
@@ -33,7 +36,8 @@ export default function ConsultationsButtons() {
         className="w-33"
         onClick={() => {
           if (!selectedConsultation?.consultation_id) {
-            window.alert("Por favor seleccione una consulta");
+            setDialogMessage("Por favor seleccione una consulta");
+            setIsAlertDialogOpen(true);
             return;
           }
 
@@ -49,7 +53,8 @@ export default function ConsultationsButtons() {
             !selectedPet ||
             JSON.stringify(selectedPet) === JSON.stringify(emptyPet)
           ) {
-            window.alert("Por favor seleccione una mascota");
+            setDialogMessage("Por favor seleccione una mascota");
+            setIsAlertDialogOpen(true);
             return;
           }
 
@@ -79,7 +84,20 @@ export default function ConsultationsButtons() {
         {/* <span className="text-xs text-gray-500 mt-0.5 ml-1">En desarrollo</span> */}
       </div>
       <div className="flex flex-col items-center">
-        <Button onClick={() => setIsMedicalHistoryDialogOpen(true)}>
+        <Button
+          onClick={() => {
+            if (
+              !selectedPet ||
+              JSON.stringify(selectedPet) === JSON.stringify(emptyPet)
+            ) {
+              setDialogMessage("Por favor seleccione una mascota");
+              setIsAlertDialogOpen(true);
+              return;
+            }
+
+            setIsMedicalHistoryDialogOpen(true);
+          }}
+        >
           Historial Médico
         </Button>
 
@@ -95,6 +113,20 @@ export default function ConsultationsButtons() {
       <MedicalHistoryDialog
         isMedicalHistoryDialogOpen={isMedicalHistoryDialogOpen}
         setIsMedicalHistoryDialogOpen={setIsMedicalHistoryDialogOpen}
+      />
+
+      {/* ========== ALERTS DIALOG ============ */}
+      <AppDialog
+        isOpen={isAlertDialogOpen}
+        onClose={() => setIsAlertDialogOpen(false)}
+        navbarTitle="Aviso"
+        description={dialogMessage}
+        showCloseButton
+        showFooter
+        showCancelButton={false}
+        confirmLabel="Aceptar"
+        onConfirm={() => setIsAlertDialogOpen(false)}
+        widthClassName="w-[420px]"
       />
     </div>
   );

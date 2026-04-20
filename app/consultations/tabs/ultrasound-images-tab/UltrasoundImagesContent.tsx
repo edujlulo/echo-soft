@@ -62,6 +62,49 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
   );
 }
 
+function UploadProgressState({
+  percentage,
+  currentFileName,
+  currentFileIndex,
+  totalFiles,
+}: {
+  percentage: number;
+  currentFileName: string | null;
+  currentFileIndex: number;
+  totalFiles: number;
+}) {
+  return (
+    <div className="h-full min-h-[320px] w-full flex items-center justify-center">
+      <div className="w-full max-w-2xl rounded-xl border border-gray-300 bg-white p-10 shadow-sm">
+        <div className="text-center">
+          <p className="text-2xl font-semibold text-gray-800">
+            Subiendo imágenes...
+          </p>
+
+          <p className="mt-3 text-base text-gray-500">
+            Archivo {currentFileIndex} de {totalFiles}
+          </p>
+
+          <p className="mt-2 text-sm text-gray-500 break-all">
+            {currentFileName ?? "Preparando archivo..."}
+          </p>
+        </div>
+
+        <div className="mt-8 h-8 w-full overflow-hidden rounded-full bg-gray-200">
+          <div
+            className="h-full rounded-full bg-blue-600 transition-all duration-150"
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+
+        <p className="mt-4 text-center text-3xl font-bold text-blue-700">
+          {percentage}%
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function UltrasoundImagesContent() {
   const [index, setIndex] = useState(-1);
 
@@ -69,8 +112,19 @@ export default function UltrasoundImagesContent() {
     (s) => s.selectedConsultation?.consultation_id
   );
 
-  const { images, isLoadingImages, fetchUltrasoundImages, fetchError } =
-    useUltrasoundImages();
+  const {
+    images,
+    isLoadingImages,
+    fetchUltrasoundImages,
+    fetchError,
+    uploadProgress,
+    isUploading,
+    uploadUltrasoundImages,
+    deleteAllUltrasoundImages,
+    deleteUltrasoundImage,
+    isDeletingAllImages,
+    deletingImageId,
+  } = useUltrasoundImages();
 
   const loadImages = useCallback(async () => {
     if (!consultationId) return;
@@ -100,7 +154,14 @@ export default function UltrasoundImagesContent() {
     <div className="h-full min-h-0 flex flex-row gap-4">
       {/* === LEFT === */}
       <div className="w-[1150px] h-full overflow-y-auto">
-        {isLoadingImages ? (
+        {isUploading && uploadProgress.isVisible ? (
+          <UploadProgressState
+            percentage={uploadProgress.percentage}
+            currentFileName={uploadProgress.currentFileName}
+            currentFileIndex={uploadProgress.currentFileIndex}
+            totalFiles={uploadProgress.totalFiles}
+          />
+        ) : isLoadingImages ? (
           <LoadingState />
         ) : fetchError ? (
           <ErrorState onRetry={loadImages} />
@@ -112,6 +173,8 @@ export default function UltrasoundImagesContent() {
               images={images}
               onZoom={openLightbox}
               onDeleteComplete={loadImages}
+              deleteUltrasoundImage={deleteUltrasoundImage}
+              deletingImageId={deletingImageId}
             />
 
             <Lightbox
@@ -135,7 +198,13 @@ export default function UltrasoundImagesContent() {
           </p>
         </div>
         <div className="h-full pl-4 pb-18 flex">
-          <UltrasoundImagesActions onUploadComplete={loadImages} />
+          <UltrasoundImagesActions
+            onUploadComplete={loadImages}
+            uploadUltrasoundImages={uploadUltrasoundImages}
+            deleteAllUltrasoundImages={deleteAllUltrasoundImages}
+            isUploading={isUploading}
+            isDeletingAllImages={isDeletingAllImages}
+          />
         </div>
       </div>
     </div>

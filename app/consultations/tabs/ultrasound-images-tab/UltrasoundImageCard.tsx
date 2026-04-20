@@ -3,7 +3,6 @@
 import AppDialog from "@/components/AppDialog";
 import Button from "@/components/Button";
 import { useState } from "react";
-import { useUltrasoundImages } from "@/hooks/useUltrasoundImages";
 
 interface Image {
   id: string;
@@ -16,6 +15,8 @@ interface Props {
   index: number;
   onZoom: (index: number) => void;
   onDeleteComplete?: () => Promise<void> | void;
+  deleteUltrasoundImage: (imageId: string) => Promise<void>;
+  deletingImageId: string | null;
 }
 
 export default function UltrasoundImageCard({
@@ -23,10 +24,10 @@ export default function UltrasoundImageCard({
   index,
   onZoom,
   onDeleteComplete,
+  deleteUltrasoundImage,
+  deletingImageId,
 }: Props) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
-  const { deleteUltrasoundImage, deletingImageId } = useUltrasoundImages();
 
   const isDeletingThisImage = deletingImageId === image.id;
 

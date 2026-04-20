@@ -1,7 +1,6 @@
 "use client";
 
 import MedicalHistoryActions from "./MedicalHistoryActions";
-import MedicalHistoryImagesRow from "./MedicalHistoryImagesRow";
 import MedicalHistoryPetInfoForm from "./MedicalHistoryPetInfoForm";
 import MedicalHistoryTable from "./MedicalHistoryTable";
 import MedicalHistoryTextarea from "./MedicalHistoryTextarea";
