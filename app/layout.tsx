@@ -1,5 +1,7 @@
 import "../styles/globals.css";
 import { ReactNode } from "react";
+import { UltrasoundUploadManagerProvider } from "@/components/providers/UltrasoundUploadManagerProvider";
+import GlobalUltrasoundUploadOverlay from "@/components/uploads/GlobalUltrasoundUploadOverlay";
 
 export const metadata = {
   title: "EcoSoft",
@@ -11,11 +13,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es">
       <body className="flex flex-col min-h-screen">
-        {/* Main container that allows scrolling when the viewport is smaller */}
-        <main className="flex-1 flex justify-center items-center overflow-auto">
-          {/* Wrapper that centers the content only if there is enough space */}
-          <div className="inline-block max-w-full max-h-full">{children}</div>
-        </main>
+        <UltrasoundUploadManagerProvider>
+          {/* Main container that allows scrolling when the viewport is smaller */}
+          <main className="flex-1 flex justify-center items-center overflow-auto">
+            {/* Wrapper that centers the content only if there is enough space */}
+            <div className="inline-block max-w-full max-h-full">{children}</div>
+          </main>
+
+          <GlobalUltrasoundUploadOverlay />
+        </UltrasoundUploadManagerProvider>
       </body>
     </html>
   );

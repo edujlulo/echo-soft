@@ -6,6 +6,7 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import UltrasoundImagesGrid from "./UltrasoundImagesGrid";
 import { useUltrasoundImages } from "@/hooks/useUltrasoundImages";
 import { useConsultationStore } from "@/context/consultationStore";
+import { useUltrasoundUploadManager } from "@/components/providers/UltrasoundUploadManagerProvider";
 
 import "yet-another-react-lightbox/styles.css";
 import UltrasoundImagesActions from "./UltrasoundImagesActions";
@@ -108,8 +109,17 @@ function UploadProgressState({
 export default function UltrasoundImagesContent() {
   const [index, setIndex] = useState(-1);
 
+  const { state: uploadManagerState } = useUltrasoundUploadManager();
+
+  const activeUploadItem =
+    [...uploadManagerState.items]
+      .reverse()
+      .find(
+        (item) => item.status === "queued" || item.status === "uploading",
+      ) ?? null;
+
   const consultationId = useConsultationStore(
-    (s) => s.selectedConsultation?.consultation_id
+    (s) => s.selectedConsultation?.consultation_id,
   );
 
   const {
@@ -117,9 +127,6 @@ export default function UltrasoundImagesContent() {
     isLoadingImages,
     fetchUltrasoundImages,
     fetchError,
-    uploadProgress,
-    isUploading,
-    uploadUltrasoundImages,
     deleteAllUltrasoundImages,
     deleteUltrasoundImage,
     isDeletingAllImages,
@@ -154,12 +161,12 @@ export default function UltrasoundImagesContent() {
     <div className="h-full min-h-0 flex flex-row gap-4">
       {/* === LEFT === */}
       <div className="w-[1150px] h-full overflow-y-auto">
-        {isUploading && uploadProgress.isVisible ? (
+        {activeUploadItem ? (
           <UploadProgressState
-            percentage={uploadProgress.percentage}
-            currentFileName={uploadProgress.currentFileName}
-            currentFileIndex={uploadProgress.currentFileIndex}
-            totalFiles={uploadProgress.totalFiles}
+            percentage={activeUploadItem.percentage}
+            currentFileName={activeUploadItem.fileName}
+            currentFileIndex={activeUploadItem.batchIndex}
+            totalFiles={activeUploadItem.batchTotal}
           />
         ) : isLoadingImages ? (
           <LoadingState />
@@ -200,9 +207,7 @@ export default function UltrasoundImagesContent() {
         <div className="h-full pl-4 pb-18 flex">
           <UltrasoundImagesActions
             onUploadComplete={loadImages}
-            uploadUltrasoundImages={uploadUltrasoundImages}
             deleteAllUltrasoundImages={deleteAllUltrasoundImages}
-            isUploading={isUploading}
             isDeletingAllImages={isDeletingAllImages}
           />
         </div>

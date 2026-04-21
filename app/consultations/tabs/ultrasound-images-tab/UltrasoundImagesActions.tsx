@@ -7,37 +7,35 @@ import { useActiveVetStore } from "@/context/activeVetStore";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useConsultationStore } from "@/context/consultationStore";
 import AppDialog from "@/components/AppDialog";
-import {
-  type UploadUltrasoundImagesParams,
-  type UploadUltrasoundImagesResult,
-} from "@/hooks/useUltrasoundImages";
+import { ultrasoundUploadManager } from "@/lib/uploads/ultrasoundUploadManager";
+import { useUltrasoundUploadManager } from "@/components/providers/UltrasoundUploadManagerProvider";
 
 interface Props {
   onUploadComplete?: () => Promise<void> | void;
-  uploadUltrasoundImages: (
-    params: UploadUltrasoundImagesParams
-  ) => Promise<UploadUltrasoundImagesResult>;
   deleteAllUltrasoundImages: (consultationId: string) => Promise<number | void>;
-  isUploading: boolean;
   isDeletingAllImages: boolean;
 }
 
 export default function UltrasoundImagesActions({
   onUploadComplete,
-  uploadUltrasoundImages,
   deleteAllUltrasoundImages,
-  isUploading,
   isDeletingAllImages,
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
 
+  const { state: uploadManagerState } = useUltrasoundUploadManager();
+
+  const isUploading = uploadManagerState.items.some(
+    (item) => item.status === "queued" || item.status === "uploading",
+  );
+
   const clinicId = useClinicStore((s) => s.activeClinic?.clinic_id);
   const vetId = useActiveVetStore((s) => s.activeVet?.vet_id);
   const petId = useSelectedPetStore((s) => s.selectedPet?.pet_id);
   const consultationId = useConsultationStore(
-    (s) => s.selectedConsultation?.consultation_id
+    (s) => s.selectedConsultation?.consultation_id,
   );
 
   function handleOpenFilePicker() {
@@ -47,6 +45,44 @@ export default function UltrasoundImagesActions({
   function handleOpenDeleteAllDialog() {
     setIsDeleteAllDialogOpen(true);
   }
+
+  // function handleTestGlobalUploadOverlay() {
+  //   const uploadId = crypto.randomUUID();
+
+  //   ultrasoundUploadManager.registerItem({
+  //     id: uploadId,
+  //     fileName: "test-ultrasound-image.jpg",
+  //     consultationId: "test-consultation",
+  //     petId: null,
+  //     clinicId: null,
+  //     vetId: null,
+  //     status: "uploading",
+  //     percentage: 0,
+  //     uploadedBytes: 0,
+  //     totalBytes: 10 * 1024 * 1024,
+  //     error: null,
+  //   });
+
+  //   let uploaded = 0;
+  //   const total = 10 * 1024 * 1024;
+
+  //   const interval = window.setInterval(() => {
+  //     uploaded += 512 * 1024;
+
+  //     const percentage = Math.min(100, Math.round((uploaded / total) * 100));
+
+  //     ultrasoundUploadManager.updateItem(uploadId, {
+  //       uploadedBytes: Math.min(uploaded, total),
+  //       totalBytes: total,
+  //       percentage,
+  //       status: percentage >= 100 ? "success" : "uploading",
+  //     });
+
+  //     if (percentage >= 100) {
+  //       window.clearInterval(interval);
+  //     }
+  //   }, 250);
+  // }
 
   async function handleDeleteAllImages() {
     if (!consultationId) {
@@ -64,7 +100,7 @@ export default function UltrasoundImagesActions({
   }
 
   async function handleFilesSelected(
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) {
     const files = event.target.files;
 
@@ -76,15 +112,14 @@ export default function UltrasoundImagesActions({
     }
 
     try {
-      await uploadUltrasoundImages({
+      await ultrasoundUploadManager.enqueueUltrasoundUploads({
         files,
         clinicId,
         vetId,
         petId,
         consultationId,
+        onUploadComplete,
       });
-
-      await onUploadComplete?.();
 
       // limpiar input para permitir volver a subir los mismos archivos
       event.target.value = "";
@@ -121,6 +156,14 @@ export default function UltrasoundImagesActions({
           "Copiar imágenes desde la carpeta"
         )}
       </Button>
+
+      {/* <button
+        type="button"
+        onClick={handleTestGlobalUploadOverlay}
+        className="mt-2 rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+      >
+        Test global upload overlay
+      </button> */}
 
       <Button
         type="button"

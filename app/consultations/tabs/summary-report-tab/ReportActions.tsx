@@ -21,8 +21,12 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
   const { finalReport } = useFinalReport();
   const formConsultation = useConsultationStore((s) => s.formConsultation);
   const consultationId = useConsultationStore(
-    (s) => s.selectedConsultation?.consultation_id
+    (s) => s.selectedConsultation?.consultation_id,
   );
+  const consultationPdfName = useConsultationStore(
+    (s) => s.selectedConsultation?.suggested_pdf_name,
+  );
+
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
   const activeVet = useActiveVetStore((s) => s.activeVet);
   const activeClinic = useClinicStore((s) => s.activeClinic);
@@ -75,7 +79,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
       a.download =
         layoutMode === "single"
           ? "Ecosoft-report-1-image-per-page.pdf"
-          : "Ecosoft-report.pdf";
+          : "Ecosoft-report";
       a.click();
 
       window.URL.revokeObjectURL(url);

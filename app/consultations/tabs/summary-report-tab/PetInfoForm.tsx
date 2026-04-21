@@ -145,7 +145,9 @@ export default function PetInfoForm({
             labelClassName="w-56 font-bold"
             inputClassName="w-110 bg-white"
             forceUpperCase={false}
-            value={formConsultation?.suggested_pdf_name ?? ""}
+            value={`${selectedPet?.name} - ${selectedPet?.owner} - ECOGRAFIA - ${formConsultation?.consultation_date}`}
+            readOnly
+            // value={formConsultation?.suggested_pdf_name ?? ""}
             onChange={(e) =>
               setFieldConsultation("suggested_pdf_name", e.target.value)
             }
