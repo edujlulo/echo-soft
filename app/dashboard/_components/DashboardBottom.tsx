@@ -6,8 +6,17 @@ import PetButtons from "./PetButtons";
 import PetImage from "./PetImage";
 import SummaryFields from "./SummaryFields";
 import ConsultationsTable from "./ConsultationsTable";
+import { useConsultations } from "@/hooks/useConsultations";
 
 export default function DashboardBottom() {
+  const {
+    consultationsByPet,
+    loadingConsultations,
+    addConsultation,
+    deleteConsultation,
+    isDeletingConsultation,
+  } = useConsultations();
+
   return (
     <div className="h-full mt-1 flex justify-end">
       <div className="w-full flex flex-row gap-2 ">
@@ -27,7 +36,10 @@ export default function DashboardBottom() {
 
             {/* ======= CONSULTATIONS TABLE ======= */}
             <div className="w-full h-full flex-1 mr-20 flex justify-center items-start">
-              <ConsultationsTable />
+              <ConsultationsTable
+                consultationsByPet={consultationsByPet}
+                loadingConsultations={loadingConsultations}
+              />
             </div>
           </div>
 
@@ -39,7 +51,11 @@ export default function DashboardBottom() {
 
         {/* ========= CONSULTATIONS BUTTONS ======== */}
         <div className="mt-10 mr-10 flex">
-          <ConsultationsButtons />
+          <ConsultationsButtons
+            addConsultation={addConsultation}
+            deleteConsultation={deleteConsultation}
+            isDeletingConsultation={isDeletingConsultation}
+          />
         </div>
       </div>
     </div>

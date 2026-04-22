@@ -8,7 +8,9 @@ import { useSelectedPetStore } from "@/context/selectedPetStore";
 import {
   insertConsultation,
   getConsultationsByPetId,
+  deleteConsultationWithImages,
 } from "@/lib/queries/consultations";
+import { Database } from "@/types/database";
 
 import { useCallback, useEffect, useState } from "react";
 
@@ -16,10 +18,12 @@ export const useConsultations = () => {
   const { activeVet } = useActiveVetStore();
   const { activeClinic } = useClinicStore();
   const { selectedPet } = useSelectedPetStore();
-  const { setSelectedConsultation } = useConsultationStore();
+  const { setSelectedConsultation, loadFromSelected, clearForm } =
+    useConsultationStore();
 
   const [consultationsByPet, setConsultationsByPet] = useState<any[]>([]);
   const [loadingConsultations, setLoadingConsultations] = useState(false);
+  const [isDeletingConsultation, setIsDeletingConsultation] = useState(false);
 
   // ========= INSERT NEW CONSULTATION =========
   const addConsultation = useCallback(
@@ -57,7 +61,61 @@ export const useConsultations = () => {
 
       return result;
     },
-    [activeVet, activeClinic, selectedPet],
+    [activeVet, activeClinic, selectedPet]
+  );
+
+  // ========= DELETE CONSULTATION =========
+  const deleteConsultation = useCallback(
+    async (
+      consultation: Database["public"]["Tables"]["consultations"]["Row"]
+    ) => {
+      if (!consultation?.consultation_id) {
+        throw new Error("No consultation selected");
+      }
+
+      if (!activeVet) {
+        throw new Error("No active veterinarian available");
+      }
+
+      const isOwnerOrAdmin =
+        activeVet.role === "owner" || activeVet.role === "admin";
+
+      const isOwnerOfConsultation = consultation.vet_id === activeVet.vet_id;
+
+      if (!isOwnerOfConsultation && !isOwnerOrAdmin) {
+        throw new Error(
+          "No tiene permiso para borrar esta consulta. Solo puede borrarla el veterinario que la creó, o un usuario con rol owner o admin."
+        );
+      }
+
+      setIsDeletingConsultation(true);
+
+      try {
+        await deleteConsultationWithImages(consultation.consultation_id);
+
+        setSelectedConsultation(null);
+        loadFromSelected(null);
+        clearForm();
+
+        if (selectedPet?.pet_id) {
+          const updatedConsultations = await getConsultationsByPetId(
+            selectedPet.pet_id
+          );
+          setConsultationsByPet(updatedConsultations);
+        } else {
+          setConsultationsByPet([]);
+        }
+      } finally {
+        setIsDeletingConsultation(false);
+      }
+    },
+    [
+      activeVet,
+      selectedPet,
+      setSelectedConsultation,
+      loadFromSelected,
+      clearForm,
+    ]
   );
 
   // ========= FETCH CONSULTATIONS BY PET =========
@@ -83,8 +141,10 @@ export const useConsultations = () => {
 
   return {
     addConsultation,
+    deleteConsultation,
     consultationsByPet,
     fetchConsultationsByPet,
     loadingConsultations,
+    isDeletingConsultation,
   };
 };

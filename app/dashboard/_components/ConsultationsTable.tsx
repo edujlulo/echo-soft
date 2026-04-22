@@ -6,18 +6,24 @@ import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useConsultationStore } from "@/context/consultationStore";
 
 import { useRef, useEffect, useMemo, useState } from "react";
-import { useConsultations } from "@/hooks/useConsultations";
 
 import { Database } from "@/types/database";
 import { useRouter } from "next/navigation";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
-export default function ConsultationsTable() {
-  const router = useRouter();
-  const { consultationsByPet, loadingConsultations } = useConsultations();
+interface Props {
+  consultationsByPet: ConsultationRow[];
+  loadingConsultations: boolean;
+}
 
-  const { selectedPet } = useSelectedPetStore();
+export default function ConsultationsTable({
+  consultationsByPet,
+  loadingConsultations,
+}: Props) {
+  const router = useRouter();
+
+  const selectedPet = useSelectedPetStore((s) => s.selectedPet);
 
   const { selectedConsultation, setSelectedConsultation, loadFromSelected } =
     useConsultationStore();
@@ -112,7 +118,7 @@ export default function ConsultationsTable() {
 
     const timeout = setTimeout(() => {
       const rowElement = document.querySelector(
-        `[data-id="${selectedRowId}"]`,
+        `[data-id="${selectedRowId}"]`
       ) as HTMLDivElement | null;
 
       if (rowElement) {
@@ -133,7 +139,7 @@ export default function ConsultationsTable() {
   const selectConsultation = (id: string) => {
     const consultation =
       consultationsByPet?.find(
-        (c: ConsultationRow) => c.consultation_id === id,
+        (c: ConsultationRow) => c.consultation_id === id
       ) ?? null;
 
     setSelectedRowId(id);
