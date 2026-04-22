@@ -8,14 +8,18 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 import { emptyPet, useSelectedPetStore } from "@/context/selectedPetStore";
 import AppDialog from "@/components/AppDialog";
+import { useActiveVetStore } from "@/context/activeVetStore";
 
 export default function PetImage() {
-  const { images, loading, handleUpload } = usePetImages();
+  const { images, loading, handleUpload, handleDelete } = usePetImages();
 
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
+  const activeVet = useActiveVetStore((s) => s.activeVet);
 
   const [dialogMessage, setDialogMessage] = useState("");
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [isDeleteConfirmDialogOpen, setIsDeleteConfirmDialogOpen] =
+    useState(false);
 
   const [isZoomOpen, setIsZoomOpen] = useState(false);
 
@@ -24,6 +28,70 @@ export default function PetImage() {
   const profileImageSrc = images.profile || "/images/blank-petimage.jpg";
   const hasRealProfileImage =
     !!images.profile && images.profile !== "/images/blank-petimage.jpg";
+
+  const handleOpenDeleteConfirmation = () => {
+    if (
+      !selectedPet ||
+      JSON.stringify(selectedPet) === JSON.stringify(emptyPet)
+    ) {
+      setDialogMessage("Por favor seleccione una mascota");
+      setIsAlertDialogOpen(true);
+      return;
+    }
+
+    if (!hasRealProfileImage || !selectedPet.image_path) {
+      setDialogMessage("La mascota no tiene una imagen de perfil para borrar");
+      setIsAlertDialogOpen(true);
+      return;
+    }
+
+    setIsDeleteConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDeleteImage = async () => {
+    if (
+      !selectedPet ||
+      JSON.stringify(selectedPet) === JSON.stringify(emptyPet)
+    ) {
+      setIsDeleteConfirmDialogOpen(false);
+      setDialogMessage("Por favor seleccione una mascota");
+      setIsAlertDialogOpen(true);
+      return;
+    }
+
+    if (!activeVet?.clinic_id) {
+      setIsDeleteConfirmDialogOpen(false);
+      setDialogMessage("No hay un veterinario activo seleccionado");
+      setIsAlertDialogOpen(true);
+      return;
+    }
+
+    if (selectedPet.clinic_id !== activeVet.clinic_id) {
+      setIsDeleteConfirmDialogOpen(false);
+      setDialogMessage(
+        "No tiene permiso para borrar esta imagen porque la mascota no pertenece a la misma clínica del veterinario activo."
+      );
+      setIsAlertDialogOpen(true);
+      return;
+    }
+
+    try {
+      await handleDelete("profile");
+
+      setIsDeleteConfirmDialogOpen(false);
+      // setDialogMessage("La imagen de perfil fue borrada correctamente");
+      // setIsAlertDialogOpen(true);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Ocurrió un error al borrar la imagen de perfil";
+
+      setIsDeleteConfirmDialogOpen(false);
+      setDialogMessage(message);
+      setIsAlertDialogOpen(true);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-1 justify-center items-center">
@@ -98,18 +166,24 @@ export default function PetImage() {
           Zoom
         </Button>
         <Button
-          disabled
-          className="
-      bg-gray-200 
-      border-gray-300 
-      text-gray-500 
-      cursor-not-allowed 
-      hover:bg-gray-200 
+          type="button"
+          onClick={handleOpenDeleteConfirmation}
+          disabled={!hasRealProfileImage || loading.profile}
+          className={
+            !hasRealProfileImage || loading.profile
+              ? `
+      bg-gray-200
+      border-gray-300
+      text-gray-500
+      cursor-not-allowed
+      hover:bg-gray-200
       hover:border-gray-300
       opacity-80
-    "
+    `
+              : ""
+          }
         >
-          X
+          {loading.profile ? "..." : "X"}
         </Button>
       </div>
       <Lightbox
@@ -129,6 +203,25 @@ export default function PetImage() {
       />
 
       {/* ========== ALERTS DIALOG ============ */}
+      <AppDialog
+        isOpen={isDeleteConfirmDialogOpen}
+        onClose={() => setIsDeleteConfirmDialogOpen(false)}
+        navbarTitle="Confirmar borrado"
+        title="¿Seguro que desea borrar esta imagen?"
+        description="Se eliminará la imagen de perfil de la mascota."
+        showCloseButton
+        showFooter
+        showCancelButton
+        cancelLabel="Cancelar"
+        confirmLabel="Sí, borrar"
+        confirmLoadingLabel="Borrando imagen..."
+        onConfirm={handleConfirmDeleteImage}
+        onCancel={() => setIsDeleteConfirmDialogOpen(false)}
+        isLoading={loading.profile}
+        disableClose={loading.profile}
+        widthClassName="w-[420px]"
+      />
+
       <AppDialog
         isOpen={isAlertDialogOpen}
         onClose={() => setIsAlertDialogOpen(false)}

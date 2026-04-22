@@ -8,12 +8,16 @@ import {
   PetImageType,
 } from "@/context/selectedPetImageStore";
 
-import { getPetImages, uploadPetImage } from "@/lib/queries/petImages";
+import {
+  getPetImages,
+  uploadPetImage,
+  deletePetImage,
+} from "@/lib/queries/petImages";
 import { usePetFetcher } from "./usePetFetcher";
 import { emptyPet } from "@/context/selectedPetStore";
 
 export function usePetImages() {
-  const { selectedPet } = useSelectedPetStore();
+  const { selectedPet, setSelectedPet } = useSelectedPetStore();
   const { images, loading, setImages, setLoading } = useSelectedPetImageStore();
 
   const { refreshPets } = usePetFetcher();
@@ -60,7 +64,7 @@ export function usePetImages() {
   // =========================
   async function handleUpload(
     event: ChangeEvent<HTMLInputElement>,
-    type: PetImageType,
+    type: PetImageType
   ) {
     if (!selectedPet || typeof selectedPet.pet_id !== "string") return;
 
@@ -108,9 +112,42 @@ export function usePetImages() {
     });
   }
 
+  // =========================
+  // DELETE IMAGE
+  // =========================
+  async function handleDelete(type: PetImageType) {
+    if (!selectedPet || typeof selectedPet.pet_id !== "string") return;
+
+    const petId = selectedPet.pet_id;
+    const currentImagePath = selectedPet.image_path ?? null;
+
+    setLoading({ [type]: true });
+
+    try {
+      await deletePetImage(petId, currentImagePath);
+
+      // Update local image state immediately
+      setImages({
+        [type]: "/images/blank-petimage.jpg",
+      });
+
+      // Update selectedPet immediately
+      setSelectedPet({
+        ...selectedPet,
+        image_path: null,
+      });
+
+      // Refresh pets list so the rest of the app stays synced
+      await refreshPets();
+    } finally {
+      setLoading({ [type]: false });
+    }
+  }
+
   return {
     images,
     loading,
     handleUpload,
+    handleDelete,
   };
 }

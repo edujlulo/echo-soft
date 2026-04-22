@@ -15,7 +15,7 @@ export interface PetImages {
 
 export async function getPetImages(
   petId: string,
-  imagePath: string | null,
+  imagePath: string | null
 ): Promise<PetImages> {
   if (!imagePath) {
     return { profile: null };
@@ -24,7 +24,9 @@ export async function getPetImages(
   // const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/pet-images/${imagePath}`;
 
   // Force to be always the right image:
-  const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/pet-images/${imagePath}?ts=${Date.now()}`;
+  const publicUrl = `${
+    process.env.NEXT_PUBLIC_SUPABASE_URL
+  }/storage/v1/object/public/pet-images/${imagePath}?ts=${Date.now()}`;
 
   return {
     profile: publicUrl,
@@ -38,7 +40,7 @@ export async function getPetImages(
 export async function uploadPetImage(
   petId: string,
   file: File,
-  type: PetImageType,
+  type: PetImageType
 ): Promise<string | null> {
   // const fileExt = file.name.split(".").pop();
 
@@ -76,4 +78,41 @@ export async function uploadPetImage(
   const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/pet-images/${filePath}`;
 
   return publicUrl;
+}
+
+// =========================
+// DELETE IMAGE
+// =========================
+export async function deletePetImage(
+  petId: string,
+  imagePath: string | null
+): Promise<void> {
+  if (!petId) {
+    throw new Error("No pet id available");
+  }
+
+  // 1) Remove file from storage only if image exists
+  if (imagePath) {
+    const { error: storageError } = await supabase.storage
+      .from("pet-images")
+      .remove([imagePath]);
+
+    if (storageError) {
+      console.error("Error deleting pet image from storage:", storageError);
+      throw storageError;
+    }
+  }
+
+  // 2) Clear image_path in pets table
+  const { error: dbError } = await supabase
+    .from("pets")
+    .update({
+      image_path: null,
+    })
+    .eq("pet_id", petId);
+
+  if (dbError) {
+    console.error("Error clearing pet image_path:", dbError);
+    throw dbError;
+  }
 }
