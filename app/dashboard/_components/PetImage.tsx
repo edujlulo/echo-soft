@@ -6,9 +6,16 @@ import { usePetImages } from "@/hooks/usePetImages";
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
+import { emptyPet, useSelectedPetStore } from "@/context/selectedPetStore";
+import AppDialog from "@/components/AppDialog";
 
 export default function PetImage() {
   const { images, loading, handleUpload } = usePetImages();
+
+  const selectedPet = useSelectedPetStore((s) => s.selectedPet);
+
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
 
   const [isZoomOpen, setIsZoomOpen] = useState(false);
 
@@ -37,7 +44,20 @@ export default function PetImage() {
       </div>
 
       <div className="my-2 text-sm flex flex-row gap-0.5">
-        <Button onClick={() => profileInputRef.current?.click()}>
+        <Button
+          onClick={() => {
+            if (
+              !selectedPet ||
+              JSON.stringify(selectedPet) === JSON.stringify(emptyPet)
+            ) {
+              setDialogMessage("Por favor seleccione una mascota");
+              setIsAlertDialogOpen(true);
+              return;
+            }
+
+            profileInputRef.current?.click();
+          }}
+        >
           Archivo
         </Button>
 
@@ -106,6 +126,20 @@ export default function PetImage() {
           buttonPrev: () => null,
           buttonNext: () => null,
         }}
+      />
+
+      {/* ========== ALERTS DIALOG ============ */}
+      <AppDialog
+        isOpen={isAlertDialogOpen}
+        onClose={() => setIsAlertDialogOpen(false)}
+        navbarTitle="Aviso"
+        description={dialogMessage}
+        showCloseButton
+        showFooter
+        showCancelButton={false}
+        confirmLabel="Aceptar"
+        onConfirm={() => setIsAlertDialogOpen(false)}
+        widthClassName="w-[420px]"
       />
     </div>
   );

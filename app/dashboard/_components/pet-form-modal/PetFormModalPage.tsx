@@ -20,7 +20,8 @@ type Pet = Database["public"]["Tables"]["pets"]["Row"];
 
 export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
   const { refreshPets } = usePetFetcher();
-  const { setSelectedPet } = useSelectedPetStore();
+  const setSelectedPet = useSelectedPetStore((s) => s.setSelectedPet);
+  const isCreating = useSelectedPetStore((s) => s.isCreating);
 
   const onSuccess = (newPet: Pet) => {
     refreshPets();
@@ -91,7 +92,7 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
 
                   {/* Central Section */}
                   <div className="pt-4">
-                    <PetImage />
+                    {!isCreating ? <PetImage /> : <div className="px-10"></div>}
                   </div>
 
                   {/* Right Section */}
