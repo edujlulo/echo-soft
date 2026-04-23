@@ -240,7 +240,7 @@ export default function PatientsTable() {
               })
             }
           >
-            Limpiar filtros
+            Mostrar todos
           </Button>
         </div>
       </div>
