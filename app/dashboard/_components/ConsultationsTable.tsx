@@ -118,7 +118,7 @@ export default function ConsultationsTable({
 
     const timeout = setTimeout(() => {
       const rowElement = document.querySelector(
-        `[data-id="${selectedRowId}"]`
+        `[data-id="${selectedRowId}"]`,
       ) as HTMLDivElement | null;
 
       if (rowElement) {
@@ -139,7 +139,7 @@ export default function ConsultationsTable({
   const selectConsultation = (id: string) => {
     const consultation =
       consultationsByPet?.find(
-        (c: ConsultationRow) => c.consultation_id === id
+        (c: ConsultationRow) => c.consultation_id === id,
       ) ?? null;
 
     setSelectedRowId(id);
@@ -201,7 +201,9 @@ export default function ConsultationsTable({
         onRowDoubleClick={handleRowDoubleClick}
         onCellKeyDown={handleKeyDown}
         getRowClassName={(params) =>
-          selectedRowId === params.id ? "selected-row" : ""
+          selectedConsultation?.consultation_id === params.id
+            ? "selected-row"
+            : ""
         }
         sx={{
           border: "1px solid #93c5fd",

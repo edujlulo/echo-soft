@@ -4,6 +4,8 @@ import PetInfoFormActions from "./PetInfoFormActions";
 import { Database } from "@/types/database";
 import { useConsultationStore } from "@/context/consultationStore";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
+import { buildSuggestedPdfName } from "@/reports/pdfNameUtils";
+import { useEffect, useMemo } from "react";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
 type NewPet = Omit<
@@ -46,6 +48,28 @@ export default function PetInfoForm({
     isSavingConsultation,
     statusMessageConsultation,
   } = useConsultationForm();
+
+  const suggestedPdfName = useMemo(
+    () => buildSuggestedPdfName(selectedPet, formConsultation),
+    [
+      selectedPet?.name,
+      selectedPet?.owner,
+      formConsultation?.consultation_date,
+    ],
+  );
+
+  useEffect(() => {
+    if (!formConsultation) return;
+    if (formConsultation.suggested_pdf_name?.trim()) return;
+    if (!suggestedPdfName) return;
+
+    setFieldConsultation("suggested_pdf_name", suggestedPdfName);
+  }, [
+    formConsultation?.consultation_id,
+    formConsultation?.suggested_pdf_name,
+    suggestedPdfName,
+    setFieldConsultation,
+  ]);
 
   return (
     <>
@@ -122,7 +146,7 @@ export default function PetInfoForm({
               <LabeledInput
                 labelClassName="w-26 font-bold"
                 inputClassName="w-40 bg-white"
-                type="Date"
+                type="date"
                 value={formConsultation?.consultation_date}
                 onChange={(e) =>
                   setFieldConsultation("consultation_date", e.target.value)
@@ -142,18 +166,17 @@ export default function PetInfoForm({
             Referido por:
           </LabeledInput>
           <LabeledInput
-            labelClassName="w-56 font-bold"
+            labelClassName="w-54 font-bold"
             inputClassName="w-110 bg-white"
             forceUpperCase={false}
-            value={`${selectedPet?.name} - ${selectedPet?.owner} - ECOGRAFIA - ${formConsultation?.consultation_date}`}
-            readOnly
-            // value={formConsultation?.suggested_pdf_name ?? ""}
+            value={formConsultation?.suggested_pdf_name ?? ""}
             onChange={(e) =>
               setFieldConsultation("suggested_pdf_name", e.target.value)
             }
           >
-            Nombre sugerido para el PDF:
+            Nombre del documento PDF:
           </LabeledInput>
+
           <LabeledInput
             labelClassName="w-37 font-bold"
             inputClassName="w-110 bg-white"

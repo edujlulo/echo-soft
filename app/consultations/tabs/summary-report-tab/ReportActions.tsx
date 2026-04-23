@@ -9,6 +9,10 @@ import { usePetImages } from "@/hooks/usePetImages";
 import { useState } from "react";
 import { fetchUltrasoundImagesByConsultation } from "@/lib/queries/ultrasoundImages";
 import ReportPreviewDialog from "./ReportPreviewDialog";
+import {
+  buildSuggestedPdfName,
+  getPdfDownloadFileName,
+} from "@/reports/pdfNameUtils";
 
 interface Props {
   setIsQuickModeOpen: (open: boolean) => void;
@@ -22,9 +26,6 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
   const formConsultation = useConsultationStore((s) => s.formConsultation);
   const consultationId = useConsultationStore(
     (s) => s.selectedConsultation?.consultation_id,
-  );
-  const consultationPdfName = useConsultationStore(
-    (s) => s.selectedConsultation?.suggested_pdf_name,
   );
 
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
@@ -74,12 +75,13 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
 
+      const suggestedPdfName =
+        formConsultation?.suggested_pdf_name ||
+        buildSuggestedPdfName(selectedPet, formConsultation);
+
       const a = document.createElement("a");
       a.href = url;
-      a.download =
-        layoutMode === "single"
-          ? "Ecosoft-report-1-image-per-page.pdf"
-          : "Ecosoft-report";
+      a.download = getPdfDownloadFileName(suggestedPdfName);
       a.click();
 
       window.URL.revokeObjectURL(url);

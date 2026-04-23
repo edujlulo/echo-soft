@@ -11,6 +11,7 @@ import {
   deleteConsultationWithImages,
 } from "@/lib/queries/consultations";
 import { Database } from "@/types/database";
+import { buildSuggestedPdfName } from "@/reports/pdfNameUtils";
 
 import { useCallback, useEffect, useState } from "react";
 
@@ -38,11 +39,16 @@ export const useConsultations = () => {
         return null;
       }
 
+      const consultationDate = new Date().toISOString();
+
       const newConsultation = {
         pet_id: petId,
         vet_id: activeVet.vet_id,
         clinic_id: activeClinic.clinic_id,
-        consultation_date: new Date().toISOString(),
+        consultation_date: consultationDate,
+        suggested_pdf_name: buildSuggestedPdfName(selectedPet, {
+          consultation_date: consultationDate,
+        }),
         vet_name: activeVet.name,
         report_title: "INFORME DE ECOGRAFÍA",
       };
@@ -61,13 +67,13 @@ export const useConsultations = () => {
 
       return result;
     },
-    [activeVet, activeClinic, selectedPet]
+    [activeVet, activeClinic, selectedPet],
   );
 
   // ========= DELETE CONSULTATION =========
   const deleteConsultation = useCallback(
     async (
-      consultation: Database["public"]["Tables"]["consultations"]["Row"]
+      consultation: Database["public"]["Tables"]["consultations"]["Row"],
     ) => {
       if (!consultation?.consultation_id) {
         throw new Error("No consultation selected");
@@ -84,7 +90,7 @@ export const useConsultations = () => {
 
       if (!isOwnerOfConsultation && !isOwnerOrAdmin) {
         throw new Error(
-          "No tiene permiso para borrar esta consulta. Solo puede borrarla el veterinario que la creó, o un usuario con rol owner o admin."
+          "No tiene permiso para borrar esta consulta. Solo puede borrarla el veterinario que la creó, o un usuario con rol owner o admin.",
         );
       }
 
@@ -99,7 +105,7 @@ export const useConsultations = () => {
 
         if (selectedPet?.pet_id) {
           const updatedConsultations = await getConsultationsByPetId(
-            selectedPet.pet_id
+            selectedPet.pet_id,
           );
           setConsultationsByPet(updatedConsultations);
         } else {
@@ -115,24 +121,37 @@ export const useConsultations = () => {
       setSelectedConsultation,
       loadFromSelected,
       clearForm,
-    ]
+    ],
   );
 
   // ========= FETCH CONSULTATIONS BY PET =========
   const fetchConsultationsByPet = useCallback(async () => {
     if (!selectedPet?.pet_id) {
       setConsultationsByPet([]);
+      setSelectedConsultation(null);
+      loadFromSelected(null);
+      clearForm();
       return;
     }
 
     setLoadingConsultations(true);
 
-    const data = await getConsultationsByPetId(selectedPet.pet_id);
+    setSelectedConsultation(null);
+    loadFromSelected(null);
 
-    setConsultationsByPet(data);
+    try {
+      const data = await getConsultationsByPetId(selectedPet.pet_id);
 
-    setLoadingConsultations(false);
-  }, [selectedPet]);
+      setConsultationsByPet(data);
+
+      const firstConsultation = data[0] ?? null;
+
+      setSelectedConsultation(firstConsultation);
+      loadFromSelected(firstConsultation);
+    } finally {
+      setLoadingConsultations(false);
+    }
+  }, [selectedPet, setSelectedConsultation, loadFromSelected, clearForm]);
 
   // ========= AUTO UPDATE WHEN PET CHANGES =========
   useEffect(() => {
