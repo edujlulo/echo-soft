@@ -32,9 +32,22 @@ export interface UploadManagerItem {
   onComplete?: (() => Promise<void> | void) | undefined;
 }
 
+export interface CompletedUploadBatch {
+  id: string;
+  consultationId: string;
+  petId: string | null;
+  clinicId: string | null;
+  vetId: string | null;
+  uploadedCount: number;
+  failedCount: number;
+  totalFiles: number;
+  completedAt: number;
+}
+
 export interface UploadManagerState {
   items: UploadManagerItem[];
   isVisible: boolean;
+  lastCompletedBatch: CompletedUploadBatch | null;
 }
 
 type UploadManagerListener = () => void;
@@ -63,6 +76,7 @@ class UltrasoundUploadManager {
   private state: UploadManagerState = {
     items: [],
     isVisible: false,
+    lastCompletedBatch: null,
   };
 
   private listeners = new Set<UploadManagerListener>();
@@ -163,9 +177,10 @@ class UltrasoundUploadManager {
       this.hideTimeout = null;
     }
 
-    this.setState(() => ({
+    this.setState((current) => ({
       items: [],
       isVisible: false,
+      lastCompletedBatch: current.lastCompletedBatch,
     }));
   }
 
@@ -202,8 +217,16 @@ class UltrasoundUploadManager {
       return {
         items: nextItems,
         isVisible: nextItems.length > 0 ? current.isVisible : false,
+        lastCompletedBatch: current.lastCompletedBatch,
       };
     });
+  }
+
+  private completeBatch(batch: CompletedUploadBatch) {
+    this.setState((current) => ({
+      ...current,
+      lastCompletedBatch: batch,
+    }));
   }
 
   async enqueueUltrasoundUploads(
@@ -223,6 +246,7 @@ class UltrasoundUploadManager {
     } = params;
 
     const normalizedFiles = normalizeFiles(files);
+    const batchId = crypto.randomUUID();
 
     if (normalizedFiles.length === 0) {
       throw new Error("No files were selected.");
@@ -330,6 +354,18 @@ class UltrasoundUploadManager {
       } catch (error) {
         console.error("Upload manager batch onUploadComplete error:", error);
       }
+
+      this.completeBatch({
+        id: batchId,
+        consultationId,
+        petId,
+        clinicId,
+        vetId,
+        uploadedCount,
+        failedCount: failed.length,
+        totalFiles: normalizedFiles.length,
+        completedAt: Date.now(),
+      });
     }
 
     return {

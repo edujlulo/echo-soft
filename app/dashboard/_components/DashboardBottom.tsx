@@ -18,7 +18,7 @@ export default function DashboardBottom() {
   } = useConsultations();
 
   return (
-    <div className="h-full mt-1 flex justify-end">
+    <div className="-mt-1.5 h-full flex justify-end">
       <div className="w-full flex flex-row gap-2 ">
         {/* ======= PET IMAGE ======= */}
         <div className="px-4 py-4 flex items-center flex-col gap-2">

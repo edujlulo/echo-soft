@@ -9,27 +9,41 @@ import { useConsultationStore } from "@/context/consultationStore";
 import AppDialog from "@/components/AppDialog";
 import { ultrasoundUploadManager } from "@/lib/uploads/ultrasoundUploadManager";
 import { useUltrasoundUploadManager } from "@/components/providers/UltrasoundUploadManagerProvider";
+import {
+  countUltrasoundImagesByConsultation,
+  MAX_ULTRASOUND_IMAGES_PER_CONSULTATION,
+} from "@/lib/queries/ultrasoundImages";
 
 interface Props {
   onUploadComplete?: () => Promise<void> | void;
   deleteAllUltrasoundImages: (consultationId: string) => Promise<number | void>;
   isDeletingAllImages: boolean;
+  currentImageCount: number;
 }
 
 export default function UltrasoundImagesActions({
   onUploadComplete,
   deleteAllUltrasoundImages,
   isDeletingAllImages,
+  currentImageCount,
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
+  const [uploadLimitMessage, setUploadLimitMessage] = useState<string | null>(
+    null,
+  );
 
   const { state: uploadManagerState } = useUltrasoundUploadManager();
 
   const isUploading = uploadManagerState.items.some(
     (item) => item.status === "queued" || item.status === "uploading",
   );
+  const remainingImageSlots = Math.max(
+    0,
+    MAX_ULTRASOUND_IMAGES_PER_CONSULTATION - currentImageCount,
+  );
+  const hasReachedImageLimit = remainingImageSlots === 0;
 
   const clinicId = useClinicStore((s) => s.activeClinic?.clinic_id);
   const vetId = useActiveVetStore((s) => s.activeVet?.vet_id);
@@ -39,6 +53,14 @@ export default function UltrasoundImagesActions({
   );
 
   function handleOpenFilePicker() {
+    if (hasReachedImageLimit) {
+      setUploadLimitMessage(
+        `Esta consulta ya tiene el limite de ${MAX_ULTRASOUND_IMAGES_PER_CONSULTATION} imagenes.`,
+      );
+      return;
+    }
+
+    setUploadLimitMessage(null);
     fileInputRef.current?.click();
   }
 
@@ -102,18 +124,40 @@ export default function UltrasoundImagesActions({
   async function handleFilesSelected(
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
-    const files = event.target.files;
+    const selectedFiles = event.target.files
+      ? Array.from(event.target.files)
+      : [];
 
-    if (!files || files.length === 0) return;
+    if (selectedFiles.length === 0) return;
 
     if (!clinicId || !vetId || !petId || !consultationId) {
       console.error("Missing required IDs for ultrasound image upload.");
+      event.target.value = "";
       return;
     }
 
     try {
+      setUploadLimitMessage(null);
+
+      const currentStoredImageCount =
+        await countUltrasoundImagesByConsultation(consultationId);
+      const remainingSlots = Math.max(
+        0,
+        MAX_ULTRASOUND_IMAGES_PER_CONSULTATION - currentStoredImageCount,
+      );
+
+      if (selectedFiles.length > remainingSlots) {
+        setUploadLimitMessage(
+          remainingSlots === 0
+            ? `Esta consulta ya tiene el limite de ${MAX_ULTRASOUND_IMAGES_PER_CONSULTATION} imagenes.`
+            : `Esta consulta tiene ${currentStoredImageCount} imágenes. Sólo puedes subir ${remainingSlots} más.`,
+        );
+        event.target.value = "";
+        return;
+      }
+
       await ultrasoundUploadManager.enqueueUltrasoundUploads({
-        files,
+        files: selectedFiles,
         clinicId,
         vetId,
         petId,
@@ -125,6 +169,10 @@ export default function UltrasoundImagesActions({
       event.target.value = "";
     } catch (error) {
       console.error("Upload error:", error);
+      setUploadLimitMessage(
+        "No se pudo validar el limite de imagenes. Intenta nuevamente.",
+      );
+      event.target.value = "";
     }
   }
 
@@ -203,6 +251,17 @@ export default function UltrasoundImagesActions({
         isLoading={isDeletingAllImages}
         disableClose={isDeletingAllImages}
         onConfirm={handleDeleteAllImages}
+      />
+
+      <AppDialog
+        isOpen={uploadLimitMessage !== null}
+        onClose={() => setUploadLimitMessage(null)}
+        navbarTitle="Limite de imágenes"
+        title="No se pueden subir esas imágenes"
+        description={<p>{uploadLimitMessage}</p>}
+        confirmLabel="Entendido"
+        showCancelButton={false}
+        onConfirm={() => setUploadLimitMessage(null)}
       />
     </div>
   );

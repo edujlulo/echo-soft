@@ -13,7 +13,7 @@ export default function DashboardHeader() {
   const { selectedPet } = useSelectedPetStore();
 
   return (
-    <div className="mt-2 ml-6 flex flex-col gap-2 w-max">
+    <div className="mt-1 ml-6 flex flex-col gap-2 w-max">
       <div className="flex">
         <LabeledInput
           inputClassName={`w-120 ${!activeVet ? "text-red-600 font-bold" : ""}`}

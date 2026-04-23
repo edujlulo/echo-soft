@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import UltrasoundImagesGrid from "./UltrasoundImagesGrid";
 import { useUltrasoundImages } from "@/hooks/useUltrasoundImages";
 import { useConsultationStore } from "@/context/consultationStore";
 import { useUltrasoundUploadManager } from "@/components/providers/UltrasoundUploadManagerProvider";
+import { MAX_ULTRASOUND_IMAGES_PER_CONSULTATION } from "@/lib/queries/ultrasoundImages";
 
 import "yet-another-react-lightbox/styles.css";
 import UltrasoundImagesActions from "./UltrasoundImagesActions";
@@ -110,6 +111,10 @@ export default function UltrasoundImagesContent() {
   const [index, setIndex] = useState(-1);
 
   const { state: uploadManagerState } = useUltrasoundUploadManager();
+  const lastCompletedBatch = uploadManagerState.lastCompletedBatch;
+  const handledCompletedBatchIdRef = useRef<string | null>(
+    lastCompletedBatch?.id ?? null,
+  );
 
   const activeUploadItem =
     [...uploadManagerState.items]
@@ -146,6 +151,15 @@ export default function UltrasoundImagesContent() {
     if (!consultationId) return;
     void loadImages();
   }, [consultationId, loadImages]);
+
+  useEffect(() => {
+    if (!consultationId || !lastCompletedBatch) return;
+    if (lastCompletedBatch.consultationId !== consultationId) return;
+    if (lastCompletedBatch.id === handledCompletedBatchIdRef.current) return;
+
+    handledCompletedBatchIdRef.current = lastCompletedBatch.id;
+    void loadImages();
+  }, [consultationId, lastCompletedBatch, loadImages]);
 
   useEffect(() => {
     if (!fetchError) return;
@@ -201,7 +215,7 @@ export default function UltrasoundImagesContent() {
       <div className="flex flex-col">
         <div className="w-full flex justify-start">
           <p className="pl-4 pt-4 text-lg text-gray-600">
-            {images.length} imágenes
+            {images.length} / {MAX_ULTRASOUND_IMAGES_PER_CONSULTATION} imágenes
           </p>
         </div>
         <div className="h-full pl-4 pb-18 flex">
@@ -209,6 +223,7 @@ export default function UltrasoundImagesContent() {
             onUploadComplete={loadImages}
             deleteAllUltrasoundImages={deleteAllUltrasoundImages}
             isDeletingAllImages={isDeletingAllImages}
+            currentImageCount={images.length}
           />
         </div>
       </div>

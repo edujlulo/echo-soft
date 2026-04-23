@@ -9,6 +9,8 @@ type UltrasoundImageInsert =
 
 const ULTRASOUND_IMAGES_BUCKET = "ultrasound-images";
 
+export const MAX_ULTRASOUND_IMAGES_PER_CONSULTATION = 90;
+
 function getSupabaseStorageTusEndpoint(): string {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
@@ -346,6 +348,22 @@ export async function fetchUltrasoundImageRowsByConsultation(
   }
 
   return (data ?? []) as UltrasoundImageRow[];
+}
+
+export async function countUltrasoundImagesByConsultation(
+  consultationId: string
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("ultrasound_images")
+    .select("id", { count: "exact", head: true })
+    .eq("consultation_id", consultationId)
+    .is("deleted_at", null);
+
+  if (error) {
+    throw new Error(`Failed to count ultrasound images: ${error.message}`);
+  }
+
+  return count ?? 0;
 }
 
 export async function fetchUltrasoundImageRowById(
