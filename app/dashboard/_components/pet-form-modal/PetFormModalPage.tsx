@@ -96,7 +96,7 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
                   </div>
 
                   {/* Right Section */}
-                  <div>
+                  <div className="w-[420px]">
                     <EditableSelectList setField={setField} />
                   </div>
                 </div>

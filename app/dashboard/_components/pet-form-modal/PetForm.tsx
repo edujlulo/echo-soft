@@ -38,6 +38,7 @@ export default function PetForm({
       {errors.owner && <p className="text-red-500 text-sm">{errors.owner}</p>}
 
       <LabeledInput
+        resetEditableSelectListOnFocus
         labelClassName="w-26"
         inputClassName="w-75 bg-white border p-1"
         value={selectedPet?.name ?? ""}

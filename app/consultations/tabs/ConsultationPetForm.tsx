@@ -44,6 +44,7 @@ export default function ConsultationPetForm({
           {/* Left section */}
           <div className="flex flex-col gap-2">
             <LabeledInput
+              categoryKey="sex"
               labelClassName="font-bold"
               inputClassName="w-40 bg-white"
               value={selectedPet?.sex ?? ""}
@@ -52,6 +53,7 @@ export default function ConsultationPetForm({
               Sexo:
             </LabeledInput>
             <LabeledInput
+              categoryKey="species"
               labelClassName="font-bold"
               inputClassName="w-30 bg-white"
               value={selectedPet?.species ?? ""}
@@ -61,6 +63,7 @@ export default function ConsultationPetForm({
             </LabeledInput>
             <div className="flex flex-row gap-2">
               <LabeledInput
+                resetEditableSelectListOnFocus
                 labelClassName="font-bold"
                 inputClassName="w-20 bg-white"
                 value={selectedPet?.weight ?? ""}
@@ -78,6 +81,7 @@ export default function ConsultationPetForm({
 
           <div className="flex flex-col gap-2">
             <LabeledInput
+              resetEditableSelectListOnFocus
               labelClassName="w-26 font-bold"
               inputClassName="w-40 bg-white"
               type="date"
@@ -95,6 +99,7 @@ export default function ConsultationPetForm({
               Edad:
             </LabeledInput>
             <LabeledInput
+              categoryKey="breed"
               labelClassName="w-26 font-bold"
               inputClassName="w-40 bg-white"
               value={selectedPet?.breed ?? ""}
@@ -103,6 +108,7 @@ export default function ConsultationPetForm({
               Raza:
             </LabeledInput>
             <LabeledInput
+              resetEditableSelectListOnFocus
               labelClassName="w-26 font-bold"
               inputClassName="w-40 bg-white"
               type="Date"
@@ -118,6 +124,7 @@ export default function ConsultationPetForm({
 
         <div>
           <LabeledInput
+            categoryKey="referred_by"
             labelClassName="w-28 font-bold"
             inputClassName="w-80 bg-white"
             value={selectedPet?.referred_by ?? ""}

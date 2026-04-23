@@ -1,10 +1,11 @@
 "use client";
 
+import AppDialog from "@/components/AppDialog";
 import Button from "@/components/Button";
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import EditableSelectListTable from "./EditableSelectListTable";
 import { Database } from "@/types/database";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditableSelectListModal from "./EditableSelectListModal";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { useTemplateActions } from "@/hooks/useTemplateActions";
@@ -15,7 +16,7 @@ type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 interface EditableSelectListProps {
   setFieldConsultation?: (
     field: keyof ConsultationRow,
-    value: string | null,
+    value: string | null
   ) => void;
   setField?: (field: keyof Pet, value: string) => void;
   buttonsClassName?: string;
@@ -26,7 +27,7 @@ export default function EditableSelectList({
   setField,
   buttonsClassName,
 }: EditableSelectListProps) {
-  const { getTitle } = useEditableSelectListStore();
+  const { getTitle, resetEditableSelectList } = useEditableSelectListStore();
 
   const {
     selectedTemplate,
@@ -44,9 +45,16 @@ export default function EditableSelectList({
 
   // estado del modal
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isWarningDialogOpen, setIsWarningDialogOpen] = useState(false);
 
   // For vet_id
   const activeVet = useActiveVetStore((s) => s.activeVet);
+
+  useEffect(() => {
+    return () => {
+      resetEditableSelectList();
+    };
+  }, [resetEditableSelectList]);
 
   // ========== RENDER ===========
   return (
@@ -88,7 +96,7 @@ export default function EditableSelectList({
         <Button
           onClick={() => {
             if (!selectedTemplate) {
-              alert("Debe seleccionar una frase");
+              setIsWarningDialogOpen(true);
               return;
             }
 
@@ -100,7 +108,7 @@ export default function EditableSelectList({
         <Button
           onClick={async () => {
             if (!selectedTemplate) {
-              alert("Debe seleccionar una frase");
+              setIsWarningDialogOpen(true);
               return;
             }
 
@@ -120,6 +128,17 @@ export default function EditableSelectList({
         setSelectedTemplate={setSelectedTemplate}
         addTemplate={addTemplate}
         updateTemplate={updateTemplate}
+      />
+
+      <AppDialog
+        isOpen={isWarningDialogOpen}
+        onClose={() => setIsWarningDialogOpen(false)}
+        navbarTitle="Aviso"
+        description="Debe seleccionar una frase"
+        confirmLabel="Aceptar"
+        onConfirm={() => setIsWarningDialogOpen(false)}
+        showCancelButton={false}
+        widthClassName="w-[420px]"
       />
     </div>
   );

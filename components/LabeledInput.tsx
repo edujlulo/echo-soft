@@ -12,6 +12,7 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   inputClassName?: string;
   forceUpperCase?: boolean;
   categoryKey?: string;
+  resetEditableSelectListOnFocus?: boolean;
 }
 
 export default function LabeledInput({
@@ -23,9 +24,11 @@ export default function LabeledInput({
   onChange,
   forceUpperCase,
   categoryKey,
+  resetEditableSelectListOnFocus = false,
   ...props
 }: Props) {
-  const { setActiveField, setActiveCategory } = useEditableSelectListStore();
+  const { setActiveField, setActiveCategory, resetEditableSelectList } =
+    useEditableSelectListStore();
 
   const label =
     typeof children === "string"
@@ -70,6 +73,11 @@ export default function LabeledInput({
         maxLength={60}
         onChange={handleChange}
         onFocus={() => {
+          if (resetEditableSelectListOnFocus) {
+            resetEditableSelectList();
+            return;
+          }
+
           setActiveField(label);
           if (categoryKey) setActiveCategory(categoryKey); // set activeCategory on focus
         }}

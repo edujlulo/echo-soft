@@ -35,10 +35,17 @@ export function useTemplateActions() {
     label: null,
   };
 
+  useEffect(() => {
+    setSelectedTemplate(null);
+  }, [activeCategory]);
+
   // ========== FETCH TEMPLATES ==========
   useEffect(() => {
     if (!activeCategory || !activeVet) {
       setTemplates([]);
+      setSelectedTemplate(null);
+      setError(null);
+      setLoading(false);
       return;
     }
 
@@ -131,7 +138,7 @@ export function useTemplateActions() {
     try {
       const updated = await updateTextTemplate(
         selectedTemplate.id,
-        selectedTemplate.content,
+        selectedTemplate.content
       );
 
       if (activeVet && activeCategory) {

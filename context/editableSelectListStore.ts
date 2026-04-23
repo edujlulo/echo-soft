@@ -13,6 +13,7 @@ interface EditableSelectListState {
   activeCategory: string | null;
   // setActiveCategory: (category: keyof ConsultationRow | null) => void;
   setActiveCategory: (field: string | null) => void;
+  resetEditableSelectList: () => void;
 }
 
 export const useEditableSelectListStore = create<EditableSelectListState>(
@@ -28,6 +29,12 @@ export const useEditableSelectListStore = create<EditableSelectListState>(
 
     setActiveCategory: (category: string | null) =>
       set({ activeCategory: category }),
+
+    resetEditableSelectList: () =>
+      set({
+        activeField: null,
+        activeCategory: null,
+      }),
 
     // setActiveCategory: (category: keyof ConsultationRow | null) =>
     //   set({ activeCategory: category }),

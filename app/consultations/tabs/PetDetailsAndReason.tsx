@@ -81,7 +81,7 @@ export default function PetDetailsAndReason({
             <ConsultLabeledTextarea
               categoryKey="reason_for_ultrasound"
               value={formatForDisplay(
-                formConsultation?.reason_for_ultrasound ?? "",
+                formConsultation?.reason_for_ultrasound ?? ""
               )}
               onChange={(e) =>
                 setFieldConsultation("reason_for_ultrasound", e.target.value)
@@ -116,7 +116,10 @@ export default function PetDetailsAndReason({
 
         {/* =========== Editable select list section ============ */}
         <div className="w-[620px]">
-          <EditableSelectList setFieldConsultation={setFieldConsultation} />
+          <EditableSelectList
+            setFieldConsultation={setFieldConsultation}
+            setField={setField}
+          />
         </div>
       </div>
     </>

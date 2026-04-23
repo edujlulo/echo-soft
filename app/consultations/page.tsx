@@ -34,6 +34,7 @@ export default function ConsultationsPage() {
               labelClassName="font-bold"
               inputClassName="w-55 bg-white"
               value={selectedPet?.name}
+              disabled
             >
               MASCOTA:
             </LabeledInput>
@@ -41,6 +42,7 @@ export default function ConsultationsPage() {
               labelClassName="font-bold w-30"
               inputClassName="w-90 bg-white"
               value={selectedPet?.owner}
+              disabled
             >
               PROPIETARIO:
             </LabeledInput>
@@ -48,6 +50,7 @@ export default function ConsultationsPage() {
               labelClassName="font-bold w-30"
               inputClassName="w-90 bg-white"
               value={activeVet?.name}
+              disabled
             >
               VETERINARIO:
             </LabeledInput>
