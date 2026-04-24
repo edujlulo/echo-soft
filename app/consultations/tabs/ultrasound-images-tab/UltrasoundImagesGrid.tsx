@@ -11,6 +11,10 @@ interface Image {
 interface Props {
   images: Image[];
   onZoom: (index: number) => void;
+  selectedImageIds: Set<string>;
+  onToggleSelection: (imageId: string) => void;
+  isSelectionDisabled: boolean;
+  deletingImageIds: string[];
   onDeleteComplete?: () => Promise<void> | void;
   deleteUltrasoundImage: (imageId: string) => Promise<void>;
   deletingImageId: string | null;
@@ -19,6 +23,10 @@ interface Props {
 export default function UltrasoundImagesGrid({
   images,
   onZoom,
+  selectedImageIds,
+  onToggleSelection,
+  isSelectionDisabled,
+  deletingImageIds,
   onDeleteComplete,
   deleteUltrasoundImage,
   deletingImageId,
@@ -31,6 +39,11 @@ export default function UltrasoundImagesGrid({
           image={image}
           index={index}
           onZoom={onZoom}
+          isSelected={selectedImageIds.has(image.id)}
+          onToggleSelection={onToggleSelection}
+          isSelectionDisabled={
+            isSelectionDisabled || deletingImageIds.includes(image.id)
+          }
           onDeleteComplete={onDeleteComplete}
           deleteUltrasoundImage={deleteUltrasoundImage}
           deletingImageId={deletingImageId}

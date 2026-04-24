@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import {
   createUltrasoundImage,
   deleteAllUltrasoundImagesByConsultation,
+  deleteSelectedUltrasoundImagesByIds,
   deleteSingleUltrasoundImage,
   fetchUltrasoundImagesByConsultation,
   isSupportedImageFile,
@@ -62,7 +63,10 @@ export function useUltrasoundImages() {
   const [isLoadingImages, setIsLoadingImages] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isDeletingAllImages, setIsDeletingAllImages] = useState(false);
+  const [isDeletingSelectedImages, setIsDeletingSelectedImages] =
+    useState(false);
   const [deletingImageId, setDeletingImageId] = useState<string | null>(null);
+  const [deletingImageIds, setDeletingImageIds] = useState<string[]>([]);
 
   const uploadUltrasoundImages = useCallback(
     async (
@@ -148,7 +152,7 @@ export function useUltrasoundImages() {
                 sortOrder: startingSortOrder + index,
                 metadata,
               },
-              ({ bytesUploaded, bytesTotal }: UploadProgressInfo) => {
+              ({ bytesUploaded }: UploadProgressInfo) => {
                 const totalUploadedBytes = uploadedBytesSoFar + bytesUploaded;
 
                 setUploadProgress((current) => ({
@@ -267,6 +271,7 @@ export function useUltrasoundImages() {
   const deleteUltrasoundImage = useCallback(async (imageId: string) => {
     setError(null);
     setDeletingImageId(imageId);
+    setDeletingImageIds([imageId]);
 
     try {
       await deleteSingleUltrasoundImage(imageId);
@@ -284,6 +289,38 @@ export function useUltrasoundImages() {
       throw deleteError;
     } finally {
       setDeletingImageId(null);
+      setDeletingImageIds([]);
+    }
+  }, []);
+
+  const deleteSelectedUltrasoundImages = useCallback(async (imageIds: string[]) => {
+    if (imageIds.length === 0) {
+      return 0;
+    }
+
+    setError(null);
+    setIsDeletingSelectedImages(true);
+    setDeletingImageIds(imageIds);
+
+    try {
+      const deletedCount = await deleteSelectedUltrasoundImagesByIds(imageIds);
+
+      setImages((currentImages) =>
+        currentImages.filter((image) => !imageIds.includes(image.id))
+      );
+
+      return deletedCount;
+    } catch (deleteError) {
+      const message =
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Unexpected delete selected error.";
+
+      setError(message);
+      throw deleteError;
+    } finally {
+      setIsDeletingSelectedImages(false);
+      setDeletingImageIds([]);
     }
   }, []);
 
@@ -291,6 +328,7 @@ export function useUltrasoundImages() {
     async (consultationId: string) => {
       setError(null);
       setIsDeletingAllImages(true);
+      setDeletingImageIds(images.map((image) => image.id));
 
       try {
         await deleteAllUltrasoundImagesByConsultation(consultationId);
@@ -305,9 +343,10 @@ export function useUltrasoundImages() {
         throw deleteError;
       } finally {
         setIsDeletingAllImages(false);
+        setDeletingImageIds([]);
       }
     },
-    []
+    [images]
   );
 
   return useMemo(
@@ -316,12 +355,15 @@ export function useUltrasoundImages() {
       isLoadingImages,
       isUploading,
       isDeletingAllImages,
+      isDeletingSelectedImages,
       deletingImageId,
+      deletingImageIds,
       error,
       fetchError,
       uploadUltrasoundImages,
       fetchUltrasoundImages,
       deleteUltrasoundImage,
+      deleteSelectedUltrasoundImages,
       deleteAllUltrasoundImages,
       uploadProgress,
       clearUltrasoundImagesError: () => setError(null),
@@ -331,12 +373,15 @@ export function useUltrasoundImages() {
       isLoadingImages,
       isUploading,
       isDeletingAllImages,
+      isDeletingSelectedImages,
       deletingImageId,
+      deletingImageIds,
       error,
       fetchError,
       uploadUltrasoundImages,
       fetchUltrasoundImages,
       deleteUltrasoundImage,
+      deleteSelectedUltrasoundImages,
       deleteAllUltrasoundImages,
       uploadProgress,
     ]

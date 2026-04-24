@@ -2,7 +2,10 @@
 
 import {
   createUltrasoundImage,
+  deleteUltrasoundImageFilesFromStorage,
+  deleteUltrasoundImageRowsByIds,
   isSupportedImageFile,
+  isUploadCancellationError,
   type UploadUltrasoundImageContext,
   type UploadProgressInfo,
 } from "@/lib/queries/ultrasoundImages";
@@ -44,10 +47,28 @@ export interface CompletedUploadBatch {
   completedAt: number;
 }
 
+interface UploadedBatchImage {
+  id: string;
+  storagePath: string;
+}
+
+export interface ActiveUploadBatch {
+  id: string;
+  consultationId: string;
+  petId: string | null;
+  clinicId: string | null;
+  vetId: string | null;
+  totalFiles: number;
+  uploadedCount: number;
+  uploadedImages: UploadedBatchImage[];
+  isCancelling: boolean;
+}
+
 export interface UploadManagerState {
   items: UploadManagerItem[];
   isVisible: boolean;
   lastCompletedBatch: CompletedUploadBatch | null;
+  activeBatch: ActiveUploadBatch | null;
 }
 
 type UploadManagerListener = () => void;
@@ -77,11 +98,14 @@ class UltrasoundUploadManager {
     items: [],
     isVisible: false,
     lastCompletedBatch: null,
+    activeBatch: null,
   };
 
   private listeners = new Set<UploadManagerListener>();
 
   private hideTimeout: number | null = null;
+
+  private currentAbortController: AbortController | null = null;
 
   subscribe(listener: UploadManagerListener) {
     this.listeners.add(listener);
@@ -181,6 +205,7 @@ class UltrasoundUploadManager {
       items: [],
       isVisible: false,
       lastCompletedBatch: current.lastCompletedBatch,
+      activeBatch: current.activeBatch,
     }));
   }
 
@@ -218,6 +243,7 @@ class UltrasoundUploadManager {
         items: nextItems,
         isVisible: nextItems.length > 0 ? current.isVisible : false,
         lastCompletedBatch: current.lastCompletedBatch,
+        activeBatch: current.activeBatch,
       };
     });
   }
@@ -226,7 +252,85 @@ class UltrasoundUploadManager {
     this.setState((current) => ({
       ...current,
       lastCompletedBatch: batch,
+      activeBatch:
+        current.activeBatch?.id === batch.id ? null : current.activeBatch,
     }));
+  }
+
+  private setActiveBatch(batch: ActiveUploadBatch | null) {
+    this.setState((current) => ({
+      ...current,
+      activeBatch: batch,
+    }));
+  }
+
+  private updateActiveBatch(
+    updater: (batch: ActiveUploadBatch) => ActiveUploadBatch,
+  ) {
+    this.setState((current) => ({
+      ...current,
+      activeBatch: current.activeBatch ? updater(current.activeBatch) : null,
+    }));
+  }
+
+  async cancelActiveBatch(options?: { removeUploaded?: boolean }) {
+    const activeBatch = this.state.activeBatch;
+
+    if (!activeBatch) {
+      return {
+        uploadedCount: 0,
+        removedCount: 0,
+      };
+    }
+
+    if (!activeBatch.isCancelling) {
+      this.updateActiveBatch((batch) => ({
+        ...batch,
+        isCancelling: true,
+      }));
+    }
+
+    this.currentAbortController?.abort();
+
+    const queuedItemIds = this.state.items
+      .filter(
+        (item) =>
+          item.consultationId === activeBatch.consultationId &&
+          item.status === "queued",
+      )
+      .map((item) => item.id);
+
+    for (const itemId of queuedItemIds) {
+      this.updateItem(itemId, {
+        status: "error",
+        error: "Upload cancelled.",
+      });
+    }
+
+    const uploadedImages = [...activeBatch.uploadedImages];
+    const uploadedCount = uploadedImages.length;
+    let removedCount = 0;
+
+    if (options?.removeUploaded && uploadedImages.length > 0) {
+      await deleteUltrasoundImageFilesFromStorage(
+        uploadedImages.map((image) => image.storagePath),
+      );
+      await deleteUltrasoundImageRowsByIds(
+        uploadedImages.map((image) => image.id),
+      );
+      removedCount = uploadedImages.length;
+    }
+
+    this.setState((current) => ({
+      ...current,
+      activeBatch:
+        current.activeBatch?.id === activeBatch.id ? null : current.activeBatch,
+    }));
+
+    return {
+      uploadedCount,
+      removedCount,
+    };
   }
 
   async enqueueUltrasoundUploads(
@@ -261,90 +365,137 @@ class UltrasoundUploadManager {
     );
 
     let uploadedBytesSoFar = 0;
+    this.setActiveBatch({
+      id: batchId,
+      consultationId,
+      petId,
+      clinicId,
+      vetId,
+      totalFiles: normalizedFiles.length,
+      uploadedCount: 0,
+      uploadedImages: [],
+      isCancelling: false,
+    });
 
-    for (const [index, file] of normalizedFiles.entries()) {
-      if (!isSupportedImageFile(file)) {
-        failed.push({
+    try {
+      for (const [index, file] of normalizedFiles.entries()) {
+        if (this.state.activeBatch?.isCancelling) {
+          break;
+        }
+
+        if (!isSupportedImageFile(file)) {
+          failed.push({
+            fileName: file.name,
+            error: "Unsupported file type. Only image files are allowed.",
+          });
+          continue;
+        }
+
+        const uploadId = crypto.randomUUID();
+
+        this.registerItem({
+          id: uploadId,
           fileName: file.name,
-          error: "Unsupported file type. Only image files are allowed.",
-        });
-        continue;
-      }
-
-      const uploadId = crypto.randomUUID();
-
-      this.registerItem({
-        id: uploadId,
-        fileName: file.name,
-        consultationId,
-        petId,
-        clinicId,
-        vetId,
-        status: "queued",
-        percentage:
-          totalBytes > 0
-            ? Math.round((uploadedBytesSoFar / totalBytes) * 100)
-            : 0,
-        uploadedBytes: uploadedBytesSoFar,
-        totalBytes,
-        error: null,
-        batchIndex: index + 1,
-        batchTotal: normalizedFiles.length,
-        onComplete: undefined,
-      });
-
-      try {
-        this.updateItem(uploadId, {
-          status: "uploading",
+          consultationId,
+          petId,
+          clinicId,
+          vetId,
+          status: "queued",
+          percentage:
+            totalBytes > 0
+              ? Math.round((uploadedBytesSoFar / totalBytes) * 100)
+              : 0,
+          uploadedBytes: uploadedBytesSoFar,
+          totalBytes,
+          error: null,
+          batchIndex: index + 1,
+          batchTotal: normalizedFiles.length,
+          onComplete: undefined,
         });
 
-        await createUltrasoundImage(
-          file,
-          {
-            clinicId,
-            vetId,
-            petId,
-            consultationId,
-            source,
-            notes,
-            sortOrder: startingSortOrder + index,
-            metadata,
-          },
-          ({ bytesUploaded }: UploadProgressInfo) => {
-            const totalUploadedBytes = uploadedBytesSoFar + bytesUploaded;
+        try {
+          this.updateItem(uploadId, {
+            status: "uploading",
+          });
 
+          const abortController = new AbortController();
+          this.currentAbortController = abortController;
+
+          const insertedRow = await createUltrasoundImage(
+            file,
+            {
+              clinicId,
+              vetId,
+              petId,
+              consultationId,
+              source,
+              notes,
+              sortOrder: startingSortOrder + index,
+              metadata,
+            },
+            ({ bytesUploaded }: UploadProgressInfo) => {
+              const totalUploadedBytes = uploadedBytesSoFar + bytesUploaded;
+
+              this.updateItem(uploadId, {
+                status: "uploading",
+                uploadedBytes: totalUploadedBytes,
+                totalBytes,
+                percentage:
+                  totalBytes > 0
+                    ? Math.min(
+                        100,
+                        Math.round((totalUploadedBytes / totalBytes) * 100),
+                      )
+                    : 0,
+              });
+            },
+            abortController.signal,
+          );
+
+          uploadedBytesSoFar += file.size ?? 0;
+          uploadedCount += 1;
+
+          this.updateActiveBatch((batch) => ({
+            ...batch,
+            uploadedCount: batch.uploadedCount + 1,
+            uploadedImages: [
+              ...batch.uploadedImages,
+              {
+                id: insertedRow.id,
+                storagePath: insertedRow.storage_path,
+              },
+            ],
+          }));
+
+          await this.completeItem(uploadId);
+        } catch (error) {
+          if (isUploadCancellationError(error)) {
             this.updateItem(uploadId, {
-              status: "uploading",
-              uploadedBytes: totalUploadedBytes,
-              totalBytes,
-              percentage:
-                totalBytes > 0
-                  ? Math.min(
-                      100,
-                      Math.round((totalUploadedBytes / totalBytes) * 100),
-                    )
-                  : 0,
+              status: "error",
+              error: "Upload cancelled.",
             });
-          },
-        );
+            break;
+          }
 
-        uploadedBytesSoFar += file.size ?? 0;
-        uploadedCount += 1;
+          const message =
+            error instanceof Error ? error.message : "Unknown upload error.";
 
-        await this.completeItem(uploadId);
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Unknown upload error.";
+          this.updateItem(uploadId, {
+            status: "error",
+            error: message,
+          });
 
-        this.updateItem(uploadId, {
-          status: "error",
-          error: message,
-        });
-
-        failed.push({
-          fileName: file.name,
-          error: message,
-        });
+          failed.push({
+            fileName: file.name,
+            error: message,
+          });
+        } finally {
+          this.currentAbortController = null;
+        }
+      }
+    } finally {
+      if (this.state.activeBatch?.id === batchId) {
+        this.setActiveBatch(null);
       }
     }
 

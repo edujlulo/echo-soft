@@ -87,7 +87,7 @@ export default function AppDialog({
 
   const confirmButtonClassName =
     variant === "danger"
-      ? "w-32 bg-red-600 hover:bg-red-700 text-white"
+      ? "w-34 bg-red-600 hover:bg-red-700 text-white"
       : "w-32";
 
   const isLoadingButtonClassName = isLoading ? "w-50" : "";

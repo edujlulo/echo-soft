@@ -14,6 +14,9 @@ interface Props {
   image: Image;
   index: number;
   onZoom: (index: number) => void;
+  isSelected: boolean;
+  onToggleSelection: (imageId: string) => void;
+  isSelectionDisabled: boolean;
   onDeleteComplete?: () => Promise<void> | void;
   deleteUltrasoundImage: (imageId: string) => Promise<void>;
   deletingImageId: string | null;
@@ -23,6 +26,9 @@ export default function UltrasoundImageCard({
   image,
   index,
   onZoom,
+  isSelected,
+  onToggleSelection,
+  isSelectionDisabled,
   onDeleteComplete,
   deleteUltrasoundImage,
   deletingImageId,
@@ -33,24 +39,42 @@ export default function UltrasoundImageCard({
 
   return (
     <div className="border border-gray-300 rounded-md p-2 bg-white">
-      <button
-        type="button"
-        onClick={() => onZoom(index)}
-        className="w-full cursor-pointer"
-      >
-        <img
-          src={image.src}
-          alt={image.alt}
-          className="w-full aspect-square object-cover rounded"
-        />
-      </button>
+      <div className="relative">
+        <label
+          className="absolute left-0 top-0 z-10 flex h-11 w-11 cursor-pointer items-start justify-start p-2"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <span className="flex h-5 w-5 items-center justify-center rounded bg-white/80 shadow-sm ring-1 ring-gray-300">
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={() => onToggleSelection(image.id)}
+              disabled={isSelectionDisabled}
+              className="h-4 w-4 cursor-pointer accent-blue-600"
+              aria-label="Seleccionar imagen"
+            />
+          </span>
+        </label>
+
+        <button
+          type="button"
+          onClick={() => onZoom(index)}
+          className="w-full cursor-pointer"
+        >
+          <img
+            src={image.src}
+            alt={image.alt}
+            className="w-full aspect-square object-cover rounded"
+          />
+        </button>
+      </div>
 
       <div className="mt-2 flex justify-between gap-2">
         <Button
           type="button"
           className="flex-1"
           onClick={() => onZoom(index)}
-          disabled={isDeletingThisImage}
+          disabled={isDeletingThisImage || isSelectionDisabled}
         >
           Zoom
         </Button>
@@ -59,7 +83,7 @@ export default function UltrasoundImageCard({
           type="button"
           className="w-10 flex items-center justify-center"
           onClick={() => setIsDeleteDialogOpen(true)}
-          disabled={isDeletingThisImage}
+          disabled={isDeletingThisImage || isSelectionDisabled}
         >
           X
         </Button>

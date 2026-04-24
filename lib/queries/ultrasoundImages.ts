@@ -66,6 +66,17 @@ export interface UploadProgressInfo {
   bytesTotal: number;
 }
 
+export class UploadCancellationError extends Error {
+  constructor(message = "Upload cancelled.") {
+    super(message);
+    this.name = "UploadCancellationError";
+  }
+}
+
+export function isUploadCancellationError(error: unknown): boolean {
+  return error instanceof UploadCancellationError;
+}
+
 export interface UltrasoundImageListItem {
   id: UltrasoundImageRow["id"];
   src: string;
@@ -165,7 +176,8 @@ export async function prepareUltrasoundImageFile(
 
 export async function uploadUltrasoundImageFileToStorage(
   preparedFile: PreparedImageFile,
-  onProgress?: (progress: UploadProgressInfo) => void
+  onProgress?: (progress: UploadProgressInfo) => void,
+  signal?: AbortSignal
 ): Promise<void> {
   const {
     data: { session },
@@ -185,6 +197,34 @@ export async function uploadUltrasoundImageFileToStorage(
   const endpoint = getSupabaseStorageTusEndpoint();
 
   await new Promise<void>((resolve, reject) => {
+    let settled = false;
+
+    function cleanupAbortListener() {
+      signal?.removeEventListener("abort", handleAbort);
+    }
+
+    function rejectOnce(error: Error) {
+      if (settled) return;
+      settled = true;
+      cleanupAbortListener();
+      reject(error);
+    }
+
+    function resolveOnce() {
+      if (settled) return;
+      settled = true;
+      cleanupAbortListener();
+      resolve();
+    }
+
+    function handleAbort() {
+      void upload.abort(true).catch(() => {
+        // Ignore abort cleanup errors and surface cancellation consistently.
+      });
+
+      rejectOnce(new UploadCancellationError());
+    }
+
     const upload = new tus.Upload(preparedFile.file, {
       endpoint,
       retryDelays: [0, 3000, 5000, 10000, 20000],
@@ -202,7 +242,7 @@ export async function uploadUltrasoundImageFileToStorage(
         cacheControl: "3600",
       },
       onError(error) {
-        reject(new Error(`Storage upload failed: ${error.message}`));
+        rejectOnce(new Error(`Storage upload failed: ${error.message}`));
       },
       onProgress(bytesUploaded, bytesTotal) {
         onProgress?.({
@@ -211,13 +251,25 @@ export async function uploadUltrasoundImageFileToStorage(
         });
       },
       onSuccess() {
-        resolve();
+        resolveOnce();
       },
     });
+
+    if (signal?.aborted) {
+      handleAbort();
+      return;
+    }
+
+    signal?.addEventListener("abort", handleAbort, { once: true });
 
     upload
       .findPreviousUploads()
       .then((previousUploads) => {
+        if (signal?.aborted) {
+          handleAbort();
+          return;
+        }
+
         if (previousUploads.length > 0) {
           upload.resumeFromPreviousUpload(previousUploads[0]);
         }
@@ -225,7 +277,7 @@ export async function uploadUltrasoundImageFileToStorage(
         upload.start();
       })
       .catch((error) => {
-        reject(
+        rejectOnce(
           new Error(
             error instanceof Error
               ? error.message
@@ -299,14 +351,25 @@ export async function insertUltrasoundImageRow(
 export async function createUltrasoundImage(
   file: File,
   context: UploadUltrasoundImageContext,
-  onProgress?: (progress: UploadProgressInfo) => void
+  onProgress?: (progress: UploadProgressInfo) => void,
+  signal?: AbortSignal
 ): Promise<UltrasoundImageRow> {
   const preparedFile = await prepareUltrasoundImageFile(
     file,
     context.consultationId
   );
 
-  await uploadUltrasoundImageFileToStorage(preparedFile, onProgress);
+  await uploadUltrasoundImageFileToStorage(preparedFile, onProgress, signal);
+
+  if (signal?.aborted) {
+    try {
+      await deleteUltrasoundImageFileFromStorage(preparedFile.storagePath);
+    } catch (cleanupError) {
+      console.error("Failed to clean up cancelled storage file:", cleanupError);
+    }
+
+    throw new UploadCancellationError();
+  }
 
   try {
     return await insertUltrasoundImageRow(preparedFile, context);
@@ -383,6 +446,26 @@ export async function fetchUltrasoundImageRowById(
   return (data as UltrasoundImageRow | null) ?? null;
 }
 
+export async function fetchUltrasoundImageRowsByIds(
+  imageIds: string[]
+): Promise<UltrasoundImageRow[]> {
+  if (imageIds.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("ultrasound_images")
+    .select("*")
+    .in("id", imageIds)
+    .is("deleted_at", null);
+
+  if (error) {
+    throw new Error(`Failed to fetch ultrasound image rows: ${error.message}`);
+  }
+
+  return (data ?? []) as UltrasoundImageRow[];
+}
+
 export async function deleteUltrasoundImageRowsByIds(
   imageIds: string[]
 ): Promise<void> {
@@ -447,6 +530,28 @@ export async function deleteAllUltrasoundImagesByConsultation(
   return rows.length;
 }
 
+export async function deleteSelectedUltrasoundImagesByIds(
+  imageIds: string[]
+): Promise<number> {
+  if (imageIds.length === 0) {
+    return 0;
+  }
+
+  const rows = await fetchUltrasoundImageRowsByIds(imageIds);
+
+  if (rows.length === 0) {
+    return 0;
+  }
+
+  const existingImageIds = rows.map((row) => row.id);
+  const storagePaths = rows.map((row) => row.storage_path);
+
+  await deleteUltrasoundImageFilesFromStorage(storagePaths);
+  await deleteUltrasoundImageRowsByIds(existingImageIds);
+
+  return existingImageIds.length;
+}
+
 // ============= FETCH ULTRASOUND IMAGES BY CONSULTATION ==============
 export async function fetchUltrasoundImagesByConsultation(
   consultationId: string
@@ -466,8 +571,6 @@ export async function fetchUltrasoundImagesByConsultation(
   if (!rows || rows.length === 0) {
     return [];
   }
-
-  const paths = rows.map((row) => row.storage_path);
 
   return rows.map((row) => {
     const { data } = supabase.storage

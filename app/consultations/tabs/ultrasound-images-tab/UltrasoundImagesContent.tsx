@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import UltrasoundImagesGrid from "./UltrasoundImagesGrid";
@@ -8,6 +8,8 @@ import { useUltrasoundImages } from "@/hooks/useUltrasoundImages";
 import { useConsultationStore } from "@/context/consultationStore";
 import { useUltrasoundUploadManager } from "@/components/providers/UltrasoundUploadManagerProvider";
 import { MAX_ULTRASOUND_IMAGES_PER_CONSULTATION } from "@/lib/queries/ultrasoundImages";
+import AppDialog from "@/components/AppDialog";
+import Button from "@/components/Button";
 
 import "yet-another-react-lightbox/styles.css";
 import UltrasoundImagesActions from "./UltrasoundImagesActions";
@@ -69,11 +71,15 @@ function UploadProgressState({
   currentFileName,
   currentFileIndex,
   totalFiles,
+  isCancelling,
+  onCancelClick,
 }: {
   percentage: number;
   currentFileName: string | null;
   currentFileIndex: number;
   totalFiles: number;
+  isCancelling: boolean;
+  onCancelClick: () => void;
 }) {
   return (
     <div className="h-full min-h-[320px] w-full flex items-center justify-center">
@@ -102,19 +108,50 @@ function UploadProgressState({
         <p className="mt-4 text-center text-3xl font-bold text-blue-700">
           {percentage}%
         </p>
+
+        <div className="mt-6 flex justify-center">
+          <Button
+            type="button"
+            onClick={onCancelClick}
+            disabled={isCancelling}
+            className="w-52"
+          >
+            {isCancelling ? "Cancelando subida..." : "Cancelar subida"}
+          </Button>
+        </div>
       </div>
     </div>
   );
 }
 
+function getSelectedImagesLabel(count: number) {
+  if (count === 1) {
+    return "1 imagen seleccionada";
+  }
+
+  return `${count} imágenes seleccionadas`;
+}
+
 export default function UltrasoundImagesContent() {
   const [index, setIndex] = useState(-1);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [isCancellingUpload, setIsCancellingUpload] = useState(false);
+  const [selectedImageIds, setSelectedImageIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [isNoSelectionDialogOpen, setIsNoSelectionDialogOpen] = useState(false);
+  const [isDeleteSelectedDialogOpen, setIsDeleteSelectedDialogOpen] =
+    useState(false);
+  const [isSelectionToolbarPinned, setIsSelectionToolbarPinned] =
+    useState(false);
 
-  const { state: uploadManagerState } = useUltrasoundUploadManager();
+  const { manager: uploadManager, state: uploadManagerState } =
+    useUltrasoundUploadManager();
   const lastCompletedBatch = uploadManagerState.lastCompletedBatch;
   const handledCompletedBatchIdRef = useRef<string | null>(
     lastCompletedBatch?.id ?? null,
   );
+  const activeBatch = uploadManagerState.activeBatch;
 
   const activeUploadItem =
     [...uploadManagerState.items]
@@ -133,10 +170,25 @@ export default function UltrasoundImagesContent() {
     fetchUltrasoundImages,
     fetchError,
     deleteAllUltrasoundImages,
+    deleteSelectedUltrasoundImages,
     deleteUltrasoundImage,
     isDeletingAllImages,
+    isDeletingSelectedImages,
     deletingImageId,
+    deletingImageIds,
+    error,
+    clearUltrasoundImagesError,
   } = useUltrasoundImages();
+
+  const selectedImageCount = selectedImageIds.size;
+  const shouldShowSelectionToolbar =
+    selectedImageCount > 0 || isSelectionToolbarPinned;
+  const visibleImageIds = useMemo(
+    () => images.map((image) => image.id),
+    [images],
+  );
+  const isSelectionBusy =
+    isDeletingAllImages || isDeletingSelectedImages || deletingImageId !== null;
 
   const loadImages = useCallback(async () => {
     if (!consultationId) return;
@@ -167,13 +219,96 @@ export default function UltrasoundImagesContent() {
     console.warn("Ultrasound images fetch error:", fetchError);
   }, [fetchError]);
 
+  useEffect(() => {
+    setSelectedImageIds((currentSelectedIds) => {
+      const nextSelectedIds = new Set(
+        [...currentSelectedIds].filter((imageId) =>
+          visibleImageIds.includes(imageId),
+        ),
+      );
+
+      if (nextSelectedIds.size === currentSelectedIds.size) {
+        return currentSelectedIds;
+      }
+
+      return nextSelectedIds;
+    });
+  }, [visibleImageIds]);
+
   function openLightbox(imageIndex: number) {
     setIndex(imageIndex);
   }
 
+  function handleToggleSelection(imageId: string) {
+    setSelectedImageIds((currentSelectedIds) => {
+      const nextSelectedIds = new Set(currentSelectedIds);
+
+      if (nextSelectedIds.has(imageId)) {
+        nextSelectedIds.delete(imageId);
+      } else {
+        nextSelectedIds.add(imageId);
+        setIsSelectionToolbarPinned(true);
+      }
+
+      return nextSelectedIds;
+    });
+  }
+
+  function handleSelectAll() {
+    setSelectedImageIds(new Set(visibleImageIds));
+  }
+
+  function handleDeselectAll() {
+    setSelectedImageIds(new Set());
+  }
+
+  function handleOpenDeleteSelectedDialog() {
+    setIsSelectionToolbarPinned(true);
+
+    if (selectedImageCount === 0) {
+      setIsNoSelectionDialogOpen(true);
+      return;
+    }
+
+    clearUltrasoundImagesError();
+    setIsDeleteSelectedDialogOpen(true);
+  }
+
+  async function handleDeleteSelectedImages() {
+    const imageIdsToDelete = [...selectedImageIds];
+
+    if (imageIdsToDelete.length === 0) {
+      setIsDeleteSelectedDialogOpen(false);
+      return;
+    }
+
+    try {
+      await deleteSelectedUltrasoundImages(imageIdsToDelete);
+      setSelectedImageIds(new Set());
+      setIsDeleteSelectedDialogOpen(false);
+      await loadImages();
+    } catch (deleteError) {
+      console.error("Delete selected ultrasound images error:", deleteError);
+    }
+  }
+
+  async function handleCancelUpload(removeUploaded: boolean) {
+    if (!activeBatch) return;
+
+    try {
+      setIsCancellingUpload(true);
+      await uploadManager.cancelActiveBatch({ removeUploaded });
+      await loadImages();
+      setIsCancelDialogOpen(false);
+    } catch (cancelError) {
+      console.error("Cancel ultrasound upload error:", cancelError);
+    } finally {
+      setIsCancellingUpload(false);
+    }
+  }
+
   return (
     <div className="h-full min-h-0 flex flex-row gap-4">
-      {/* === LEFT === */}
       <div className="w-[1150px] h-full overflow-y-auto">
         {activeUploadItem ? (
           <UploadProgressState
@@ -181,6 +316,10 @@ export default function UltrasoundImagesContent() {
             currentFileName={activeUploadItem.fileName}
             currentFileIndex={activeUploadItem.batchIndex}
             totalFiles={activeUploadItem.batchTotal}
+            isCancelling={
+              isCancellingUpload || activeBatch?.isCancelling === true
+            }
+            onCancelClick={() => setIsCancelDialogOpen(true)}
           />
         ) : isLoadingImages ? (
           <LoadingState />
@@ -190,9 +329,41 @@ export default function UltrasoundImagesContent() {
           <EmptyState />
         ) : (
           <>
+            {shouldShowSelectionToolbar ? (
+              <div className="mb-3 flex items-center justify-between rounded-md border border-gray-200 bg-white px-4 py-3">
+                <p className="text-sm font-medium text-gray-600">
+                  {getSelectedImagesLabel(selectedImageCount)}
+                </p>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSelectAll}
+                    disabled={images.length === 0 || isSelectionBusy}
+                    className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    Seleccionar todas
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleDeselectAll}
+                    disabled={selectedImageCount === 0 || isSelectionBusy}
+                    className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    Deseleccionar todas
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
             <UltrasoundImagesGrid
               images={images}
               onZoom={openLightbox}
+              selectedImageIds={selectedImageIds}
+              onToggleSelection={handleToggleSelection}
+              isSelectionDisabled={isSelectionBusy}
+              deletingImageIds={deletingImageIds}
               onDeleteComplete={loadImages}
               deleteUltrasoundImage={deleteUltrasoundImage}
               deletingImageId={deletingImageId}
@@ -211,7 +382,108 @@ export default function UltrasoundImagesContent() {
         )}
       </div>
 
-      {/* === RIGHT === */}
+      <AppDialog
+        widthClassName="w-[700px]"
+        isOpen={isCancelDialogOpen}
+        onClose={() => {
+          if (isCancellingUpload) return;
+          setIsCancelDialogOpen(false);
+        }}
+        navbarTitle="Cancelar subida"
+        title="¿Cancelar subida de imágenes?"
+        description={
+          <p>
+            Ya se han subido {activeBatch?.uploadedCount ?? 0} de{" "}
+            {activeBatch?.totalFiles ?? 0} imágenes. ¿Qué deseas hacer con las
+            imágenes subidas hasta ahora?
+          </p>
+        }
+        showCancelButton={false}
+        disableClose={isCancellingUpload}
+        footer={
+          <>
+            <Button
+              type="button"
+              onClick={() => void handleCancelUpload(false)}
+              disabled={isCancellingUpload}
+              className="w-56"
+            >
+              {isCancellingUpload
+                ? "Cancelando subida..."
+                : "Mantener imágenes subidas"}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => void handleCancelUpload(true)}
+              disabled={isCancellingUpload}
+              className="w-56 bg-red-600 border-red-700 hover:bg-red-700"
+            >
+              {isCancellingUpload
+                ? "Eliminando imágenes..."
+                : "Eliminar imágenes subidas"}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setIsCancelDialogOpen(false)}
+              disabled={isCancellingUpload}
+              className="w-32"
+            >
+              Volver
+            </Button>
+          </>
+        }
+      />
+
+      <AppDialog
+        isOpen={isNoSelectionDialogOpen}
+        onClose={() => setIsNoSelectionDialogOpen(false)}
+        navbarTitle="Imágenes seleccionadas"
+        title="No hay imágenes seleccionadas"
+        description={
+          <p>
+            Selecciona al menos una imagen antes de intentar borrar imágenes
+            seleccionadas.
+          </p>
+        }
+        confirmLabel="Entendido"
+        showCancelButton={false}
+        onConfirm={() => setIsNoSelectionDialogOpen(false)}
+      />
+
+      <AppDialog
+        isOpen={isDeleteSelectedDialogOpen}
+        onClose={() => {
+          if (isDeletingSelectedImages) return;
+          clearUltrasoundImagesError();
+          setIsDeleteSelectedDialogOpen(false);
+        }}
+        navbarTitle="Confirmar eliminación"
+        title="¿Borrar imágenes seleccionadas?"
+        description={
+          <>
+            <p>
+              {selectedImageCount === 1
+                ? "Vas a borrar 1 imagen seleccionada. Esta acción no se puede deshacer."
+                : `Vas a borrar ${selectedImageCount} imágenes seleccionadas. Esta acción no se puede deshacer.`}
+            </p>
+            {error ? (
+              <p className="mt-2 font-medium text-red-700">{error}</p>
+            ) : null}
+          </>
+        }
+        confirmLabel="Borrar imágenes"
+        confirmLoadingLabel="Borrando imágenes..."
+        cancelLabel="Cancelar"
+        variant="danger"
+        isLoading={isDeletingSelectedImages}
+        disableClose={isDeletingSelectedImages}
+        onConfirm={handleDeleteSelectedImages}
+        onCancel={() => {
+          clearUltrasoundImagesError();
+          setIsDeleteSelectedDialogOpen(false);
+        }}
+      />
+
       <div className="flex flex-col">
         <div className="w-full flex justify-start">
           <p className="pl-4 pt-4 text-lg text-gray-600">
@@ -221,8 +493,13 @@ export default function UltrasoundImagesContent() {
         <div className="h-full pl-4 pb-18 flex">
           <UltrasoundImagesActions
             onUploadComplete={loadImages}
+            onDeleteSelectedClick={handleOpenDeleteSelectedDialog}
             deleteAllUltrasoundImages={deleteAllUltrasoundImages}
             isDeletingAllImages={isDeletingAllImages}
+            isDeletingSelectedImages={isDeletingSelectedImages}
+            hasImages={images.length > 0}
+            selectedImageCount={selectedImageCount}
+            isSelectionActionsDisabled={deletingImageId !== null}
             currentImageCount={images.length}
           />
         </div>
