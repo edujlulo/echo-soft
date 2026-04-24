@@ -7,6 +7,7 @@ import {
   VetImageType,
   getVetImagesWithSignedUrls,
   SignedVetImages,
+  deleteVetImage,
 } from "@/lib/queries/vetImages";
 
 export function useVetImages() {
@@ -58,5 +59,22 @@ export function useVetImages() {
     setLoading((prev) => ({ ...prev, [type]: false }));
   }
 
-  return { images, loading, handleUpload };
+  async function handleDelete(type: Extract<VetImageType, "profile" | "signature">) {
+    if (!activeVet) return;
+
+    setLoading((prev) => ({ ...prev, [type]: true }));
+
+    try {
+      await deleteVetImage(activeVet.vet_id, type);
+
+      setImages((prev) => ({
+        ...prev,
+        [type]: null,
+      }));
+    } finally {
+      setLoading((prev) => ({ ...prev, [type]: false }));
+    }
+  }
+
+  return { images, loading, handleUpload, handleDelete };
 }

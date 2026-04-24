@@ -118,3 +118,59 @@ export async function uploadVetImage(
 
   return urlData.signedUrl;
 }
+
+export async function deleteVetImage(
+  vetId: string,
+  type: Extract<VetImageType, "profile" | "signature">
+): Promise<void> {
+  if (!vetId) {
+    throw new Error("No vet id available");
+  }
+
+  const { data: existingImage, error: fetchError } = await supabase
+    .from("veterinarian_images")
+    .select("id, file_path")
+    .eq("vet_id", vetId)
+    .eq("image_type", type)
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error("Error fetching veterinarian image:", fetchError);
+    throw fetchError;
+  }
+
+  if (existingImage?.file_path) {
+    const { error: storageError } = await supabase.storage
+      .from("vet-images")
+      .remove([existingImage.file_path]);
+
+    if (storageError) {
+      console.error("Error deleting vet image from storage:", storageError);
+      throw storageError;
+    }
+  }
+
+  if (existingImage?.id) {
+    const { error: deleteError } = await supabase
+      .from("veterinarian_images")
+      .delete()
+      .eq("id", existingImage.id);
+
+    if (deleteError) {
+      console.error("Error deleting veterinarian_images row:", deleteError);
+      throw deleteError;
+    }
+  }
+
+  const veterinarianColumn = type === "profile" ? "profile_photo" : "signature";
+
+  const { error: vetError } = await supabase
+    .from("veterinarians")
+    .update({ [veterinarianColumn]: null })
+    .eq("vet_id", vetId);
+
+  if (vetError) {
+    console.error("Error clearing veterinarian image column:", vetError);
+    throw vetError;
+  }
+}
