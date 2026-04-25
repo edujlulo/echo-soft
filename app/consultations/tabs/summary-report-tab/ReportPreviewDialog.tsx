@@ -27,7 +27,7 @@ export default function ReportPreviewDialog({
 }: Props) {
   const formConsultation = useConsultationStore((s) => s.formConsultation);
   const consultationId = useConsultationStore(
-    (s) => s.selectedConsultation?.consultation_id,
+    (s) => s.selectedConsultation?.consultation_id
   );
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
   const activeVet = useActiveVetStore((s) => s.activeVet);
@@ -54,8 +54,9 @@ export default function ReportPreviewDialog({
       }
 
       try {
-        const fetchedImages =
-          await fetchUltrasoundImagesByConsultation(consultationId);
+        const fetchedImages = await fetchUltrasoundImagesByConsultation(
+          consultationId
+        );
 
         if (isMounted) {
           setUltrasoundImages(fetchedImages);
@@ -106,11 +107,11 @@ export default function ReportPreviewDialog({
     <Dialog
       open={isOpen}
       onClose={onClose}
-      className="fixed inset-0 z-50 flex overflow-x-auto overflow-y-auto"
+      className="fixed inset-0 z-50 flex overflow-y-auto overflow-x-auto"
     >
       <div className="fixed inset-0 bg-black/20" aria-hidden="true" />
 
-      <Dialog.Panel className="w-[1000px] h-[850px] flex flex-col flex-shrink-0 bg-gray-100 rounded-md z-50 border border-gray-500 shadow-lg relative m-auto">
+      <Dialog.Panel className="w-[1000px] h-[780px] flex flex-col flex-shrink-0 bg-gray-100 rounded-md z-50 border border-gray-500 shadow-lg relative m-auto">
         <button
           type="button"
           onClick={onClose}
@@ -130,7 +131,7 @@ export default function ReportPreviewDialog({
               <iframe
                 title="Report Preview"
                 srcDoc={reportHtml}
-                className="w-full h-full min-h-[700px] border-0"
+                className="w-full h-full border-0"
               />
             </div>
           </div>
