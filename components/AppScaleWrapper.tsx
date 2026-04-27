@@ -8,7 +8,7 @@ const DEFAULT_BASE_SIZE = {
   height: 800,
 };
 
-const MIN_SCALE = 0.75;
+const MIN_SCALE = 0.8;
 
 const ROUTE_BASE_SIZES: Record<string, { width: number; height: number }> = {
   "/consultations": { width: 1600, height: 800 },

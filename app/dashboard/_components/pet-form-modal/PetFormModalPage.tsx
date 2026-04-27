@@ -10,6 +10,7 @@ import { Database } from "@/types/database";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { usePetFetcher } from "@/hooks/usePetFetcher";
 import { Dialog } from "@headlessui/react";
+import DialogScaleWrapper from "@/components/DialogScaleWrapper";
 
 type PetFormModalProps = {
   isOpen: boolean;
@@ -47,62 +48,84 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
       {/* Center container */}
       <div className="fixed inset-0 flex overflow-auto">
         <div className="m-auto self-start">
-          <Dialog.Panel className="w-[1100px] h-[600px] flex flex-col bg-gray-100 rounded-md shadow-lg mx-auto my-auto self-start overflow-x-auto overflow-y-auto">
-            {/* ========= NAVBAR ========= */}
-            <div className="w-full">
-              <Navbar>Nueva Mascota...</Navbar>
-            </div>
+          <DialogScaleWrapper
+            baseWidth={1100}
+            baseHeight={600}
+            minScale={0.8}
+            className="m-auto"
+          >
+            <Dialog.Panel className="w-[1100px] h-[600px] flex flex-col bg-gray-100 rounded-md shadow-lg mx-auto my-auto self-start overflow-x-auto overflow-y-auto">
+              {/* Botón cerrar */}
+              <button
+                onClick={() => {
+                  setErrors({});
+                  onClose();
+                }}
+                className="pt-0.5 absolute top-2 right-2 w-8 h-6 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-md shadow-md border border-gray-500 transition-colors text-2xl"
+              >
+                ×
+              </button>
 
-            <div className="flex-1 min-h-0 p-4 flex flex-col gap-2 items-center justify-center">
-              {/* ======= TITLE ========= */}
-              <h1 className="pr-12 text-2xl font-semibold">MASCOTA</h1>
+              {/* ========= NAVBAR ========= */}
+              <div className="w-full">
+                <Navbar>Nueva Mascota...</Navbar>
+              </div>
 
-              <div className="w-full min-h-0 flex flex-col gap-2">
-                <div className="w-full min-h-0 flex flex-row gap-5">
-                  {/* Left Section */}
-                  <div className=" flex flex-col gap-2">
-                    {/* ======== PET FORM ========= */}
-                    <div className="h-full pb-10 flex justify-center items-center">
-                      {selectedPet && (
-                        <PetForm
-                          selectedPet={selectedPet as Pet}
-                          setField={setField}
-                          errors={errors}
-                          statusMessage={statusMessage}
-                        />
+              <div className="flex-1 min-h-0 p-4 flex flex-col gap-2 items-center justify-center">
+                {/* ======= TITLE ========= */}
+                <h1 className="pr-12 text-2xl font-semibold">MASCOTA</h1>
+
+                <div className="w-full min-h-0 flex flex-col gap-2">
+                  <div className="w-full min-h-0 flex flex-row gap-5">
+                    {/* Left Section */}
+                    <div className=" flex flex-col gap-2">
+                      {/* ======== PET FORM ========= */}
+                      <div className="h-full pb-10 flex justify-center items-center">
+                        {selectedPet && (
+                          <PetForm
+                            selectedPet={selectedPet as Pet}
+                            setField={setField}
+                            errors={errors}
+                            statusMessage={statusMessage}
+                          />
+                        )}
+                      </div>
+
+                      {/* ======== BUTTONS ======== */}
+                      <div className="pl-6 pb-2 flex flex-row gap-4 justify-start items-start">
+                        <Button onClick={submit} disabled={isSubmitting}>
+                          {isSubmitting ? "Guardando..." : "Grabar"}
+                        </Button>
+
+                        <Button
+                          onClick={() => {
+                            setErrors({});
+                            onClose();
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Central Section */}
+                    <div className="pt-4">
+                      {!isCreating ? (
+                        <PetImage />
+                      ) : (
+                        <div className="px-10"></div>
                       )}
                     </div>
 
-                    {/* ======== BUTTONS ======== */}
-                    <div className="pl-6 pb-2 flex flex-row gap-4 justify-start items-start">
-                      <Button onClick={submit} disabled={isSubmitting}>
-                        {isSubmitting ? "Guardando..." : "Grabar"}
-                      </Button>
-
-                      <Button
-                        onClick={() => {
-                          setErrors({});
-                          onClose();
-                        }}
-                      >
-                        Cancelar
-                      </Button>
+                    {/* Right Section */}
+                    <div className="w-[420px]">
+                      <EditableSelectList setField={setField} />
                     </div>
-                  </div>
-
-                  {/* Central Section */}
-                  <div className="pt-4">
-                    {!isCreating ? <PetImage /> : <div className="px-10"></div>}
-                  </div>
-
-                  {/* Right Section */}
-                  <div className="w-[420px]">
-                    <EditableSelectList setField={setField} />
                   </div>
                 </div>
               </div>
-            </div>
-          </Dialog.Panel>
+            </Dialog.Panel>
+          </DialogScaleWrapper>
         </div>
       </div>
     </Dialog>

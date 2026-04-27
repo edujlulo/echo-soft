@@ -4,6 +4,7 @@ import Button from "@/components/Button";
 import Navbar from "@/components/Navbar";
 import { Dialog } from "@headlessui/react";
 import FullTemplatesContent from "./_components/FullTemplatesContent";
+import DialogScaleWrapper from "@/components/DialogScaleWrapper";
 
 interface Props {
   isFullTemplatesDialogOpen: boolean;
@@ -26,19 +27,26 @@ export default function FullReportTemplatesDialog({
 
         {/* Panel del modal */}
 
-        <Dialog.Panel className="w-[1200px] h-[760px] flex flex-col flex-shrink-0 bg-amber-50 rounded-md z-50 border border-gray-500 shadow-lg relative m-auto">
-          {/* Navbar */}
-          <div className="w-full flex-shrink-0">
-            <Navbar>Plantillas</Navbar>
-          </div>
+        <DialogScaleWrapper
+          baseWidth={1200}
+          baseHeight={760}
+          minScale={0.8}
+          className="m-auto"
+        >
+          <Dialog.Panel className="w-[1200px] h-[760px] flex flex-col flex-shrink-0 bg-amber-50 rounded-md z-50 border border-gray-500 shadow-lg relative m-auto">
+            {/* Navbar */}
+            <div className="w-full flex-shrink-0">
+              <Navbar>Plantillas</Navbar>
+            </div>
 
-          {/* ========= CONTENT ========= */}
-          <div className="flex-1 min-h-0 overflow-hidden">
-            <FullTemplatesContent
-              setIsFullTemplatesDialogOpen={setIsFullTemplatesDialogOpen}
-            />
-          </div>
-        </Dialog.Panel>
+            {/* ========= CONTENT ========= */}
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <FullTemplatesContent
+                setIsFullTemplatesDialogOpen={setIsFullTemplatesDialogOpen}
+              />
+            </div>
+          </Dialog.Panel>
+        </DialogScaleWrapper>
       </Dialog>
     </div>
   );
