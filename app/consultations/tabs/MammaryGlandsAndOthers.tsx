@@ -22,7 +22,7 @@ export default function MammaryGlandsAndOthers() {
       {/* =========== Main content =========== */}
       <div className="min-h-0 ml-6 flex flex-row gap-4">
         {/* =========== Consultation form ============ */}
-        <div className="w-[650px] flex flex-col gap-0.5">
+        <div className="w-[650px] -mt-0.5 flex flex-col ">
           <ConsultLabeledTextarea
             categoryKey="mammary_glands"
             textareaHeight="h-18"
@@ -89,7 +89,7 @@ export default function MammaryGlandsAndOthers() {
 
           <ConsultLabeledTextarea
             categoryKey="mammary_notes"
-            textareaHeight="h-18"
+            textareaHeight="h-17"
             value={formatForDisplay(formConsultation?.mammary_notes ?? "")}
             onChange={(e) =>
               setFieldConsultation("mammary_notes", e.target.value)

@@ -53,8 +53,8 @@ export default function AppScaleWrapper({ children }: AppScaleWrapperProps) {
 
   const baseSize =
     !viewportSize || pathname === "/"
-      ? viewportSize ?? DEFAULT_BASE_SIZE
-      : ROUTE_BASE_SIZES[pathname] ?? DEFAULT_BASE_SIZE;
+      ? (viewportSize ?? DEFAULT_BASE_SIZE)
+      : (ROUTE_BASE_SIZES[pathname] ?? DEFAULT_BASE_SIZE);
 
   const scale = viewportSize
     ? Math.max(
@@ -62,8 +62,8 @@ export default function AppScaleWrapper({ children }: AppScaleWrapperProps) {
         Math.min(
           viewportSize.width / baseSize.width,
           viewportSize.height / baseSize.height,
-          1
-        )
+          1,
+        ),
       )
     : 1;
 
@@ -71,10 +71,8 @@ export default function AppScaleWrapper({ children }: AppScaleWrapperProps) {
   const scaledHeight = baseSize.height * scale;
   const offsetX = viewportSize ? (viewportSize.width - scaledWidth) / 2 : 0;
   const offsetY = viewportSize ? (viewportSize.height - scaledHeight) / 2 : 0;
-  const fitsViewport =
-    viewportSize &&
-    scaledWidth <= viewportSize.width &&
-    scaledHeight <= viewportSize.height;
+  const fitsWidth = viewportSize && scaledWidth <= viewportSize.width;
+  const fitsHeight = viewportSize && scaledHeight <= viewportSize.height;
 
   useEffect(() => {
     if (!viewportSize) return;
@@ -111,8 +109,8 @@ export default function AppScaleWrapper({ children }: AppScaleWrapperProps) {
   return (
     <div
       className={`flex h-screen w-screen overflow-auto ${
-        fitsViewport ? "items-center justify-center" : "items-start justify-start"
-      }`}
+        fitsHeight ? "items-center" : "items-start"
+      } ${fitsWidth ? "justify-center" : "justify-start"}`}
     >
       <div
         style={{

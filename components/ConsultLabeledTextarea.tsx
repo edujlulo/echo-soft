@@ -31,7 +31,7 @@ export default function ConsultLabeledTextarea({
   const label = typeof children === "string" ? children : "";
 
   return (
-    <div className="px-2 flex flex-col gap-1 items-start text-sm">
+    <div className="px-2 flex flex-col gap-1 items-start text-base">
       <label className={clsx("w-full font-bold text-blue-950", labelClassName)}>
         {children}
       </label>
@@ -52,7 +52,7 @@ export default function ConsultLabeledTextarea({
           "w-full bg-white border border-blue-200 px-2 pb-0.5 pt-1.5 rounded",
           "focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white",
           textareaHeight ?? "h-24",
-          textareaClassName
+          textareaClassName,
         )}
       />
     </div>

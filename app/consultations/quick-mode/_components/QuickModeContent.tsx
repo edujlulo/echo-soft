@@ -4,6 +4,7 @@ import EditableSelectList from "@/components/EditableSelectList";
 import OrgansTable from "./OrgansTable";
 import DynamicTextarea from "./DynamicTextarea";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
+import QuickModeReportDraft from "./QuickModeReportDraft";
 
 interface Props {
   setIsQuickModeOpen: (open: boolean) => void;
@@ -47,19 +48,24 @@ export default function QuickModeContent({ setIsQuickModeOpen }: Props) {
               <OrgansTable />
             </div>
 
-            {/* ========== HELP SECTION ========== */}
-            <div className="w-[60%]  pt-2 flex flex-col gap-2">
-              <div className="flex-1 min-h-0">
-                <ConsultLabeledTextarea textareaHeight={"h-60"}>
-                  AYUDA PARA
-                </ConsultLabeledTextarea>
-              </div>
-              <div className="flex-1 min-h-0">
-                <ConsultLabeledTextarea textareaHeight={"h-60"}>
-                  AYUDA PARA
-                </ConsultLabeledTextarea>
-              </div>
+            {/* ========== REPORT DRAFT ========== */}
+            <div className="w-[60%] pt-2 flex flex-col gap-2">
+              <QuickModeReportDraft />
             </div>
+
+            {/* ========== HELP SECTION ========== */}
+            {/* <div className="w-[60%]  pt-2 flex flex-col gap-2">
+              <div className="flex-1 min-h-0">
+                <ConsultLabeledTextarea textareaHeight={"h-60"}>
+                  AYUDA PARA
+                </ConsultLabeledTextarea>
+              </div>
+              <div className="flex-1 min-h-0">
+                <ConsultLabeledTextarea textareaHeight={"h-60"}>
+                  AYUDA PARA
+                </ConsultLabeledTextarea>
+              </div>
+            </div> */}
           </div>
 
           {/* ========== LONG PHRASE OR TEMPLATE ========== */}
