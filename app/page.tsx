@@ -1,5 +1,6 @@
 "use client";
 
+import AppDialog from "@/components/AppDialog";
 import Button from "@/components/Button";
 import LabeledInput from "@/components/LabeledInput";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,6 +13,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("Ecosoft123.");
   const [isLoading, setIsLoading] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleLogin = async () => {
     if (isLoading) return; // evita doble submit
     setIsLoading(true);
@@ -19,7 +22,8 @@ export default function LoginPage() {
       await login(email, password);
       // redirigir a home si es exitoso
     } catch (error) {
-      alert("Correo o contraseña incorrectos");
+      setErrorMessage("Correo o contraseña incorrectos");
+      setPassword("");
     } finally {
       setIsLoading(false);
     }
@@ -68,6 +72,10 @@ export default function LoginPage() {
           >
             Contraseña
           </LabeledInput>
+
+          {errorMessage && (
+            <p className="text-sm text-red-700 text-center">{errorMessage}</p>
+          )}
 
           <p className="text-xs text-gray-600 mt-4 text-center">
             Solo personal autorizado de la clínica puede iniciar sesión

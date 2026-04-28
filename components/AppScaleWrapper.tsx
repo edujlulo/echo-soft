@@ -14,6 +14,7 @@ const ROUTE_BASE_SIZES: Record<string, { width: number; height: number }> = {
   "/consultations": { width: 1600, height: 800 },
   "/dashboard": { width: 1400, height: 700 },
   "/home": { width: 1100, height: 640 },
+  "/auth/accept-invite": { width: 520, height: 550 },
 };
 
 type AppScaleWrapperProps = {
