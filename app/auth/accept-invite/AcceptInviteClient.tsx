@@ -28,23 +28,16 @@ export default function AcceptInviteClient() {
   );
 
   useEffect(() => {
-    const prepareInviteSession = async () => {
+    const prepareAuthSession = async () => {
+      setIsCheckingInvite(true);
+
       const code = searchParams.get("code");
 
-      if (!code) {
-        setIsValidInvite(false);
-        setIsCheckingInvite(false);
-        return;
-      }
-
-      const { error: exchangeError } =
+      if (code) {
         await supabase.auth.exchangeCodeForSession(code);
-
-      if (exchangeError) {
-        setIsValidInvite(false);
-        setIsCheckingInvite(false);
-        return;
       }
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const {
         data: { user },
@@ -60,7 +53,7 @@ export default function AcceptInviteClient() {
       setIsCheckingInvite(false);
     };
 
-    prepareInviteSession();
+    prepareAuthSession();
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -147,7 +140,7 @@ export default function AcceptInviteClient() {
           </div>
 
           <h1 className="text-3xl font-bold text-blue-900 mb-3">
-            Validando invitación
+            Validando acceso
           </h1>
 
           <p className="text-blue-800">Por favor, espere un momento.</p>
@@ -165,12 +158,12 @@ export default function AcceptInviteClient() {
           </p>
 
           <h1 className="text-3xl font-bold text-blue-900 mb-4">
-            Invitación no válida o expirada
+            Enlace no válido o expirado
           </h1>
 
           <p className="text-blue-950 mb-4">
-            Para activar su cuenta, debe ingresar desde el enlace de invitación
-            enviado a su correo electrónico.
+            Para continuar, debe ingresar desde el enlace enviado a su correo
+            electrónico.
           </p>
 
           <p className="text-sm text-blue-900 mb-6">
