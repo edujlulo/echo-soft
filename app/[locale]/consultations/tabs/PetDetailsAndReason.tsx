@@ -1,4 +1,4 @@
-import PetImage from "@/app/dashboard/_components/PetImage";
+import PetImage from "../../dashboard/_components/PetImage";
 import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
 import ConsultationPetForm from "./ConsultationPetForm";

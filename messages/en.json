@@ -1,0 +1,61 @@
+{
+  "LoginPage": {
+    "title": "Welcome to EchoSoft",
+    "subtitle": "Enter your email and password to continue",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email address",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "loginButton": "Log in",
+    "loadingButton": "Loading...",
+    "unauthorizedMessage": "Only authorised clinic staff can log in",
+    "invalidCredentials": "Incorrect email address or password"
+  },
+  "HomePage": {
+    "echosoft": "EchoSoft",
+    "veterinarians": "Veterinary sonographers",
+    "loginSection": "Login",
+    "serialNumber": "Serial No.",
+    "address": "Address",
+    "phones": "Phone",
+    "enterSystem": "ENTER SYSTEM",
+    "exit": "EXIT",
+    "webVersion": "WEB VERSION",
+    "exeUpdatedDate": "Date the exe was updated:"
+  },
+  "VeterinariansTable": {
+    "vetName": "Veterinarian Name",
+    "registrationNumber": "Registration Number",
+    "loadingVets": "Loading veterinarians..."
+  },
+  "VetImages": {
+    "profilePhoto": "Profile Photo",
+    "signature": "Signature",
+    "file": "File",
+    "zoom": "Zoom",
+
+    "loadingImage": "Loading image...",
+
+    "confirmDeleteTitle": "Confirm Deletion",
+    "confirmDeleteQuestion": "Are you sure you want to delete this image?",
+
+    "deleteProfileDescription": "The veterinarian's profile photo will be deleted.",
+    "deleteSignatureDescription": "The veterinarian's signature will be deleted.",
+
+    "cancel": "Cancel",
+    "confirmDelete": "Yes, Delete",
+    "deletingImage": "Deleting image...",
+
+    "notice": "Notice",
+    "accept": "OK",
+
+    "noProfileToDelete": "The veterinarian has no profile photo to delete.",
+    "noSignatureToDelete": "The veterinarian has no signature to delete.",
+
+    "errorDeletingProfile": "An error occurred while deleting the profile photo.",
+    "errorDeletingSignature": "An error occurred while deleting the signature."
+  },
+  "ClinicImage": {
+    "loadingImage": "Loading image..."
+  }
+}

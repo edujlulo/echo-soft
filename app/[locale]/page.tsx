@@ -1,28 +1,30 @@
 "use client";
 
-import AppDialog from "@/components/AppDialog";
 import Button from "@/components/Button";
 import LabeledInput from "@/components/LabeledInput";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/hooks/useAuth";
-import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 
 export default function LoginPage() {
+  const t = useTranslations("LoginPage");
   const { login } = useAuth();
 
   const [email, setEmail] = useState("correo@correo.com");
   const [password, setPassword] = useState("Ecosoft123.");
   const [isLoading, setIsLoading] = useState(false);
-
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async () => {
-    if (isLoading) return; // evita doble submit
+    if (isLoading) return;
+
     setIsLoading(true);
+
     try {
       await login(email, password);
-      // redirigir a home si es exitoso
     } catch (error) {
-      setErrorMessage("Correo o contraseña incorrectos");
+      setErrorMessage(t("invalidCredentials"));
       setPassword("");
     } finally {
       setIsLoading(false);
@@ -34,27 +36,31 @@ export default function LoginPage() {
     handleLogin();
   };
 
-  // 🔹 Agregamos listener global para Enter
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Enter") {
-        e.preventDefault(); // evita submit duplicado o comportamiento por defecto
+        e.preventDefault();
         handleLogin();
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
+
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [email, password, isLoading]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
+      {/* Language buttons top-right */}
+      <LanguageSwitcher />
+
       <div className="bg-blue-200 shadow-lg rounded-xl p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold text-blue-900 mb-2 text-center">
-          Bienvenido a EcoSoft
+          {t("title")}
         </h1>
+
         <p className="text-sm text-blue-800 mb-6 text-center">
-          Ingrese su correo y contraseña para continuar
+          {t("subtitle")}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -63,18 +69,19 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             inputClassName="w-60"
-            placeholder="Ingrese su correo"
+            placeholder={t("emailPlaceholder")}
           >
-            Correo
+            {t("emailLabel")}
           </LabeledInput>
+
           <LabeledInput
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             inputClassName="w-60"
-            placeholder="Ingrese su contraseña"
+            placeholder={t("passwordPlaceholder")}
           >
-            Contraseña
+            {t("passwordLabel")}
           </LabeledInput>
 
           {errorMessage && (
@@ -82,14 +89,16 @@ export default function LoginPage() {
           )}
 
           <p className="text-xs text-gray-600 mt-4 text-center">
-            Solo personal autorizado de la clínica puede iniciar sesión
+            {t("unauthorizedMessage")}
           </p>
 
           <div className="mt-6 flex justify-center">
             <Button
               type="submit"
               disabled={isLoading}
-              className={`bg-blue-600 text-blue-50 border !border-blue-900 rounded-lg shadow-md px-6 py-2 font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors duration-200 ease-in-out flex items-center justify-center ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+              className={`bg-blue-600 text-blue-50 border !border-blue-900 rounded-lg shadow-md px-6 py-2 font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors duration-200 ease-in-out flex items-center justify-center ${
+                isLoading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
             >
               {isLoading ? (
                 <>
@@ -106,17 +115,18 @@ export default function LoginPage() {
                       r="10"
                       stroke="currentColor"
                       strokeWidth="4"
-                    ></circle>
+                    />
                     <path
                       className="opacity-75"
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                    ></path>
+                    />
                   </svg>
-                  Cargando...
+
+                  {t("loadingButton")}
                 </>
               ) : (
-                "Entrar"
+                t("loginButton")
               )}
             </Button>
           </div>

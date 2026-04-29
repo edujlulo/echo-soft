@@ -3,7 +3,7 @@
 import Button from "@/components/Button";
 import LabeledInput from "@/components/LabeledInput";
 import { supabase } from "@/lib/supabase/client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function AcceptInviteClient() {
@@ -12,6 +12,9 @@ export default function AcceptInviteClient() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const params = useParams();
+  const locale = params.locale as string;
 
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -118,7 +121,7 @@ export default function AcceptInviteClient() {
       await supabase.auth.signOut();
 
       setTimeout(() => {
-        router.replace("/");
+        router.replace(`/${locale}`);
       }, 2000);
     } catch (error) {
       setErrorMessage(
@@ -172,7 +175,7 @@ export default function AcceptInviteClient() {
 
           <Button
             type="button"
-            onClick={() => router.push("/")}
+            onClick={() => router.push(`/${locale}`)}
             className="bg-blue-600 text-blue-50 border !border-blue-900 rounded-lg shadow-md px-6 py-2 font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors duration-200 ease-in-out"
           >
             Volver al inicio de sesión

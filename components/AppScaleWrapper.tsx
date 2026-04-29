@@ -32,8 +32,13 @@ function getViewportSize() {
   };
 }
 
+function removeLocaleFromPath(pathname: string) {
+  return pathname.replace(/^\/[^/]+/, "") || "/";
+}
+
 export default function AppScaleWrapper({ children }: AppScaleWrapperProps) {
   const pathname = usePathname();
+  const pathnameWithoutLocale = removeLocaleFromPath(pathname);
   const [viewportSize, setViewportSize] = useState<{
     width: number;
     height: number;
@@ -53,9 +58,9 @@ export default function AppScaleWrapper({ children }: AppScaleWrapperProps) {
   }, []);
 
   const baseSize =
-    !viewportSize || pathname === "/"
-      ? (viewportSize ?? DEFAULT_BASE_SIZE)
-      : (ROUTE_BASE_SIZES[pathname] ?? DEFAULT_BASE_SIZE);
+    !viewportSize || pathnameWithoutLocale === "/"
+      ? viewportSize ?? DEFAULT_BASE_SIZE
+      : ROUTE_BASE_SIZES[pathnameWithoutLocale] ?? DEFAULT_BASE_SIZE;
 
   const scale = viewportSize
     ? Math.max(
@@ -63,8 +68,8 @@ export default function AppScaleWrapper({ children }: AppScaleWrapperProps) {
         Math.min(
           viewportSize.width / baseSize.width,
           viewportSize.height / baseSize.height,
-          1,
-        ),
+          1
+        )
       )
     : 1;
 

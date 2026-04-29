@@ -3,7 +3,7 @@
 import Button from "@/components/Button";
 import { useSelectedPetStore, emptyPet } from "@/context/selectedPetStore";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import MedicalHistoryDialog from "../medical-history-dialog/MedicalHistoryDialog";
 import { useMemo, useState } from "react";
 import AppDialog from "@/components/AppDialog";
@@ -35,16 +35,19 @@ export default function ConsultationsButtons({
 
   const router = useRouter();
 
+  const params = useParams();
+  const locale = params.locale as string;
+
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
   const { selectedConsultation } = useConsultationForm();
   const activeVet = useActiveVetStore((s) => s.activeVet);
 
   function navigateToHome() {
-    router.push("/home");
+    router.push(`/${locale}/home`);
   }
 
   const navigateToConsultations = () => {
-    router.push("/consultations");
+    router.push(`/${locale}/consultations`);
   };
 
   const formattedConsultationDate = useMemo(() => {

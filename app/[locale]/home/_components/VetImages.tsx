@@ -3,12 +3,14 @@
 import AppDialog from "@/components/AppDialog";
 import Button from "@/components/Button";
 import { useVetImages } from "@/hooks/useVetImages";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 
 export default function VetImages() {
+  const t = useTranslations("VetImages");
   const { images, loading, handleUpload, handleDelete } = useVetImages();
 
   const profileInputRef = useRef<HTMLInputElement>(null);
@@ -20,7 +22,7 @@ export default function VetImages() {
     "profile" | "signature" | null
   >(null);
   const [zoomImage, setZoomImage] = useState<"profile" | "signature" | null>(
-    null,
+    null
   );
 
   const profileImageSrc = images.profile || "/images/blank-vetimages.jpg";
@@ -33,8 +35,8 @@ export default function VetImages() {
     deleteTarget === "profile"
       ? loading.profile
       : deleteTarget === "signature"
-        ? loading.signature
-        : false;
+      ? loading.signature
+      : false;
 
   function handleOpenDeleteConfirmation(type: "profile" | "signature") {
     const hasImage =
@@ -42,9 +44,7 @@ export default function VetImages() {
 
     if (!hasImage) {
       setDialogMessage(
-        type === "profile"
-          ? "El veterinario no tiene una foto de perfil para borrar."
-          : "El veterinario no tiene una firma para borrar.",
+        type === "profile" ? t("noProfileToDelete") : t("noSignatureToDelete")
       );
       setIsAlertDialogOpen(true);
       return;
@@ -64,8 +64,8 @@ export default function VetImages() {
         error instanceof Error
           ? error.message
           : deleteTarget === "profile"
-            ? "Ocurrió un error al borrar la foto de perfil."
-            : "Ocurrió un error al borrar la firma.";
+          ? t("errorDeletingProfile")
+          : t("errorDeletingSignature");
 
       setDeleteTarget(null);
       setDialogMessage(message);
@@ -76,13 +76,13 @@ export default function VetImages() {
   return (
     <div className="w-[200px] flex flex-col items-center justify-start mt-1">
       {/* PROFILE PHOTO */}
-      <p className="font-bold">Foto de perfil</p>
+      <p className="font-bold">{t("profilePhoto")}</p>
 
       <div className="w-[140px] h-[120px] flex items-center justify-center bg-transparent rounded">
         {loading.profile ? (
           <div className="flex flex-col items-center gap-1 text-gray-500 animate-pulse">
             <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-xs">Cargando imagen...</span>
+            <span className="text-xs">{t("loadingImage")}</span>
           </div>
         ) : (
           <img
@@ -95,7 +95,7 @@ export default function VetImages() {
 
       <div className="my-2 space-x-1 text-sm">
         <Button onClick={() => profileInputRef.current?.click()}>
-          Archivo
+          {t("file")}
         </Button>
 
         <input
@@ -124,7 +124,7 @@ export default function VetImages() {
               : ""
           }
         >
-          Zoom
+          {t("zoom")}
         </Button>
         <Button
           type="button"
@@ -149,13 +149,13 @@ export default function VetImages() {
       </div>
 
       {/* SIGNATURE */}
-      <p className="font-bold text-sm">Firma</p>
+      <p className="font-bold text-sm">{t("signature")}</p>
 
       <div className="w-[120px] h-[100px] flex items-center justify-center bg-transparent rounded">
         {loading.signature ? (
           <div className="flex flex-col items-center gap-1 text-gray-500 animate-pulse">
             <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-xs">Cargando imagen...</span>
+            <span className="text-xs">{t("loadingImage")}</span>
           </div>
         ) : (
           <img
@@ -168,7 +168,7 @@ export default function VetImages() {
 
       <div className="my-2 space-x-1 text-sm">
         <Button onClick={() => signatureInputRef.current?.click()}>
-          Archivo
+          {t("file")}
         </Button>
 
         <input
@@ -197,7 +197,7 @@ export default function VetImages() {
               : ""
           }
         >
-          Zoom
+          {t("zoom")}
         </Button>
         <Button
           type="button"
@@ -240,19 +240,19 @@ export default function VetImages() {
       <AppDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => setDeleteTarget(null)}
-        navbarTitle="Confirmar borrado"
-        title="¿Seguro que desea borrar esta imagen?"
+        navbarTitle={t("confirmDeleteTitle")}
+        title={t("confirmDeleteQuestion")}
         description={
           deleteTarget === "profile"
-            ? "Se eliminará la foto de perfil del veterinario."
-            : "Se eliminará la firma del veterinario."
+            ? t("deleteProfileDescription")
+            : t("deleteSignatureDescription")
         }
         showCloseButton
         showFooter
         showCancelButton
-        cancelLabel="Cancelar"
-        confirmLabel="Sí, borrar"
-        confirmLoadingLabel="Borrando imagen..."
+        cancelLabel={t("cancel")}
+        confirmLabel={t("confirmDelete")}
+        confirmLoadingLabel={t("deletingImage")}
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeleteTarget(null)}
         isLoading={isDeleting}
@@ -263,12 +263,12 @@ export default function VetImages() {
       <AppDialog
         isOpen={isAlertDialogOpen}
         onClose={() => setIsAlertDialogOpen(false)}
-        navbarTitle="Aviso"
+        navbarTitle={t("notice")}
         description={dialogMessage}
         showCloseButton
         showFooter
         showCancelButton={false}
-        confirmLabel="Aceptar"
+        confirmLabel={t("accept")}
         onConfirm={() => setIsAlertDialogOpen(false)}
         widthClassName="w-[420px]"
       />

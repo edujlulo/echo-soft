@@ -2,9 +2,11 @@
 
 import Button from "@/components/Button";
 import { useClinicImage } from "@/hooks/useClinicImage";
+import { useTranslations } from "next-intl";
 import { useRef } from "react";
 
 export default function ClinicImage() {
+  const t = useTranslations("ClinicImage");
   const { image, loading, handleUpload } = useClinicImage();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -15,7 +17,7 @@ export default function ClinicImage() {
         {loading ? (
           <div className="flex flex-col items-center gap-1 text-gray-500 animate-pulse">
             <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-xs">Cargando imagen...</span>
+            <span className="text-xs">{t("loadingImage")}</span>
           </div>
         ) : (
           <img

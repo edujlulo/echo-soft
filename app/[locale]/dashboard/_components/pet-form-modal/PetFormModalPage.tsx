@@ -4,7 +4,7 @@ import Button from "@/components/Button";
 import Navbar from "@/components/Navbar";
 import PetForm from "./PetForm";
 import PetImage from "../PetImage";
-import EditableSelectList from "../../../../components/EditableSelectList";
+import EditableSelectList from "@/components/EditableSelectList";
 import { usePetForm } from "@/hooks/usePetForm";
 import { Database } from "@/types/database";
 import { useSelectedPetStore } from "@/context/selectedPetStore";

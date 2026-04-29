@@ -1,7 +1,7 @@
 "use client";
 
 import { supabase } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useClinicStore } from "@/context/activeClinicStore";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { Database } from "@/types/database";
@@ -10,6 +10,9 @@ export function useAuth() {
   const router = useRouter();
   const setActiveClinic = useClinicStore((state) => state.setActiveClinic);
   const setActiveVet = useActiveVetStore((state) => state.setActiveVet);
+
+  const params = useParams();
+  const locale = params.locale as string;
 
   type Vet = Database["public"]["Tables"]["veterinarians"]["Row"];
 
@@ -76,12 +79,12 @@ export function useAuth() {
     setActiveClinic(normalizedClinic);
 
     // 5️⃣ Redirigir
-    router.replace("/home");
+    router.replace(`/${locale}/home`);
   };
 
   const logout = async () => {
     await supabase.auth.signOut();
-    router.replace("/");
+    router.replace(`/${locale}`);
   };
 
   return {

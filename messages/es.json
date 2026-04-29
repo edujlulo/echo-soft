@@ -1,0 +1,63 @@
+{
+  "LoginPage": {
+    "title": "Bienvenido a EcoSoft",
+    "subtitle": "Ingrese su correo y contraseña para continuar",
+    "emailLabel": "Correo",
+    "emailPlaceholder": "Ingrese su correo",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "Ingrese su contraseña",
+    "loginButton": "Entrar",
+    "loadingButton": "Cargando...",
+    "unauthorizedMessage": "Solo personal autorizado de la clínica puede iniciar sesión",
+    "invalidCredentials": "Correo o contraseña incorrectos"
+  },
+  "HomePage": {
+    "echosoft": "EcoSoft",
+    "veterinarians": "Ecografistas",
+    "loginSection": "Inicio de sesión",
+    "serialNumber": "Serial Nro.",
+    "address": "Dirección",
+    "phones": "Teléfonos",
+    "enterSystem": "ENTRAR AL SISTEMA",
+    "exit": "SALIR",
+    "webVersion": "VERSIÓN WEB",
+    "exeUpdatedDate": "Fecha en que se actualizó el exe:"
+  },
+  "VeterinariansTable": {
+    "vetName": "Nombre Veterinario",
+    "registrationNumber": "Nro. Matrícula o Colegio",
+    "loadingVets": "Cargando veterinarios..."
+  },
+
+  "VetImages": {
+    "profilePhoto": "Foto de perfil",
+    "signature": "Firma",
+    "file": "Archivo",
+    "zoom": "Zoom",
+
+    "loadingImage": "Cargando imagen...",
+
+    "confirmDeleteTitle": "Confirmar borrado",
+    "confirmDeleteQuestion": "¿Seguro que desea borrar esta imagen?",
+
+    "deleteProfileDescription": "Se eliminará la foto de perfil del veterinario.",
+    "deleteSignatureDescription": "Se eliminará la firma del veterinario.",
+
+    "cancel": "Cancelar",
+    "confirmDelete": "Sí, borrar",
+    "deletingImage": "Borrando imagen...",
+
+    "notice": "Aviso",
+    "accept": "Aceptar",
+
+    "noProfileToDelete": "El veterinario no tiene una foto de perfil para borrar.",
+    "noSignatureToDelete": "El veterinario no tiene una firma para borrar.",
+
+    "errorDeletingProfile": "Ocurrió un error al borrar la foto de perfil.",
+    "errorDeletingSignature": "Ocurrió un error al borrar la firma."
+  },
+
+  "ClinicImage": {
+    "loadingImage": "Cargando imagen..."
+  }
+}

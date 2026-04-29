@@ -8,7 +8,7 @@ import { useConsultationStore } from "@/context/consultationStore";
 import { useRef, useEffect, useMemo, useState } from "react";
 
 import { Database } from "@/types/database";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
@@ -23,6 +23,9 @@ export default function ConsultationsTable({
 }: Props) {
   const router = useRouter();
 
+  const params = useParams();
+  const locale = params.locale as string;
+
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
 
   const { selectedConsultation, setSelectedConsultation, loadFromSelected } =
@@ -34,7 +37,7 @@ export default function ConsultationsTable({
   const dataGridRef = useRef<HTMLDivElement>(null);
 
   const navigateToConsultations = () => {
-    router.push("/consultations");
+    router.push(`/${locale}/consultations`);
   };
 
   // =========================
@@ -118,7 +121,7 @@ export default function ConsultationsTable({
 
     const timeout = setTimeout(() => {
       const rowElement = document.querySelector(
-        `[data-id="${selectedRowId}"]`,
+        `[data-id="${selectedRowId}"]`
       ) as HTMLDivElement | null;
 
       if (rowElement) {
@@ -139,7 +142,7 @@ export default function ConsultationsTable({
   const selectConsultation = (id: string) => {
     const consultation =
       consultationsByPet?.find(
-        (c: ConsultationRow) => c.consultation_id === id,
+        (c: ConsultationRow) => c.consultation_id === id
       ) ?? null;
 
     setSelectedRowId(id);

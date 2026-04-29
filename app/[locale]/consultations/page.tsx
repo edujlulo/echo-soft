@@ -4,18 +4,21 @@ import LabeledInput from "@/components/LabeledInput";
 import Navbar from "@/components/Navbar";
 import ConsultationTabs from "./ConsultationTabs";
 import Button from "@/components/Button";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useActiveVetStore } from "@/context/activeVetStore";
 
 export default function ConsultationsPage() {
   const router = useRouter();
 
+  const params = useParams();
+  const locale = params.locale as string;
+
   const activeVet = useActiveVetStore((s) => s.activeVet);
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
 
   const navigateToDashboard = () => {
-    router.push("/dashboard");
+    router.push(`/${locale}/dashboard`);
   };
 
   return (

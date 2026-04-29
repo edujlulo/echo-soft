@@ -2,6 +2,7 @@
 
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { Database } from "@/types/database";
+import { useTranslations } from "next-intl";
 
 // Tipo de fila tal como la devuelve Supabase
 type Vet = Database["public"]["Tables"]["veterinarians"]["Row"];
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function VeterinariansTable({ vets, loading }: Props) {
+  const t = useTranslations("VeterinariansTable");
   const activeVet = useActiveVetStore((state) => state.activeVet);
 
   // Filas vacías para mantener altura
@@ -27,13 +29,13 @@ export default function VeterinariansTable({ vets, loading }: Props) {
                 className="border border-blue-300 px-2 py-1 text-center align-middle"
                 style={{ width: "60%" }}
               >
-                Nombre Veterinario
+                {t("vetName")}
               </th>
               <th
                 className="border border-blue-300 px-2 py-1 text-center align-middle"
                 style={{ width: "40%" }}
               >
-                Nro. Matrícula o Colegio
+                {t("registrationNumber")}
               </th>
             </tr>
           </thead>
@@ -45,7 +47,7 @@ export default function VeterinariansTable({ vets, loading }: Props) {
                   colSpan={2}
                   className="border border-blue-300 px-2 py-1 text-center text-blue-700"
                 >
-                  Cargando veterinarios...
+                  {t("loadingVets")}
                 </td>
               </tr>
             ) : (

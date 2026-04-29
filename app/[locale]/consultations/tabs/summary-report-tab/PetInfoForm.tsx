@@ -1,4 +1,4 @@
-import PetImage from "@/app/dashboard/_components/PetImage";
+import PetImage from "@/app/[locale]/dashboard/_components/PetImage";
 import LabeledInput from "@/components/LabeledInput";
 import PetInfoFormActions from "./PetInfoFormActions";
 import { Database } from "@/types/database";
@@ -51,11 +51,7 @@ export default function PetInfoForm({
 
   const suggestedPdfName = useMemo(
     () => buildSuggestedPdfName(selectedPet, formConsultation),
-    [
-      selectedPet?.name,
-      selectedPet?.owner,
-      formConsultation?.consultation_date,
-    ],
+    [selectedPet?.name, selectedPet?.owner, formConsultation?.consultation_date]
   );
 
   useEffect(() => {
