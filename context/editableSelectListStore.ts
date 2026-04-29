@@ -24,7 +24,7 @@ export const useEditableSelectListStore = create<EditableSelectListState>(
     setActiveField: (field: string | null) => set({ activeField: field }),
 
     getTitle: () => {
-      return get().activeField ?? "FRASES"; // default title if no active field
+      return get().activeField ?? ""; // default title if no active field
     },
 
     setActiveCategory: (category: string | null) =>

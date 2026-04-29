@@ -3,6 +3,7 @@ import Button from "./Button";
 import { Dialog } from "@headlessui/react";
 import Navbar from "./Navbar";
 import { Database } from "@/types/database";
+import { useTranslations } from "next-intl";
 
 type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
 
@@ -23,6 +24,7 @@ export default function EditableSelectListModal({
   addTemplate,
   updateTemplate,
 }: Props) {
+  const t = useTranslations("EditableSelectListModal");
   // Ref for focus into textarea:
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -49,11 +51,11 @@ export default function EditableSelectListModal({
 
           {/* Navbar */}
           <div className="w-full">
-            <Navbar>Nuevo Registro...</Navbar>
+            <Navbar>{t("newRecord")}</Navbar>
           </div>
           <div className="py-4 px-4 flex flex-row gap-2">
             <Dialog.Title className="text-lg font-semibold mb-2">
-              Texto:
+              {t("text")}
             </Dialog.Title>
 
             <textarea
@@ -69,7 +71,7 @@ export default function EditableSelectListModal({
                   content: e.target.value === "" ? null : e.target.value,
                 });
               }}
-              placeholder="Escribe algo..."
+              placeholder={t("placeholder")}
               onFocus={(e) => {
                 // poner cursor al final cuando reciba foco
                 const val = e.target.value;
@@ -117,11 +119,11 @@ export default function EditableSelectListModal({
               }}
               className="w-23"
             >
-              Aceptar
+              {t("accept")}
             </Button>
 
             <Button onClick={() => setIsModalOpen(false)} className="w-23">
-              Cancelar
+              {t("cancel")}
             </Button>
           </div>
         </Dialog.Panel>

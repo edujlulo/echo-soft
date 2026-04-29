@@ -9,8 +9,10 @@ import "yet-another-react-lightbox/styles.css";
 import { emptyPet, useSelectedPetStore } from "@/context/selectedPetStore";
 import AppDialog from "@/components/AppDialog";
 import { useActiveVetStore } from "@/context/activeVetStore";
+import { useTranslations } from "next-intl";
 
 export default function PetImage() {
+  const t = useTranslations("PetImage");
   const { images, loading, handleUpload, handleDelete } = usePetImages();
 
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
@@ -100,7 +102,7 @@ export default function PetImage() {
         {loading.profile ? (
           <div className="flex flex-col items-center gap-1 text-blue-800 animate-pulse overlay">
             <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-xs">Cargando imagen...</span>
+            <span className="text-xs">{t("loadingImage")}</span>
           </div>
         ) : (
           <img
@@ -126,7 +128,7 @@ export default function PetImage() {
             profileInputRef.current?.click();
           }}
         >
-          Archivo
+          {t("file")}
         </Button>
 
         <input
@@ -163,7 +165,7 @@ export default function PetImage() {
               : ""
           }
         >
-          Zoom
+          {t("zoom")}
         </Button>
         <Button
           type="button"
@@ -206,15 +208,15 @@ export default function PetImage() {
       <AppDialog
         isOpen={isDeleteConfirmDialogOpen}
         onClose={() => setIsDeleteConfirmDialogOpen(false)}
-        navbarTitle="Confirmar borrado"
-        title="¿Seguro que desea borrar esta imagen?"
-        description="Se eliminará la imagen de perfil de la mascota."
+        navbarTitle={t("confirmDeleteTitle")}
+        title={t("confirmDeleteQuestion")}
+        description={t("deletePhotoDescription")}
         showCloseButton
         showFooter
         showCancelButton
-        cancelLabel="Cancelar"
-        confirmLabel="Sí, borrar"
-        confirmLoadingLabel="Borrando imagen..."
+        cancelLabel={t("cancel")}
+        confirmLabel={t("confirmDelete")}
+        confirmLoadingLabel={t("deletingImage")}
         onConfirm={handleConfirmDeleteImage}
         onCancel={() => setIsDeleteConfirmDialogOpen(false)}
         isLoading={loading.profile}
@@ -225,12 +227,12 @@ export default function PetImage() {
       <AppDialog
         isOpen={isAlertDialogOpen}
         onClose={() => setIsAlertDialogOpen(false)}
-        navbarTitle="Aviso"
+        navbarTitle={t("notice")}
         description={dialogMessage}
         showCloseButton
         showFooter
         showCancelButton={false}
-        confirmLabel="Aceptar"
+        confirmLabel={t("accept")}
         onConfirm={() => setIsAlertDialogOpen(false)}
         widthClassName="w-[420px]"
       />

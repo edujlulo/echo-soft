@@ -7,8 +7,10 @@ import PetImage from "./PetImage";
 import SummaryFields from "./SummaryFields";
 import ConsultationsTable from "./ConsultationsTable";
 import { useConsultations } from "@/hooks/useConsultations";
+import { useTranslations } from "next-intl";
 
 export default function DashboardBottom() {
+  const t = useTranslations("DashboardBottom");
   const {
     consultationsByPet,
     loadingConsultations,
@@ -22,7 +24,7 @@ export default function DashboardBottom() {
       <div className="w-full flex flex-row gap-2 ">
         {/* ======= PET IMAGE ======= */}
         <div className="px-4 py-4 flex items-center flex-col gap-2">
-          <p className="py-0.5 px-2 font-bold text-xl bg-gray-300">MASCOTA</p>
+          <p className="py-0.5 px-2 font-bold text-xl bg-gray-300">{t("pet")}</p>
           <PetImage />
         </div>
 

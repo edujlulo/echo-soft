@@ -11,6 +11,7 @@ import { usePetFetcher } from "@/hooks/usePetFetcher";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useRef, useEffect, useMemo, useState } from "react";
 import Button from "@/components/Button";
+import { useTranslations } from "next-intl";
 
 type PetRow = {
   id: string;
@@ -33,6 +34,7 @@ type ColumnFilters = {
 };
 
 export default function PatientsTable() {
+  const t = useTranslations("PatientsTable");
   const { pets, isLoading } = usePetFetcher();
   const { startEditing, selectedPet, setSelectedPet } = useSelectedPetStore();
 
@@ -71,14 +73,14 @@ export default function PatientsTable() {
         sex: pet.sex,
         birth_date: pet.birth_date,
       })),
-    [pets],
+    [pets]
   );
 
   const filteredRows = useMemo(() => {
     return baseRows.filter((row) => {
       return (
         normalizeValue(row.record_number).includes(
-          normalizeValue(filters.record_number),
+          normalizeValue(filters.record_number)
         ) &&
         normalizeValue(row.name).includes(normalizeValue(filters.name)) &&
         normalizeValue(row.owner).includes(normalizeValue(filters.owner)) &&
@@ -91,15 +93,15 @@ export default function PatientsTable() {
 
   // Columnas
   const columns: GridColDef<PetRow>[] = [
-    { field: "record_number", headerName: "Núm. Historia", flex: 0.8 },
-    { field: "name", headerName: "Nombre Mascota", flex: 1.7 },
-    { field: "owner", headerName: "Propietario", flex: 2.5 },
-    { field: "species", headerName: "Especie", flex: 1 },
-    { field: "breed", headerName: "Raza", flex: 1.2 },
-    { field: "sex", headerName: "Sexo", flex: 1.2 },
+    { field: "record_number", headerName: t("recordNumber"), flex: 0.8 },
+    { field: "name", headerName: t("petName"), flex: 1.7 },
+    { field: "owner", headerName: t("owner"), flex: 2.5 },
+    { field: "species", headerName: t("species"), flex: 1 },
+    { field: "breed", headerName: t("breed"), flex: 1.2 },
+    { field: "sex", headerName: t("sex"), flex: 1.2 },
     {
       field: "birth_date",
-      headerName: "F. Nacimiento",
+      headerName: t("birthDate"),
       flex: 1,
       renderCell: (params) => {
         if (!params.value) return "";
@@ -125,7 +127,7 @@ export default function PatientsTable() {
     // Espera un tick para que la fila se renderice
     const timeout = setTimeout(() => {
       const rowElement = document.querySelector(
-        `[data-id="${selectedPet.pet_id}"]`,
+        `[data-id="${selectedPet.pet_id}"]`
       ) as HTMLDivElement | null;
 
       if (rowElement) {
@@ -151,7 +153,7 @@ export default function PatientsTable() {
       breed: null,
       sex: null,
       birth_date: null,
-    }),
+    })
   );
 
   // Combinar filas reales + vacías
@@ -182,7 +184,7 @@ export default function PatientsTable() {
           type="text"
           value={filters.record_number}
           onChange={(e) => handleFilterChange("record_number", e.target.value)}
-          placeholder="Buscar..."
+          placeholder={t("searchPlaceholder")}
           className={inputsClassName}
         />
 
@@ -190,7 +192,7 @@ export default function PatientsTable() {
           type="text"
           value={filters.name}
           onChange={(e) => handleFilterChange("name", e.target.value)}
-          placeholder="Buscar..."
+          placeholder={t("searchPlaceholder")}
           className={inputsClassName}
         />
 
@@ -198,7 +200,7 @@ export default function PatientsTable() {
           type="text"
           value={filters.owner}
           onChange={(e) => handleFilterChange("owner", e.target.value)}
-          placeholder="Buscar..."
+          placeholder={t("searchPlaceholder")}
           className={inputsClassName}
         />
 
@@ -206,7 +208,7 @@ export default function PatientsTable() {
           type="text"
           value={filters.species}
           onChange={(e) => handleFilterChange("species", e.target.value)}
-          placeholder="Buscar..."
+          placeholder={t("searchPlaceholder")}
           className={inputsClassName}
         />
 
@@ -214,7 +216,7 @@ export default function PatientsTable() {
           type="text"
           value={filters.breed}
           onChange={(e) => handleFilterChange("breed", e.target.value)}
-          placeholder="Buscar..."
+          placeholder={t("searchPlaceholder")}
           className={inputsClassName}
         />
 
@@ -222,7 +224,7 @@ export default function PatientsTable() {
           type="text"
           value={filters.sex}
           onChange={(e) => handleFilterChange("sex", e.target.value)}
-          placeholder="Buscar..."
+          placeholder={t("searchPlaceholder")}
           className={inputsClassName}
         />
 
@@ -240,7 +242,7 @@ export default function PatientsTable() {
               })
             }
           >
-            Mostrar todos
+            {t("showAll")}
           </Button>
         </div>
       </div>

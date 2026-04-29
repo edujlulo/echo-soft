@@ -8,8 +8,10 @@ import { useActiveVetStore } from "@/context/activeVetStore";
 import { deletePetWithRelations } from "@/lib/queries/pets";
 import { Database } from "@/types/database";
 import { usePetFetcher } from "@/hooks/usePetFetcher";
+import { useTranslations } from "next-intl";
 
 export default function PetButtons() {
+  const t = useTranslations("PetButtons");
   const {
     selectedPet,
     startCreating,
@@ -41,7 +43,7 @@ export default function PetButtons() {
       JSON.stringify(selectedPet) === JSON.stringify(emptyPet) ||
       !selectedPet.pet_id
     ) {
-      setDialogMessage("Por favor seleccione una mascota");
+      setDialogMessage(t("selectPet"));
       setIsAlertDialogOpen(true);
       return;
     }
@@ -56,7 +58,7 @@ export default function PetButtons() {
       !selectedPet.pet_id
     ) {
       setIsDeleteConfirmDialogOpen(false);
-      setDialogMessage("Por favor seleccione una mascota");
+      setDialogMessage(t("selectPet"));
       setIsAlertDialogOpen(true);
       return;
     }
@@ -101,9 +103,7 @@ export default function PetButtons() {
       setIsAlertDialogOpen(true);
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : "Ocurrió un error al borrar la mascota";
+        error instanceof Error ? error.message : t("deletePetError");
 
       setIsDeleteConfirmDialogOpen(false);
       setDialogMessage(message);
@@ -127,7 +127,7 @@ export default function PetButtons() {
         onClick={() => startCreating()}
         disabled={disablePetActions}
       >
-        Nueva Mascota
+        {t("createPet")}
       </Button>
       <Button
         disabled={disablePetActions}
@@ -144,7 +144,7 @@ export default function PetButtons() {
             !selectedPet ||
             JSON.stringify(selectedPet) === JSON.stringify(emptyPet)
           ) {
-            setDialogMessage("Por favor seleccione una mascota");
+            setDialogMessage(t("selectPet"));
             setIsAlertDialogOpen(true);
             return;
           }
@@ -152,7 +152,7 @@ export default function PetButtons() {
           startEditing();
         }}
       >
-        Modificar Mascota
+        {t("editPet")}
       </Button>
       <div className="flex flex-col items-center">
         <Button
@@ -171,7 +171,7 @@ export default function PetButtons() {
             {isDeletingPet && (
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-transparent" />
             )}
-            <span>{isDeletingPet ? "Borrando..." : "Borrar Mascota"}</span>
+            <span>{isDeletingPet ? t("deleting") : t("deletePet")}</span>
           </span>
         </Button>
       </div>
@@ -180,8 +180,8 @@ export default function PetButtons() {
       <AppDialog
         isOpen={isDeleteConfirmDialogOpen}
         onClose={() => setIsDeleteConfirmDialogOpen(false)}
-        navbarTitle="Confirmar borrado"
-        title="¿Seguro que desea borrar esta mascota?"
+        navbarTitle={t("confirmDeleteTitle")}
+        title={t("confirmDeleteQuestion")}
         description={
           <div className="space-y-3 text-sm">
             <p>
@@ -190,17 +190,16 @@ export default function PetButtons() {
             </p>
 
             <div className="rounded border border-red-300 bg-red-50 px-3 py-2 text-red-800">
-              Esta acción es irreversible. Se eliminará la mascota, todas sus
-              consultas y todas las imágenes vinculadas a esas consultas.
+              {t("irreversibleWarning")}
             </div>
           </div>
         }
         showCloseButton
         showFooter
         showCancelButton
-        cancelLabel="Cancelar"
-        confirmLabel="Sí, borrar"
-        confirmLoadingLabel="Borrando mascota..."
+        cancelLabel={t("cancel")}
+        confirmLabel={t("confirmDelete")}
+        confirmLoadingLabel={t("deletingPet")}
         onConfirm={handleConfirmDeletePet}
         onCancel={() => setIsDeleteConfirmDialogOpen(false)}
         isLoading={isDeletingPet}
@@ -212,12 +211,12 @@ export default function PetButtons() {
       <AppDialog
         isOpen={isAlertDialogOpen}
         onClose={() => setIsAlertDialogOpen(false)}
-        navbarTitle="Aviso"
+        navbarTitle={t("notice")}
         description={dialogMessage}
         showCloseButton
         showFooter
         showCancelButton={false}
-        confirmLabel="Aceptar"
+        confirmLabel={t("accept")}
         onConfirm={() => setIsAlertDialogOpen(false)}
         widthClassName="w-[420px]"
       />

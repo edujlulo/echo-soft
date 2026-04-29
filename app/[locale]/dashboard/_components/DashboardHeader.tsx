@@ -4,8 +4,10 @@ import LabeledInput from "@/components/LabeledInput";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { Database } from "@/types/database";
+import { useTranslations } from "next-intl";
 
 export default function DashboardHeader() {
+  const t = useTranslations("DashboardHeader");
   const activeVet = useActiveVetStore((state) => state.activeVet) as
     | Database["public"]["Tables"]["veterinarians"]["Row"]
     | null;
@@ -18,10 +20,10 @@ export default function DashboardHeader() {
         <LabeledInput
           inputClassName={`w-120 ${!activeVet ? "text-red-600 font-bold" : ""}`}
           labelClassName="w-55 font-bold text-lg"
-          value={activeVet ? `${activeVet.name}` : "No hay veterinario activo"}
+          value={activeVet ? `${activeVet.name}` : t("noActiveVet")}
           disabled={true}
         >
-          Veterinario trabajando:
+          {t("workingVet")}
         </LabeledInput>
       </div>
       <div className="flex flex-row gap-6">
@@ -31,7 +33,7 @@ export default function DashboardHeader() {
           value={selectedPet?.name}
           disabled={true}
         >
-          Mascota
+          {t("pet")}
         </LabeledInput>
         <LabeledInput
           inputClassName="w-110"
@@ -39,7 +41,7 @@ export default function DashboardHeader() {
           value={selectedPet?.owner}
           disabled={true}
         >
-          Propietario
+          {t("owner")}
         </LabeledInput>
       </div>
     </div>

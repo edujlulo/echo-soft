@@ -11,6 +11,7 @@ import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { usePetFetcher } from "@/hooks/usePetFetcher";
 import { Dialog } from "@headlessui/react";
 import DialogScaleWrapper from "@/components/DialogScaleWrapper";
+import { useTranslations } from "next-intl";
 
 type PetFormModalProps = {
   isOpen: boolean;
@@ -20,6 +21,7 @@ type PetFormModalProps = {
 type Pet = Database["public"]["Tables"]["pets"]["Row"];
 
 export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
+  const t = useTranslations("PetFormModal");
   const { refreshPets } = usePetFetcher();
   const setSelectedPet = useSelectedPetStore((s) => s.setSelectedPet);
   const isCreating = useSelectedPetStore((s) => s.isCreating);
@@ -68,12 +70,12 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
 
               {/* ========= NAVBAR ========= */}
               <div className="w-full">
-                <Navbar>Nueva Mascota...</Navbar>
+                <Navbar>{t("newPet")}</Navbar>
               </div>
 
               <div className="flex-1 min-h-0 p-4 flex flex-col gap-2 items-center justify-center">
                 {/* ======= TITLE ========= */}
-                <h1 className="pr-12 text-2xl font-semibold">MASCOTA</h1>
+                <h1 className="pr-12 text-2xl font-semibold">{t("petTitle")}</h1>
 
                 <div className="w-full min-h-0 flex flex-col gap-2">
                   <div className="w-full min-h-0 flex flex-row gap-5">
@@ -94,7 +96,7 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
                       {/* ======== BUTTONS ======== */}
                       <div className="pl-6 pb-2 flex flex-row gap-4 justify-start items-start">
                         <Button onClick={submit} disabled={isSubmitting}>
-                          {isSubmitting ? "Guardando..." : "Grabar"}
+                          {isSubmitting ? t("saving") : t("save")}
                         </Button>
 
                         <Button
@@ -103,7 +105,7 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
                             onClose();
                           }}
                         >
-                          Cancelar
+                          {t("cancel")}
                         </Button>
                       </div>
                     </div>

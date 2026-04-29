@@ -57,5 +57,154 @@
   },
   "ClinicImage": {
     "loadingImage": "Loading image..."
+  },
+  "DashboardPage": {
+    "navbarTitle": "Patients"
+  },
+  "DashboardHeader": {
+    "workingVet": "Working veterinarian:",
+    "noActiveVet": "No active veterinarian",
+    "pet": "Patient",
+    "owner": "Owner"
+  },
+  "DashboardBottom": {
+    "pet": "PATIENT"
+  },
+  "ConsultationsTable": {
+    "date": "Date",
+    "vet": "Veterinarian",
+    "speciality": "Speciality"
+  },
+  "ConsultationsButtons": {
+    "dateUnavailable": "date unavailable",
+    "selectConsultation": "Please select a consultation",
+    "selectPet": "Please select a Patient",
+    "noActiveVet": "No active veterinarian selected",
+    "consultationDeleted": "The consultation was deleted successfully",
+    "deleteConsultationError": "An error occurred while deleting the consultation",
+    "createConsultationError": "An error occurred while creating the consultation",
+    "viewConsultation": "View Consultation",
+    "creating": "Creating...",
+    "createConsultation": "Create Consultation",
+    "deleting": "Deleting...",
+    "deleteConsultation": "Delete Consultation",
+    "medicalHistory": "Medical History",
+    "close": "Close",
+    "notice": "Notice",
+    "accept": "OK",
+    "confirmDeleteTitle": "Confirm Deletion",
+    "confirmDeleteQuestion": "Are you sure you want to delete this consultation?",
+    "deleteIntro": "You are about to delete the consultation from",
+    "consultationVet": "Consultation veterinarian:",
+    "notAvailable": "Not available",
+    "irreversibleWarning": "This action is irreversible. The consultation and all images linked to it will be deleted.",
+    "cancel": "Cancel",
+    "confirmDelete": "Yes, Delete",
+    "deletingConsultation": "Deleting consultation..."
+  },
+  "PatientsTable": {
+    "name": "Name",
+    "species": "Species",
+    "breed": "Breed",
+    "owner": "Owner",
+    "loadingPatients": "Loading patients...",
+    "recordNumber": "Record No.",
+    "petName": "Patient Name",
+    "sex": "Sex",
+    "birthDate": "Date of Birth",
+    "searchPlaceholder": "Search...",
+    "showAll": "Show All"
+  },
+
+  "PetButtons": {
+    "viewPet": "View Patient",
+    "createPet": "Create Patient",
+    "creating": "Creating...",
+    "deletePet": "Delete Patient",
+    "deleting": "Deleting...",
+    "editPet": "Edit Patient",
+    "selectPet": "Please select a patient",
+    "petDeleted": "The patient was deleted successfully",
+    "deletePetError": "An error occurred while deleting the patient",
+    "createPetError": "An error occurred while creating the patient",
+
+    "notice": "Notice",
+    "accept": "OK",
+
+    "confirmDeleteTitle": "Confirm Deletion",
+    "confirmDeleteQuestion": "Are you sure you want to delete this patient?",
+    "irreversibleWarning": "This action is irreversible. The patient and all linked consultations and images will be deleted.",
+    "cancel": "Cancel",
+    "confirmDelete": "Yes, Delete",
+    "deletingPet": "Deleting patient..."
+  },
+
+  "PetImage": {
+    "patientPhoto": "Patient Photo",
+    "file": "File",
+    "zoom": "Zoom",
+
+    "loadingImage": "Loading image...",
+
+    "confirmDeleteTitle": "Confirm Deletion",
+    "confirmDeleteQuestion": "Are you sure you want to delete this image?",
+    "deletePhotoDescription": "The patient's photo will be deleted.",
+
+    "cancel": "Cancel",
+    "confirmDelete": "Yes, Delete",
+    "deletingImage": "Deleting image...",
+
+    "notice": "Notice",
+    "accept": "OK",
+
+    "noPhotoToDelete": "The patient has no photo to delete.",
+    "errorDeletingPhoto": "An error occurred while deleting the patient photo."
+  },
+
+  "SummaryFields": {
+    "summary": "SUMMARY",
+    "totalPatients": "Total Patients",
+    "groupTotal": "Group Total",
+    "percentage": "Percentage %"
+  },
+
+  "PetFormModal": {
+    "newPet": "New Patient...",
+    "petTitle": "PATIENT",
+    "saving": "Saving...",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+
+  "PetForm": {
+    "owner": "Owner:",
+    "pet": "Patient:",
+    "referredBy": "Referred by:",
+    "species": "Species:",
+    "breed": "Breed:",
+    "sex": "Sex:"
+  },
+
+  "EditableSelectList": {
+    "doubleClickInstruction": "Double-click to select the value",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "notice": "Notice",
+    "selectPhrase": "You must select a phrase",
+    "accept": "OK",
+    "defaultTitle": "PHRASES"
+  },
+
+  "EditableSelectListModal": {
+    "newRecord": "New Record...",
+    "text": "Text:",
+    "placeholder": "Type something...",
+    "accept": "OK",
+    "cancel": "Cancel"
+  },
+
+  "EditableSelectListTable": {
+    "phrase": "Phrase"
   }
 }

@@ -9,6 +9,7 @@ import { useRef, useEffect, useMemo, useState } from "react";
 
 import { Database } from "@/types/database";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
@@ -21,6 +22,7 @@ export default function ConsultationsTable({
   consultationsByPet,
   loadingConsultations,
 }: Props) {
+  const t = useTranslations("ConsultationsTable");
   const router = useRouter();
 
   const params = useParams();
@@ -78,7 +80,7 @@ export default function ConsultationsTable({
   const columns: GridColDef[] = [
     {
       field: "consultation_date",
-      headerName: "Fecha",
+      headerName: t("date"),
       flex: 1,
       renderCell: (params) => {
         if (!params.value) return "";
@@ -92,12 +94,12 @@ export default function ConsultationsTable({
     },
     {
       field: "vet_name",
-      headerName: "Veterinario",
+      headerName: t("vet"),
       flex: 2,
     },
     {
       field: "report_title",
-      headerName: "Especialidad",
+      headerName: t("speciality"),
       flex: 2.5,
     },
   ];

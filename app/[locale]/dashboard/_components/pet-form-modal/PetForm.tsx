@@ -4,6 +4,7 @@ import LabeledInput from "@/components/LabeledInput";
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import { FormErrors } from "@/hooks/usePetForm";
 import { Database } from "@/types/database";
+import { useTranslations } from "next-intl";
 
 type Pet = Database["public"]["Tables"]["pets"]["Row"];
 
@@ -20,6 +21,7 @@ export default function PetForm({
   errors,
   statusMessage,
 }: PetFormProps) {
+  const t = useTranslations("PetForm");
   if (!selectedPet) return null;
 
   const { setActiveField } = useEditableSelectListStore();
@@ -33,7 +35,7 @@ export default function PetForm({
         value={selectedPet?.owner ?? ""}
         onChange={(e) => setField("owner", e.target.value)}
       >
-        Propietario:
+        {t("owner")}
       </LabeledInput>
       {errors.owner && <p className="text-red-500 text-sm">{errors.owner}</p>}
 
@@ -44,7 +46,7 @@ export default function PetForm({
         value={selectedPet?.name ?? ""}
         onChange={(e) => setField("name", e.target.value)}
       >
-        Mascota:
+        {t("pet")}
       </LabeledInput>
       {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
 
@@ -55,7 +57,7 @@ export default function PetForm({
         value={selectedPet?.referred_by ?? ""}
         onChange={(e) => setField("referred_by", e.target.value)}
       >
-        Referido por:
+        {t("referredBy")}
       </LabeledInput>
 
       <LabeledInput
@@ -65,7 +67,7 @@ export default function PetForm({
         value={selectedPet?.species ?? ""}
         onChange={(e) => setField("species", e.target.value)}
       >
-        Especie:
+        {t("species")}
       </LabeledInput>
 
       <LabeledInput
@@ -75,7 +77,7 @@ export default function PetForm({
         value={selectedPet?.breed ?? ""}
         onChange={(e) => setField("breed", e.target.value)}
       >
-        Raza:
+        {t("breed")}
       </LabeledInput>
 
       <LabeledInput
@@ -85,7 +87,7 @@ export default function PetForm({
         value={selectedPet?.sex ?? ""}
         onChange={(e) => setField("sex", e.target.value)}
       >
-        Sexo:
+        {t("sex")}
       </LabeledInput>
 
       {statusMessage && <p className="text-green-600">{statusMessage}</p>}

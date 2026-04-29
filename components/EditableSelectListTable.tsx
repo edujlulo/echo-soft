@@ -12,6 +12,7 @@ import {
 import { Database } from "@/types/database";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { Pet } from "@/lib/queries/petImages";
+import { useTranslations } from "next-intl";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
@@ -39,6 +40,7 @@ export default function EditableSelectListTable({
   loading,
   error,
 }: EditableSelectListProps) {
+  const t = useTranslations("EditableSelectListTable");
   const activeVet = useActiveVetStore((s) => s.activeVet);
   const activeCategory = useEditableSelectListStore((s) => s.activeCategory);
 
@@ -67,7 +69,7 @@ export default function EditableSelectListTable({
     () => [
       {
         field: "frase",
-        headerName: "Frase",
+        headerName: t("phrase"),
         flex: 1,
         editable: false,
         headerAlign: "center",
@@ -79,7 +81,7 @@ export default function EditableSelectListTable({
         },
       },
     ],
-    []
+    [t]
   );
 
   // =========================

@@ -59,5 +59,155 @@
 
   "ClinicImage": {
     "loadingImage": "Cargando imagen..."
+  },
+
+  "DashboardPage": {
+    "navbarTitle": "Pacientes"
+  },
+  "DashboardHeader": {
+    "workingVet": "Veterinario trabajando:",
+    "noActiveVet": "No hay veterinario activo",
+    "pet": "Mascota",
+    "owner": "Propietario"
+  },
+  "DashboardBottom": {
+    "pet": "MASCOTA"
+  },
+  "ConsultationsTable": {
+    "date": "Fecha",
+    "vet": "Veterinario",
+    "speciality": "Especialidad"
+  },
+  "ConsultationsButtons": {
+    "dateUnavailable": "fecha no disponible",
+    "selectConsultation": "Por favor seleccione una consulta",
+    "selectPet": "Por favor seleccione una mascota",
+    "noActiveVet": "No hay un veterinario activo seleccionado",
+    "consultationDeleted": "La consulta fue borrada correctamente",
+    "deleteConsultationError": "Ocurrió un error al borrar la consulta",
+    "createConsultationError": "Ocurrió un error al crear la consulta",
+    "viewConsultation": "Ver Consulta",
+    "creating": "Creando...",
+    "createConsultation": "Crear Consulta",
+    "deleting": "Borrando...",
+    "deleteConsultation": "Borrar Consulta",
+    "medicalHistory": "Historial Médico",
+    "close": "Cerrar",
+    "notice": "Aviso",
+    "accept": "Aceptar",
+    "confirmDeleteTitle": "Confirmar borrado",
+    "confirmDeleteQuestion": "¿Seguro que desea borrar esta consulta?",
+    "deleteIntro": "Está a punto de borrar la consulta del",
+    "consultationVet": "Veterinario de la consulta:",
+    "notAvailable": "No disponible",
+    "irreversibleWarning": "Esta acción es irreversible. Se eliminará la consulta y también todas las imágenes vinculadas a ella.",
+    "cancel": "Cancelar",
+    "confirmDelete": "Sí, borrar",
+    "deletingConsultation": "Borrando consulta..."
+  },
+  "PatientsTable": {
+    "name": "Nombre",
+    "species": "Especie",
+    "breed": "Raza",
+    "owner": "Propietario",
+    "loadingPatients": "Cargando pacientes...",
+    "recordNumber": "Núm. Historia",
+    "petName": "Nombre Mascota",
+    "sex": "Sexo",
+    "birthDate": "F. Nacimiento",
+    "searchPlaceholder": "Buscar...",
+    "showAll": "Mostrar todos"
+  },
+
+  "PetButtons": {
+    "viewPet": "Ver Paciente",
+    "createPet": "Crear Paciente",
+    "creating": "Creando...",
+    "deletePet": "Borrar Paciente",
+    "deleting": "Borrando...",
+    "editPet": "Modificar Mascota",
+    "selectPet": "Por favor seleccione un paciente",
+    "petDeleted": "El paciente fue borrado correctamente",
+    "deletePetError": "Ocurrió un error al borrar el paciente",
+    "createPetError": "Ocurrió un error al crear el paciente",
+
+    "notice": "Aviso",
+    "accept": "Aceptar",
+
+    "confirmDeleteTitle": "Confirmar borrado",
+    "confirmDeleteQuestion": "¿Seguro que desea borrar este paciente?",
+    "irreversibleWarning": "Esta acción es irreversible. Se eliminará el paciente y también todas las consultas e imágenes vinculadas.",
+    "cancel": "Cancelar",
+    "confirmDelete": "Sí, borrar",
+    "deletingPet": "Borrando paciente..."
+  },
+
+  "PetImage": {
+    "patientPhoto": "Foto del paciente",
+    "file": "Archivo",
+    "zoom": "Zoom",
+
+    "loadingImage": "Cargando imagen...",
+
+    "confirmDeleteTitle": "Confirmar borrado",
+    "confirmDeleteQuestion": "¿Seguro que desea borrar esta imagen?",
+    "deletePhotoDescription": "Se eliminará la foto del paciente.",
+
+    "cancel": "Cancelar",
+    "confirmDelete": "Sí, borrar",
+    "deletingImage": "Borrando imagen...",
+
+    "notice": "Aviso",
+    "accept": "Aceptar",
+
+    "noPhotoToDelete": "El paciente no tiene una foto para borrar.",
+    "errorDeletingPhoto": "Ocurrió un error al borrar la foto del paciente."
+  },
+
+  "SummaryFields": {
+    "summary": "RESUMEN",
+    "totalPatients": "Total Mascotas",
+    "groupTotal": "Total Grupo",
+    "percentage": "Porcentaje %"
+  },
+
+  "PetFormModal": {
+    "newPet": "Nueva Mascota...",
+    "petTitle": "MASCOTA",
+    "saving": "Guardando...",
+    "save": "Grabar",
+    "cancel": "Cancelar"
+  },
+
+  "PetForm": {
+    "owner": "Propietario:",
+    "pet": "Mascota:",
+    "referredBy": "Referido por:",
+    "species": "Especie:",
+    "breed": "Raza:",
+    "sex": "Sexo:"
+  },
+
+  "EditableSelectList": {
+    "doubleClickInstruction": "Haga doble click para seleccionar el valor",
+    "add": "Agregar",
+    "edit": "Modificar",
+    "delete": "Eliminar",
+    "notice": "Aviso",
+    "selectPhrase": "Debe seleccionar una frase",
+    "accept": "Aceptar",
+    "defaultTitle": "FRASES"
+  },
+
+  "EditableSelectListModal": {
+    "newRecord": "Nuevo Registro...",
+    "text": "Texto:",
+    "placeholder": "Escribe algo...",
+    "accept": "Aceptar",
+    "cancel": "Cancelar"
+  },
+
+  "EditableSelectListTable": {
+    "phrase": "Frase"
   }
 }

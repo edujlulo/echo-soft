@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import AppDialog from "@/components/AppDialog";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { Database } from "@/types/database";
+import { useTranslations } from "next-intl";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
@@ -23,6 +24,7 @@ export default function ConsultationsButtons({
   deleteConsultation,
   isDeletingConsultation,
 }: Props) {
+  const t = useTranslations("ConsultationsButtons");
   const [isMedicalHistoryDialogOpen, setIsMedicalHistoryDialogOpen] =
     useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
@@ -51,24 +53,24 @@ export default function ConsultationsButtons({
   };
 
   const formattedConsultationDate = useMemo(() => {
-    if (!selectedConsultation?.consultation_date) return "fecha no disponible";
+    if (!selectedConsultation?.consultation_date) return t("dateUnavailable");
 
     const date = new Date(selectedConsultation.consultation_date);
 
-    if (isNaN(date.getTime())) return "fecha no disponible";
+    if (isNaN(date.getTime())) return t("dateUnavailable");
 
     return date.toLocaleDateString("es-ES");
-  }, [selectedConsultation]);
+  }, [selectedConsultation, t]);
 
   const handleOpenDeleteConfirmation = () => {
     if (!selectedConsultation?.consultation_id) {
-      setDialogMessage("Por favor seleccione una consulta");
+      setDialogMessage(t("selectConsultation"));
       setIsAlertDialogOpen(true);
       return;
     }
 
     if (!activeVet?.vet_id) {
-      setDialogMessage("No hay un veterinario activo seleccionado");
+      setDialogMessage(t("noActiveVet"));
       setIsAlertDialogOpen(true);
       return;
     }
@@ -79,7 +81,7 @@ export default function ConsultationsButtons({
   const handleConfirmDeleteConsultation = async () => {
     if (!selectedConsultation?.consultation_id) {
       setIsDeleteConfirmDialogOpen(false);
-      setDialogMessage("Por favor seleccione una consulta");
+      setDialogMessage(t("selectConsultation"));
       setIsAlertDialogOpen(true);
       return;
     }
@@ -88,13 +90,11 @@ export default function ConsultationsButtons({
       await deleteConsultation(selectedConsultation);
 
       setIsDeleteConfirmDialogOpen(false);
-      setDialogMessage("La consulta fue borrada correctamente");
+      setDialogMessage(t("consultationDeleted"));
       setIsAlertDialogOpen(true);
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : "Ocurrió un error al borrar la consulta";
+        error instanceof Error ? error.message : t("deleteConsultationError");
 
       setIsDeleteConfirmDialogOpen(false);
       setDialogMessage(message);
@@ -107,7 +107,7 @@ export default function ConsultationsButtons({
       !selectedPet ||
       JSON.stringify(selectedPet) === JSON.stringify(emptyPet)
     ) {
-      setDialogMessage("Por favor seleccione una mascota");
+      setDialogMessage(t("selectPet"));
       setIsAlertDialogOpen(true);
       return;
     }
@@ -119,9 +119,7 @@ export default function ConsultationsButtons({
       navigateToConsultations();
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : "Ocurrió un error al crear la consulta";
+        error instanceof Error ? error.message : t("createConsultationError");
 
       setDialogMessage(message);
       setIsAlertDialogOpen(true);
@@ -133,11 +131,11 @@ export default function ConsultationsButtons({
   return (
     <div className="mb-8 flex flex-col gap-2 justify-center items-center">
       <Button
-        className="w-33"
+        className="w-38"
         disabled={disableActions}
         onClick={() => {
           if (!selectedConsultation?.consultation_id) {
-            setDialogMessage("Por favor seleccione una consulta");
+            setDialogMessage(t("selectConsultation"));
             setIsAlertDialogOpen(true);
             return;
           }
@@ -145,11 +143,11 @@ export default function ConsultationsButtons({
           navigateToConsultations();
         }}
       >
-        Ver Consulta
+        {t("viewConsultation")}
       </Button>
       <Button
         className={`
-    w-33
+    w-38
     ${
       isCreatingConsultation
         ? "cursor-not-allowed opacity-80 bg-blue-500 border-blue-700 text-gray-950 hover:bg-blue-500 hover:border-blue-700"
@@ -164,7 +162,7 @@ export default function ConsultationsButtons({
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-transparent" />
           )}
           <span>
-            {isCreatingConsultation ? "Creando..." : "Crear Consulta"}
+            {isCreatingConsultation ? t("creating") : t("createConsultation")}
           </span>
         </span>
       </Button>
@@ -173,7 +171,7 @@ export default function ConsultationsButtons({
           onClick={handleOpenDeleteConfirmation}
           disabled={disableActions}
           className={`
-      w-33
+      w-38
       ${
         isDeletingConsultation
           ? "bg-red-200 border-red-300 text-gray-500 cursor-not-allowed hover:bg-red-200 hover:border-red-300 opacity-80"
@@ -181,7 +179,7 @@ export default function ConsultationsButtons({
       }
     `}
         >
-          {isDeletingConsultation ? "Borrando..." : "Borrar Consulta"}
+          {isDeletingConsultation ? t("deleting") : t("deleteConsultation")}
         </Button>
       </div>
       <div className="flex flex-col items-center">
@@ -192,16 +190,16 @@ export default function ConsultationsButtons({
               !selectedPet ||
               JSON.stringify(selectedPet) === JSON.stringify(emptyPet)
             ) {
-              setDialogMessage("Por favor seleccione una mascota");
+              setDialogMessage(t("selectPet"));
               setIsAlertDialogOpen(true);
               return;
             }
 
             setIsMedicalHistoryDialogOpen(true);
           }}
-          className="w-33"
+          className="w-38"
         >
-          Historial Médico
+          {t("medicalHistory")}
         </Button>
 
         {/* <span className="text-xs text-gray-500 mt-0.5 ml-1">En desarrollo</span> */}
@@ -210,7 +208,7 @@ export default function ConsultationsButtons({
         onClick={navigateToHome}
         className="mt-5 flex w-20 items-center justify-center px-3 py-1 font-bold bg-green-300 border border-gray-50 hover:bg-green-400"
       >
-        Cerrar
+        {t("close")}
       </Button>
       {/* ============ MEDICAL HISTORY SECTION DIALOG ========== */}
       <MedicalHistoryDialog
@@ -222,12 +220,12 @@ export default function ConsultationsButtons({
       <AppDialog
         isOpen={isAlertDialogOpen}
         onClose={() => setIsAlertDialogOpen(false)}
-        navbarTitle="Aviso"
+        navbarTitle={t("notice")}
         description={dialogMessage}
         showCloseButton
         showFooter
         showCancelButton={false}
-        confirmLabel="Aceptar"
+        confirmLabel={t("accept")}
         onConfirm={() => setIsAlertDialogOpen(false)}
         widthClassName="w-[420px]"
       />
@@ -235,35 +233,34 @@ export default function ConsultationsButtons({
       <AppDialog
         isOpen={isDeleteConfirmDialogOpen}
         onClose={() => setIsDeleteConfirmDialogOpen(false)}
-        navbarTitle="Confirmar borrado"
-        title="¿Seguro que desea borrar esta consulta?"
+        navbarTitle={t("confirmDeleteTitle")}
+        title={t("confirmDeleteQuestion")}
         description={
           <div className="space-y-3 text-sm">
             <p>
-              Está a punto de borrar la consulta del{" "}
+              {t("deleteIntro")}{" "}
               <span className="font-semibold">{formattedConsultationDate}</span>
               .
             </p>
 
             <p>
-              Veterinario de la consulta:{" "}
+              {t("consultationVet")}{" "}
               <span className="font-semibold">
-                {selectedConsultation?.vet_name ?? "No disponible"}
+                {selectedConsultation?.vet_name ?? t("notAvailable")}
               </span>
             </p>
 
             <div className="rounded border border-red-300 bg-red-50 px-3 py-2 text-red-800">
-              Esta acción es irreversible. Se eliminará la consulta y también
-              todas las imágenes vinculadas a ella.
+              {t("irreversibleWarning")}
             </div>
           </div>
         }
         showCloseButton
         showFooter
         showCancelButton
-        cancelLabel="Cancelar"
-        confirmLabel="Sí, borrar"
-        confirmLoadingLabel="Borrando consulta..."
+        cancelLabel={t("cancel")}
+        confirmLabel={t("confirmDelete")}
+        confirmLoadingLabel={t("deletingConsultation")}
         onConfirm={handleConfirmDeleteConsultation}
         onCancel={() => setIsDeleteConfirmDialogOpen(false)}
         isLoading={isDeletingConsultation}

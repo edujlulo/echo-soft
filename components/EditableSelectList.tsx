@@ -10,6 +10,7 @@ import EditableSelectListModal from "./EditableSelectListModal";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { useTemplateActions } from "@/hooks/useTemplateActions";
 import { Pet } from "@/lib/queries/petImages";
+import { useTranslations } from "next-intl";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
@@ -27,6 +28,7 @@ export default function EditableSelectList({
   setField,
   buttonsClassName,
 }: EditableSelectListProps) {
+  const t = useTranslations("EditableSelectList");
   const { getTitle, resetEditableSelectList } = useEditableSelectListStore();
 
   const {
@@ -60,10 +62,10 @@ export default function EditableSelectList({
   return (
     <div className="px-4 py-4 bg-cyan-300 flex flex-col gap-2 h-full overflow-hidden">
       <h1 className="w-full bg-white text-center text-xl text-blue-600 font-semibold">
-        {getTitle()}
+        {getTitle() || t("defaultTitle")}
       </h1>
       <p className="w-full text-blue-800 text-start font-semibold">
-        Haga doble click para seleccionar el valor
+        {t("doubleClickInstruction")}
       </p>
 
       {/* ====== TABLE ====== */}
@@ -91,7 +93,7 @@ export default function EditableSelectList({
             setIsModalOpen(true);
           }}
         >
-          Agregar
+          {t("add")}
         </Button>
         <Button
           onClick={() => {
@@ -103,7 +105,7 @@ export default function EditableSelectList({
             setIsModalOpen(true);
           }}
         >
-          Modificar
+          {t("edit")}
         </Button>
         <Button
           onClick={async () => {
@@ -116,7 +118,7 @@ export default function EditableSelectList({
             if (!success) return;
           }}
         >
-          Eliminar
+          {t("delete")}
         </Button>
       </div>
 
@@ -133,9 +135,9 @@ export default function EditableSelectList({
       <AppDialog
         isOpen={isWarningDialogOpen}
         onClose={() => setIsWarningDialogOpen(false)}
-        navbarTitle="Aviso"
-        description="Debe seleccionar una frase"
-        confirmLabel="Aceptar"
+        navbarTitle={t("notice")}
+        description={t("selectPhrase")}
+        confirmLabel={t("accept")}
         onConfirm={() => setIsWarningDialogOpen(false)}
         showCancelButton={false}
         widthClassName="w-[420px]"
