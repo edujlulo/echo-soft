@@ -62,6 +62,8 @@ export default function LoginPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            inputClassName="w-60"
+            placeholder="Ingrese su correo"
           >
             Correo
           </LabeledInput>
@@ -69,6 +71,8 @@ export default function LoginPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            inputClassName="w-60"
+            placeholder="Ingrese su contraseña"
           >
             Contraseña
           </LabeledInput>
