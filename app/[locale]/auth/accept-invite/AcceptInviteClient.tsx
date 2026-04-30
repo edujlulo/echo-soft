@@ -5,8 +5,11 @@ import LabeledInput from "@/components/LabeledInput";
 import { supabase } from "@/lib/supabase/client";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function AcceptInviteClient() {
+  const t = useTranslations("AcceptInvitePage");
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -69,17 +72,17 @@ export default function AcceptInviteClient() {
     const cleanConfirmPassword = confirmPassword.trim();
 
     if (!cleanPassword || !cleanConfirmPassword) {
-      setErrorMessage("Debe ingresar y confirmar su contraseña.");
+      setErrorMessage(t("passwordRequired"));
       return;
     }
 
     if (cleanPassword.length < 4) {
-      setErrorMessage("La contraseña debe tener al menos 4 caracteres.");
+      setErrorMessage(t("passwordMinLengthError"));
       return;
     }
 
     if (cleanPassword !== cleanConfirmPassword) {
-      setErrorMessage("Las contraseñas no coinciden.");
+      setErrorMessage(t("passwordMismatch"));
       return;
     }
 
@@ -92,7 +95,7 @@ export default function AcceptInviteClient() {
       } = await supabase.auth.getUser();
 
       if (userError || !user?.email) {
-        throw new Error("No se pudo validar la invitación.");
+        throw new Error(t("inviteValidationError"));
       }
 
       const { error: passwordError } = await supabase.auth.updateUser({
@@ -100,7 +103,7 @@ export default function AcceptInviteClient() {
       });
 
       if (passwordError) {
-        throw new Error("No se pudo guardar la contraseña.");
+        throw new Error(t("passwordSaveError"));
       }
 
       const { error: vetError } = await supabase
@@ -111,11 +114,11 @@ export default function AcceptInviteClient() {
         .eq("email", user.email);
 
       if (vetError) {
-        throw new Error("No se pudo conectar el usuario con el veterinario.");
+        throw new Error(t("vetConnectionError"));
       }
 
       setSuccessMessage(
-        "Cuenta activada correctamente. Ya puede iniciar sesión."
+        t("accountActivated")
       );
 
       await supabase.auth.signOut();
@@ -127,7 +130,7 @@ export default function AcceptInviteClient() {
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : "Ocurrió un error al activar la cuenta."
+          : t("genericActivationError")
       );
     } finally {
       setIsLoading(false);
@@ -143,10 +146,10 @@ export default function AcceptInviteClient() {
           </div>
 
           <h1 className="text-3xl font-bold text-blue-900 mb-3">
-            Validando acceso
+            {t("validatingAccess")}
           </h1>
 
-          <p className="text-blue-800">Por favor, espere un momento.</p>
+          <p className="text-blue-800">{t("pleaseWait")}</p>
         </div>
       </div>
     );
@@ -157,20 +160,19 @@ export default function AcceptInviteClient() {
       <div className="flex h-full w-full items-center justify-center px-4">
         <div className="bg-blue-200 shadow-lg rounded-xl px-10 py-8 w-full max-w-md text-center">
           <p className="font-semibold text-blue-700 uppercase tracking-wide mb-2">
-            Acceso no disponible
+            {t("accessUnavailable")}
           </p>
 
           <h1 className="text-3xl font-bold text-blue-900 mb-4">
-            Enlace no válido o expirado
+            {t("invalidOrExpiredLink")}
           </h1>
 
           <p className="text-blue-950 mb-4">
-            Para continuar, debe ingresar desde el enlace enviado a su correo
-            electrónico.
+            {t("invalidInviteDescription")}
           </p>
 
           <p className="text-sm text-blue-900 mb-6">
-            Si el enlace ya expiró, solicite una nueva invitación.
+            {t("expiredInviteInstruction")}
           </p>
 
           <Button
@@ -178,7 +180,7 @@ export default function AcceptInviteClient() {
             onClick={() => router.push(`/${locale}`)}
             className="bg-blue-600 text-blue-50 border !border-blue-900 rounded-lg shadow-md px-6 py-2 font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors duration-200 ease-in-out"
           >
-            Volver al inicio de sesión
+            {t("backToLogin")}
           </Button>
         </div>
       </div>
@@ -190,28 +192,27 @@ export default function AcceptInviteClient() {
       <div className="bg-blue-200 shadow-lg rounded-xl px-10 py-8 w-full max-w-md">
         <div className="text-center mb-6">
           <p className=" font-semibold text-blue-700 uppercase tracking-wide mb-2">
-            Invitación de acceso
+            {t("accessInvitation")}
           </p>
 
           <h1 className="text-3xl font-bold text-blue-900 mb-2">
-            Bienvenido a EcoSoft
+            {t("welcome")}
           </h1>
 
           <p className=" text-blue-800">
-            Estás a un paso de activar tu cuenta.
+            {t("almostReady")}
           </p>
         </div>
 
         <div className="bg-blue-50 border border-blue-300 rounded-lg px-4 py-3 mb-6">
           <p className="text-sm text-blue-950 text-center">
-            Crea una contraseña para completar tu registro y comenzar a usar la
-            aplicación.
+            {t("createPasswordInstruction")}
           </p>
         </div>
 
         {email && (
           <p className="mb-4 text-center text-sm text-blue-900">
-            Cuenta invitada: <span className="font-semibold">{email}</span>
+            {t("invitedAccount")} <span className="font-semibold">{email}</span>
           </p>
         )}
 
@@ -222,9 +223,9 @@ export default function AcceptInviteClient() {
             onChange={(e) => setPassword(e.target.value)}
             labelClassName="w-32"
             inputClassName="w-full"
-            placeholder="Ingrese su contraseña"
+            placeholder={t("passwordPlaceholder")}
           >
-            Contraseña
+            {t("password")}
           </LabeledInput>
 
           <LabeledInput
@@ -233,9 +234,9 @@ export default function AcceptInviteClient() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             labelClassName="w-32"
             inputClassName="w-full"
-            placeholder="Repita su contraseña"
+            placeholder={t("confirmPasswordPlaceholder")}
           >
-            Confirmar
+            {t("confirmPassword")}
           </LabeledInput>
 
           {errorMessage && (
@@ -249,7 +250,7 @@ export default function AcceptInviteClient() {
           )}
 
           <p className="text-sm text-gray-600 mt-4 text-center">
-            La contraseña debe tener al menos 4 caracteres.
+            {t("passwordRequirement")}
           </p>
 
           <div className="mt-6 flex justify-center">
@@ -260,14 +261,14 @@ export default function AcceptInviteClient() {
             >
               <span className="flex items-center justify-center gap-2">
                 {isLoading && <Spinner className="h-4 w-4 border-2" />}
-                {isLoading ? "Activando..." : "Activar cuenta"}
+                {isLoading ? t("activating") : t("activateAccount")}
               </span>
             </Button>
           </div>
         </form>
 
         <p className="text-sm text-blue-900 mt-6 text-center">
-          Este acceso es exclusivo para usuarios invitados por EcoSoft.
+          {t("invitedUsersOnly")}
         </p>
       </div>
     </div>

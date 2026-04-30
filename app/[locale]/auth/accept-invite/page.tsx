@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import AcceptInviteClient from "./AcceptInviteClient";
+import { useTranslations } from "next-intl";
 
 function Spinner() {
   return (
@@ -8,6 +9,8 @@ function Spinner() {
 }
 
 export default function AcceptInvitePage() {
+  const t = useTranslations("AcceptInvitePage");
+
   return (
     <Suspense
       fallback={
@@ -17,9 +20,11 @@ export default function AcceptInvitePage() {
               <Spinner />
             </div>
 
-            <h1 className="text-3xl font-bold text-blue-900 mb-3">Cargando</h1>
+            <h1 className="text-3xl font-bold text-blue-900 mb-3">
+              {t("loading")}
+            </h1>
 
-            <p className="text-blue-800">Por favor, espere un momento.</p>
+            <p className="text-blue-800">{t("pleaseWait")}</p>
           </div>
         </div>
       }

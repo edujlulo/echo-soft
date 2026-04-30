@@ -454,5 +454,41 @@
     "rename": "Rename",
     "addSelectedTemplateToReport": "Add selected template to report",
     "exit": "Exit"
+  },
+
+  "AcceptInvitePage": {
+    "loading": "Loading",
+    "validatingAccess": "Validating access",
+    "pleaseWait": "Please wait a moment.",
+
+    "accessUnavailable": "Access unavailable",
+    "invalidOrExpiredLink": "Invalid or expired link",
+    "invalidInviteDescription": "To continue, you must use the link sent to your email address.",
+    "expiredInviteInstruction": "If the link has expired, please request a new invitation.",
+    "backToLogin": "Back to login",
+
+    "accessInvitation": "Access invitation",
+    "welcome": "Welcome to EchoSoft",
+    "almostReady": "You are one step away from activating your account.",
+    "createPasswordInstruction": "Create a password to complete your registration and start using the application.",
+    "invitedAccount": "Invited account:",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPassword": "Confirm",
+    "confirmPasswordPlaceholder": "Repeat your password",
+
+    "passwordRequired": "You must enter and confirm your password.",
+    "passwordMinLengthError": "The password must be at least 4 characters long.",
+    "passwordMismatch": "The passwords do not match.",
+    "inviteValidationError": "The invitation could not be validated.",
+    "passwordSaveError": "The password could not be saved.",
+    "vetConnectionError": "The user could not be linked to the veterinarian.",
+    "accountActivated": "Account activated successfully. You can now log in.",
+    "genericActivationError": "An error occurred while activating the account.",
+
+    "passwordRequirement": "The password must be at least 4 characters long.",
+    "activating": "Activating...",
+    "activateAccount": "Activate account",
+    "invitedUsersOnly": "This access is only for users invited by EchoSoft."
   }
 }

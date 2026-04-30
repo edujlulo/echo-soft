@@ -11,7 +11,7 @@ export default function LoginPage() {
   const t = useTranslations("LoginPage");
   const { login } = useAuth();
 
-  const [email, setEmail] = useState("correo@correo.com");
+  const [email, setEmail] = useState("email@email.com");
   const [password, setPassword] = useState("Ecosoft123.");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
