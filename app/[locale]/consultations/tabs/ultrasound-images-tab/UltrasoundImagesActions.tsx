@@ -13,6 +13,7 @@ import {
   countUltrasoundImagesByConsultation,
   MAX_ULTRASOUND_IMAGES_PER_CONSULTATION,
 } from "@/lib/queries/ultrasoundImages";
+import { useTranslations } from "next-intl";
 
 interface Props {
   onUploadComplete?: () => Promise<void> | void;
@@ -37,6 +38,8 @@ export default function UltrasoundImagesActions({
   isSelectionActionsDisabled,
   currentImageCount,
 }: Props) {
+  const t = useTranslations("UltrasoundImagesTab");
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
@@ -67,7 +70,9 @@ export default function UltrasoundImagesActions({
   function handleOpenFilePicker() {
     if (hasReachedImageLimit) {
       setUploadLimitMessage(
-        `Esta consulta ya tiene el límite de ${MAX_ULTRASOUND_IMAGES_PER_CONSULTATION} imágenes.`,
+        t("imageLimitReached", {
+          maxImages: MAX_ULTRASOUND_IMAGES_PER_CONSULTATION,
+        }),
       );
       return;
     }
@@ -121,8 +126,13 @@ export default function UltrasoundImagesActions({
       if (selectedFiles.length > remainingSlots) {
         setUploadLimitMessage(
           remainingSlots === 0
-            ? `Esta consulta ya tiene el límite de ${MAX_ULTRASOUND_IMAGES_PER_CONSULTATION} imágenes.`
-            : `Esta consulta tiene ${currentStoredImageCount} imágenes. Sólo puedes subir ${remainingSlots} más.`,
+            ? t("imageLimitReached", {
+                maxImages: MAX_ULTRASOUND_IMAGES_PER_CONSULTATION,
+              })
+            : t("remainingUploadLimit", {
+                currentImageCount: currentStoredImageCount,
+                remainingSlots,
+              }),
         );
         event.target.value = "";
         return;
@@ -140,9 +150,7 @@ export default function UltrasoundImagesActions({
       event.target.value = "";
     } catch (error) {
       console.error("Upload error:", error);
-      setUploadLimitMessage(
-        "No se pudo validar el límite de imágenes. Intenta nuevamente.",
-      );
+      setUploadLimitMessage(t("imageLimitValidationError"));
       event.target.value = "";
     }
   }
@@ -167,10 +175,10 @@ export default function UltrasoundImagesActions({
         {isUploading ? (
           <span className="inline-flex items-center justify-center gap-2">
             <span className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            <span>Subiendo imágenes...</span>
+            <span>{t("uploadingImages")}</span>
           </span>
         ) : (
-          "Copiar imágenes desde la carpeta"
+          t("copyImagesFromFolder")
         )}
       </Button>
 
@@ -185,12 +193,12 @@ export default function UltrasoundImagesActions({
         {isDeletingSelectedImages ? (
           <span className="inline-flex items-center justify-center gap-2">
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            <span>Borrando imágenes...</span>
+            <span>{t("deletingImages")}</span>
           </span>
         ) : selectedImageCount === 1 ? (
-          "Borrar imagen seleccionada"
+          t("deleteSelectedImage")
         ) : (
-          "Borrar imágenes seleccionadas"
+          t("deleteSelectedImages")
         )}
       </Button>
 
@@ -203,32 +211,29 @@ export default function UltrasoundImagesActions({
         {isDeletingAllImages ? (
           <span className="inline-flex items-center justify-center gap-2">
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            <span>Borrando imágenes...</span>
+            <span>{t("deletingImages")}</span>
           </span>
         ) : (
-          "Borrar todas las imágenes"
+          t("deleteAllImages")
         )}
       </Button>
 
       <AppDialog
         isOpen={isDeleteAllDialogOpen}
         onClose={() => setIsDeleteAllDialogOpen(false)}
-        navbarTitle="Confirmar eliminación"
-        title="Eliminar todas las imágenes de esta consulta"
+        navbarTitle={t("confirmDeleteTitle")}
+        title={t("deleteAllTitle")}
         description={
           <>
-            <p>
-              ¿Estás seguro de que deseas eliminar todas las imágenes de esta
-              consulta?
-            </p>
+            <p>{t("deleteAllQuestion")}</p>
             <p className="mt-2 font-semibold text-red-700">
-              Esta acción no se puede deshacer.
+              {t("irreversibleWarning")}
             </p>
           </>
         }
-        confirmLabel="Eliminar todo"
-        confirmLoadingLabel="Borrando imágenes..."
-        cancelLabel="Cancelar"
+        confirmLabel={t("deleteAll")}
+        confirmLoadingLabel={t("deletingImages")}
+        cancelLabel={t("cancel")}
         variant="danger"
         isLoading={isDeletingAllImages}
         disableClose={isDeletingAllImages}
@@ -238,10 +243,10 @@ export default function UltrasoundImagesActions({
       <AppDialog
         isOpen={uploadLimitMessage !== null}
         onClose={() => setUploadLimitMessage(null)}
-        navbarTitle="Límite de imágenes"
-        title="No se pueden subir esas imágenes"
+        navbarTitle={t("imageLimitTitle")}
+        title={t("cannotUploadImagesTitle")}
         description={<p>{uploadLimitMessage}</p>}
-        confirmLabel="Entendido"
+        confirmLabel={t("understood")}
         showCancelButton={false}
         onConfirm={() => setUploadLimitMessage(null)}
       />

@@ -2,6 +2,7 @@
 
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { Database } from "@/types/database";
+import { useTranslations } from "next-intl";
 
 type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
 
@@ -18,10 +19,12 @@ export default function FullTemplatesTable({
   onSelectTemplate,
   loading = false,
 }: Props) {
+  const t = useTranslations("FullReportTemplatesDialog");
+
   const columns: GridColDef[] = [
     {
       field: "label",
-      headerName: "Plantilla",
+      headerName: t("template"),
       flex: 1,
       sortable: false,
       filterable: false,

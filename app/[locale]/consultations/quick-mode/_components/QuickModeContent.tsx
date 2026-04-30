@@ -5,12 +5,15 @@ import OrgansTable from "./OrgansTable";
 import DynamicTextarea from "./DynamicTextarea";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
 import QuickModeReportDraft from "./QuickModeReportDraft";
+import { useTranslations } from "next-intl";
 
 interface Props {
   setIsQuickModeOpen: (open: boolean) => void;
 }
 
 export default function QuickModeContent({ setIsQuickModeOpen }: Props) {
+  const t = useTranslations("QuickModeSection");
+
   const { setFieldConsultation } = useConsultationForm();
 
   return (
@@ -34,7 +37,7 @@ export default function QuickModeContent({ setIsQuickModeOpen }: Props) {
                 onClick={() => setIsQuickModeOpen(false)}
                 className="w-23"
               >
-                Cerrar
+                {t("close")}
               </Button>
             </div>
           </div>
@@ -72,7 +75,7 @@ export default function QuickModeContent({ setIsQuickModeOpen }: Props) {
           <div>
             <div className="mb-2 pr-30">
               <ConsultLabeledTextarea>
-                FRASE LARGA O PLANTILLA
+                {t("longPhraseOrTemplate")}
               </ConsultLabeledTextarea>
             </div>
           </div>

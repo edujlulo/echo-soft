@@ -5,6 +5,7 @@ import ConsultationPetForm from "./ConsultationPetForm";
 import { Database } from "@/types/database";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
+import { useTranslations } from "next-intl";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
 type NewPet = Omit<
@@ -38,6 +39,8 @@ export default function PetDetailsAndReason({
   statusMessage,
   calculateAge,
 }: PetDetailsAndReasonProps) {
+  const t = useTranslations("ConsultationTabs");
+
   const {
     formConsultation,
     setFieldConsultation,
@@ -87,7 +90,7 @@ export default function PetDetailsAndReason({
                 setFieldConsultation("reason_for_ultrasound", e.target.value)
               }
             >
-              MOTIVO DEL EXAMEN ECOGRÁFICO
+              {t("reasonForUltrasound")}
             </ConsultLabeledTextarea>
 
             <ConsultLabeledTextarea
@@ -97,13 +100,13 @@ export default function PetDetailsAndReason({
                 setFieldConsultation("equipment_used", e.target.value)
               }
             >
-              EQUIPO UTILIZADO
+              {t("equipmentUsed")}
             </ConsultLabeledTextarea>
 
             {/* ======== Saving and status messages ======== */}
             <div className="h-5 mt-2 flex justify-center items-center">
               {isSavingConsultation && (
-                <p className="text-sm text-blue-600">Guardando...</p>
+                <p className="text-sm text-blue-600">{t("saving")}</p>
               )}
               {statusMessageConsultation && (
                 <h3 className="text-sm text-green-700">

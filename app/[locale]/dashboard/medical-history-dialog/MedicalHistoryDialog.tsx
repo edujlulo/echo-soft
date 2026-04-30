@@ -3,6 +3,7 @@
 import DialogScaleWrapper from "@/components/DialogScaleWrapper";
 import Navbar from "@/components/Navbar";
 import { Dialog } from "@headlessui/react";
+import { useTranslations } from "next-intl";
 import MedicalHistoryContent from "./_components/MedicalHistoryContent";
 
 interface Props {
@@ -14,6 +15,8 @@ export default function MedicalHistoryDialog({
   isMedicalHistoryDialogOpen,
   setIsMedicalHistoryDialogOpen,
 }: Props) {
+  const t = useTranslations("MedicalHistory");
+
   return (
     <div>
       <Dialog
@@ -35,13 +38,14 @@ export default function MedicalHistoryDialog({
             <button
               onClick={() => setIsMedicalHistoryDialogOpen(false)}
               className="pt-0.5 absolute top-2 right-2 w-8 h-6 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-md shadow-md border border-gray-500 transition-colors text-2xl"
+              aria-label={t("closeDialog")}
             >
               ×
             </button>
 
             {/* Navbar */}
             <div className="w-full flex-shrink-0">
-              <Navbar>Visor de informes</Navbar>
+              <Navbar>{t("reportViewer")}</Navbar>
             </div>
 
             {/* ========= CONTENT ========= */}

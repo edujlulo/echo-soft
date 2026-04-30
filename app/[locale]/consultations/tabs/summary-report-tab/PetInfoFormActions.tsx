@@ -1,6 +1,7 @@
 import Button from "@/components/Button";
 import { useConsultationStore } from "@/context/consultationStore";
 import { updateConsultation } from "@/lib/queries/consultations";
+import { useTranslations } from "next-intl";
 
 interface Props {
   setIsFullTemplatesDialogOpen: (open: boolean) => void;
@@ -9,6 +10,8 @@ interface Props {
 export default function PetInfoFormActions({
   setIsFullTemplatesDialogOpen,
 }: Props) {
+  const t = useTranslations("SummaryReportTab");
+
   const reportMode = useConsultationStore((state) => state.reportMode);
   const setReportMode = useConsultationStore((state) => state.setReportMode);
   const selectedConsultation = useConsultationStore(
@@ -48,7 +51,7 @@ export default function PetInfoFormActions({
         <div className="ml-4 mt-6 flex flex-col gap-2 justify-center">
           {/* TOGGLE BUTTON FOR FULL REPORT TEMPLATE MODE */}
           <div className="flex flex-row gap-2">
-            <p className="font-bold">Modo plantilla completa (edición libre)</p>
+            <p className="font-bold">{t("fullTemplateMode")}</p>
             <button
               onClick={() => {
                 void handleToggleReportMode();
@@ -66,7 +69,7 @@ export default function PetInfoFormActions({
           </div>
           <div className="flex flex-row gap-1.5">
             <Button onClick={() => setIsFullTemplatesDialogOpen(true)}>
-              Plantillas
+              {t("templates")}
             </Button>
           </div>
         </div>

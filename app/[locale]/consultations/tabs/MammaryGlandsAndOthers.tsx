@@ -1,8 +1,11 @@
 import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
+import { useTranslations } from "next-intl";
 
 export default function MammaryGlandsAndOthers() {
+  const t = useTranslations("ConsultationTabs");
+
   const {
     formConsultation,
     setFieldConsultation,
@@ -31,7 +34,7 @@ export default function MammaryGlandsAndOthers() {
               setFieldConsultation("mammary_glands", e.target.value)
             }
           >
-            GLÁNDULAS MAMARIAS
+            {t("mammaryGlands")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -40,7 +43,7 @@ export default function MammaryGlandsAndOthers() {
             value={formatForDisplay(formConsultation?.others ?? "")}
             onChange={(e) => setFieldConsultation("others", e.target.value)}
           >
-            OTROS
+            {t("others")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -51,7 +54,7 @@ export default function MammaryGlandsAndOthers() {
               setFieldConsultation("major_vessels", e.target.value)
             }
           >
-            GRANDES VASOS, VENAS Y ARTERIAS
+            {t("majorVessels")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -62,7 +65,7 @@ export default function MammaryGlandsAndOthers() {
               setFieldConsultation("abdominal_cavity", e.target.value)
             }
           >
-            CAVIDAD ABDOMINAL
+            {t("abdominalCavity")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -73,7 +76,7 @@ export default function MammaryGlandsAndOthers() {
               setFieldConsultation("conclusions", e.target.value)
             }
           >
-            CONCLUSIONES
+            {t("conclusions")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -84,7 +87,7 @@ export default function MammaryGlandsAndOthers() {
               setFieldConsultation("observations", e.target.value)
             }
           >
-            OBSERVACIONES
+            {t("observations")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -95,13 +98,13 @@ export default function MammaryGlandsAndOthers() {
               setFieldConsultation("mammary_notes", e.target.value)
             }
           >
-            FRASE LARGA O PLANTILLA
+            {t("longPhraseOrTemplate")}
           </ConsultLabeledTextarea>
 
           {/* ======== Saving and status messages ======== */}
           <div className="h-5 mt-1 flex justify-center items-center">
             {isSavingConsultation && (
-              <p className="text-sm text-blue-600">Guardando...</p>
+              <p className="text-sm text-blue-600">{t("saving")}</p>
             )}
             {statusMessageConsultation && (
               <h3 className="text-sm text-green-700">

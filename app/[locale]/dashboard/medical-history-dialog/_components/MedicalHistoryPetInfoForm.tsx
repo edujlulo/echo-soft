@@ -5,8 +5,11 @@ import { useActiveVetStore } from "@/context/activeVetStore";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
 import { useConsultationPetForm } from "@/hooks/useConsultationPetForm";
+import { useTranslations } from "next-intl";
 
 export default function MedicalHistoryPetInfoForm() {
+  const t = useTranslations("MedicalHistory");
+
   const activeVet = useActiveVetStore((s) => s.activeVet);
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
 
@@ -20,25 +23,25 @@ export default function MedicalHistoryPetInfoForm() {
         {/* ===== PET, OWNER AND VETERINARIAN ====== */}
         <div className="flex flex-col gap-1">
           <LabeledInput
-            labelClassName="font-bold w-29"
+            labelClassName="font-bold w-32"
             inputClassName="w-80 bg-white"
             value={selectedPet?.name}
           >
-            MASCOTA:
+            {t("pet")}
           </LabeledInput>
           <LabeledInput
-            labelClassName="font-bold w-29"
+            labelClassName="font-bold w-32"
             inputClassName="w-80 bg-white"
             value={selectedPet?.owner}
           >
-            PROPIETARIO:
+            {t("owner")}
           </LabeledInput>
           <LabeledInput
-            labelClassName="font-bold w-29"
+            labelClassName="font-bold w-32"
             inputClassName="w-80 bg-white"
             value={activeVet?.name}
           >
-            VETERINARIO:
+            {t("veterinarian")}
           </LabeledInput>
         </div>
 
@@ -50,7 +53,7 @@ export default function MedicalHistoryPetInfoForm() {
             value={selectedPet?.sex ?? ""}
             // onChange={(e) => setField("sex", e.target.value)}
           >
-            Sexo:
+            {t("sex")}
           </LabeledInput>
           <LabeledInput
             labelClassName="font-bold"
@@ -58,7 +61,7 @@ export default function MedicalHistoryPetInfoForm() {
             value={selectedPet?.species ?? ""}
             // onChange={(e) => setField("species", e.target.value)}
           >
-            Especie:
+            {t("species")}
           </LabeledInput>
           <div className="flex flex-row gap-2">
             <LabeledInput
@@ -67,7 +70,7 @@ export default function MedicalHistoryPetInfoForm() {
               value={selectedPet?.weight ?? ""}
               // onChange={(e) => setField("weight", e.target.value)}
             >
-              Peso:
+              {t("weight")}
             </LabeledInput>
             <p className="font-bold text-sm text-blue-950 flex justify-center items-center">
               Kg.
@@ -83,7 +86,7 @@ export default function MedicalHistoryPetInfoForm() {
             value={calculateAge(selectedPet?.birth_date ?? undefined)}
             disabled
           >
-            Edad:
+            {t("age")}
           </LabeledInput>
           <LabeledInput
             labelClassName="w-26 font-bold"
@@ -91,7 +94,7 @@ export default function MedicalHistoryPetInfoForm() {
             value={selectedPet?.breed ?? ""}
             // onChange={(e) => setField("breed", e.target.value)}
           >
-            Raza:
+            {t("breed")}
           </LabeledInput>
           <LabeledInput
             labelClassName="w-26 font-bold"
@@ -102,7 +105,7 @@ export default function MedicalHistoryPetInfoForm() {
             //   setFieldConsultation("consultation_date", e.target.value)
             // }
           >
-            Fecha:
+            {t("date")}
           </LabeledInput>
         </div>
       </div>

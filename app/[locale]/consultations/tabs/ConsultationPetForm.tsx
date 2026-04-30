@@ -2,6 +2,7 @@ import LabeledInput from "@/components/LabeledInput";
 import { useConsultationStore } from "@/context/consultationStore";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
 import { Database } from "@/types/database";
+import { useTranslations } from "next-intl";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
 type NewPet = Omit<
@@ -33,6 +34,8 @@ export default function ConsultationPetForm({
   statusMessage,
   calculateAge,
 }: ConsultationPetFormProps) {
+  const t = useTranslations("ConsultationTabs");
+
   const { selectedConsultation } = useConsultationStore();
 
   const { formConsultation, setFieldConsultation } = useConsultationForm();
@@ -50,7 +53,7 @@ export default function ConsultationPetForm({
               value={selectedPet?.sex ?? ""}
               onChange={(e) => setField("sex", e.target.value)}
             >
-              Sexo:
+              {t("sex")}
             </LabeledInput>
             <LabeledInput
               categoryKey="species"
@@ -59,7 +62,7 @@ export default function ConsultationPetForm({
               value={selectedPet?.species ?? ""}
               onChange={(e) => setField("species", e.target.value)}
             >
-              Especie:
+              {t("species")}
             </LabeledInput>
             <div className="flex flex-row gap-2">
               <LabeledInput
@@ -69,10 +72,10 @@ export default function ConsultationPetForm({
                 value={selectedPet?.weight ?? ""}
                 onChange={(e) => setField("weight", e.target.value)}
               >
-                Peso:
+                {t("weight")}
               </LabeledInput>
               <p className="font-bold text-sm text-blue-950 flex justify-center items-center">
-                Kg.
+                {t("kilogramUnit")}
               </p>
             </div>
           </div>
@@ -88,7 +91,7 @@ export default function ConsultationPetForm({
               value={selectedPet?.birth_date ?? ""}
               onChange={(e) => setField("birth_date", e.target.value)}
             >
-              Fecha de nacimiento:
+              {t("birthDate")}
             </LabeledInput>
             <LabeledInput
               labelClassName="w-26 font-bold"
@@ -96,7 +99,7 @@ export default function ConsultationPetForm({
               value={calculateAge(selectedPet?.birth_date ?? undefined)}
               disabled
             >
-              Edad:
+              {t("age")}
             </LabeledInput>
             <LabeledInput
               categoryKey="breed"
@@ -105,7 +108,7 @@ export default function ConsultationPetForm({
               value={selectedPet?.breed ?? ""}
               onChange={(e) => setField("breed", e.target.value)}
             >
-              Raza:
+              {t("breed")}
             </LabeledInput>
             <LabeledInput
               resetEditableSelectListOnFocus
@@ -117,7 +120,7 @@ export default function ConsultationPetForm({
                 setFieldConsultation("consultation_date", e.target.value)
               }
             >
-              Fecha:
+              {t("date")}
             </LabeledInput>
           </div>
         </div>
@@ -130,13 +133,13 @@ export default function ConsultationPetForm({
             value={selectedPet?.referred_by ?? ""}
             onChange={(e) => setField("referred_by", e.target.value)}
           >
-            Referido por:
+            {t("referredBy")}
           </LabeledInput>
         </div>
 
         {/* ======== Saving and status messages ======== */}
         <div className="h-5 mt-2 flex justify-center items-center">
-          {isSaving && <p className="text-sm text-blue-600">Guardando...</p>}
+          {isSaving && <p className="text-sm text-blue-600">{t("saving")}</p>}
           {statusMessage && (
             <h3 className="text-sm text-green-700">{statusMessage}</h3>
           )}

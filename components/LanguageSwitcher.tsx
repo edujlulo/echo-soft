@@ -12,7 +12,7 @@ export default function LanguageSwitcher() {
 
   return (
     <div>
-      <div className="absolute top-4 right-4 flex gap-2 text-sm">
+      <div className="fixed top-4 right-4 flex gap-2 text-sm">
         <button
           onClick={() => changeLanguage("es")}
           className="bg-blue-300 cursor-pointer flex items-center gap-1 px-3 py-1 rounded-md border border-blue-600 hover:bg-blue-400 transition"

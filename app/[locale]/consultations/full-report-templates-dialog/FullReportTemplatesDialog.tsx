@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import { Dialog } from "@headlessui/react";
 import FullTemplatesContent from "./_components/FullTemplatesContent";
 import DialogScaleWrapper from "@/components/DialogScaleWrapper";
+import { useTranslations } from "next-intl";
 
 interface Props {
   isFullTemplatesDialogOpen: boolean;
@@ -15,6 +16,8 @@ export default function FullReportTemplatesDialog({
   isFullTemplatesDialogOpen,
   setIsFullTemplatesDialogOpen,
 }: Props) {
+  const t = useTranslations("FullReportTemplatesDialog");
+
   return (
     <div>
       <Dialog
@@ -36,7 +39,7 @@ export default function FullReportTemplatesDialog({
           <Dialog.Panel className="w-[1200px] h-[760px] flex flex-col flex-shrink-0 bg-amber-50 rounded-md z-50 border border-gray-500 shadow-lg relative m-auto">
             {/* Navbar */}
             <div className="w-full flex-shrink-0">
-              <Navbar>Plantillas</Navbar>
+              <Navbar>{t("templates")}</Navbar>
             </div>
 
             {/* ========= CONTENT ========= */}

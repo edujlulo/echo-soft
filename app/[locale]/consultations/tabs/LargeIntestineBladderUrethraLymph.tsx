@@ -1,8 +1,11 @@
 import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
+import { useTranslations } from "next-intl";
 
 export default function LargeIntestineBladderUrethraLymph() {
+  const t = useTranslations("ConsultationTabs");
+
   const {
     formConsultation,
     setFieldConsultation,
@@ -28,7 +31,7 @@ export default function LargeIntestineBladderUrethraLymph() {
             value={formatForDisplay(formConsultation?.colon ?? "")}
             onChange={(e) => setFieldConsultation("colon", e.target.value)}
           >
-            COLON
+            {t("colon")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -38,7 +41,7 @@ export default function LargeIntestineBladderUrethraLymph() {
               setFieldConsultation("urinary_bladder", e.target.value)
             }
           >
-            VEJIGA URINARIA
+            {t("urinaryBladder")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -46,7 +49,7 @@ export default function LargeIntestineBladderUrethraLymph() {
             value={formatForDisplay(formConsultation?.urethra ?? "")}
             onChange={(e) => setFieldConsultation("urethra", e.target.value)}
           >
-            URETRA
+            {t("urethra")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -56,7 +59,7 @@ export default function LargeIntestineBladderUrethraLymph() {
               setFieldConsultation("lymph_nodes", e.target.value)
             }
           >
-            LINFONODOS
+            {t("lymphNodes")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -66,13 +69,13 @@ export default function LargeIntestineBladderUrethraLymph() {
               setFieldConsultation("colon_notes", e.target.value)
             }
           >
-            FRASE LARGA O PLANTILLA
+            {t("longPhraseOrTemplate")}
           </ConsultLabeledTextarea>
 
           {/* ======== Saving and status messages ======== */}
           <div className="h-5 mt-2 flex justify-center items-center">
             {isSavingConsultation && (
-              <p className="text-sm text-blue-600">Guardando...</p>
+              <p className="text-sm text-blue-600">{t("saving")}</p>
             )}
             {statusMessageConsultation && (
               <h3 className="text-sm text-green-700">

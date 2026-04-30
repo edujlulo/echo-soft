@@ -8,6 +8,7 @@ import NewFullTemplateNameDialog from "./NewFullTemplateNameDialog";
 import { useFullReportTemplates } from "@/hooks/useFullReportTemplates";
 import { useConsultationStore } from "@/context/consultationStore";
 import { updateConsultation } from "@/lib/queries/consultations";
+import { useTranslations } from "next-intl";
 
 interface Props {
   setIsFullTemplatesDialogOpen: (open: boolean) => void;
@@ -16,6 +17,8 @@ interface Props {
 export default function FullTemplatesContent({
   setIsFullTemplatesDialogOpen,
 }: Props) {
+  const t = useTranslations("FullReportTemplatesDialog");
+
   const [isNewTemplateNameDialogOpen, setIsNewTemplateNameDialogOpen] =
     useState(false);
   const [templateNameDialogMode, setTemplateNameDialogMode] = useState<
@@ -78,7 +81,7 @@ export default function FullTemplatesContent({
 
   async function handleAddSelectedTemplateToReport() {
     if (!selectedTemplate) {
-      alert("Debe seleccionar una plantilla.");
+      alert(t("selectTemplate"));
       return;
     }
 
@@ -138,7 +141,7 @@ export default function FullTemplatesContent({
 
         {selectedTemplate ? (
           <p className="text-sm text-blue-900 px-1">
-            {isSavingContent ? "Guardando contenido..." : "Contenido listo"}
+            {isSavingContent ? t("savingContent") : t("contentReady")}
           </p>
         ) : null}
 
@@ -153,7 +156,7 @@ export default function FullTemplatesContent({
           }}
           onOpenRenameDialog={() => {
             if (!selectedTemplate) {
-              alert("Debe seleccionar una plantilla.");
+              alert(t("selectTemplate"));
               return;
             }
 

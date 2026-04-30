@@ -1,8 +1,11 @@
 import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
+import { useTranslations } from "next-intl";
 
 export default function AdrenalUterusOvaries() {
+  const t = useTranslations("ConsultationTabs");
+
   const {
     formConsultation,
     setFieldConsultation,
@@ -30,7 +33,7 @@ export default function AdrenalUterusOvaries() {
               setFieldConsultation("adrenal_glands", e.target.value)
             }
           >
-            GLÁNDULAS ADRENALES
+            {t("adrenalGlands")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -38,7 +41,7 @@ export default function AdrenalUterusOvaries() {
             value={formatForDisplay(formConsultation?.uterus ?? "")}
             onChange={(e) => setFieldConsultation("uterus", e.target.value)}
           >
-            ÚTERO
+            {t("uterus")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -46,7 +49,7 @@ export default function AdrenalUterusOvaries() {
             value={formatForDisplay(formConsultation?.ovaries ?? "")}
             onChange={(e) => setFieldConsultation("ovaries", e.target.value)}
           >
-            OVARIOS
+            {t("ovaries")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -56,7 +59,7 @@ export default function AdrenalUterusOvaries() {
               setFieldConsultation("thyroid_glands", e.target.value)
             }
           >
-            GLÁNDULAS TIROIDES
+            {t("thyroidGlands")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -66,13 +69,13 @@ export default function AdrenalUterusOvaries() {
               setFieldConsultation("uterus_notes", e.target.value)
             }
           >
-            FRASE LARGA O PLANTILLA
+            {t("longPhraseOrTemplate")}
           </ConsultLabeledTextarea>
 
           {/* ======== Saving and status messages ======== */}
           <div className="h-5 mt-2 flex justify-center items-center">
             {isSavingConsultation && (
-              <p className="text-sm text-blue-600">Guardando...</p>
+              <p className="text-sm text-blue-600">{t("saving")}</p>
             )}
             {statusMessageConsultation && (
               <h3 className="text-sm text-green-700">

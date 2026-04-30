@@ -13,12 +13,15 @@ import {
   buildSuggestedPdfName,
   getPdfDownloadFileName,
 } from "@/reports/pdfNameUtils";
+import { useTranslations } from "next-intl";
 
 interface Props {
   setIsQuickModeOpen: (open: boolean) => void;
 }
 
 export default function ReportActions({ setIsQuickModeOpen }: Props) {
+  const t = useTranslations("SummaryReportTab");
+
   const [isDownloading, setIsDownloading] = useState(false);
   const [isReportPreviewOpen, setIsReportPreviewOpen] = useState(false);
 
@@ -116,7 +119,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
             onClick={handlePreviewPDF}
             className={reportActionsButtonsClassName}
           >
-            Vista previa del PDF
+            {t("pdfPreview")}
           </Button>
         </div>
         <Button
@@ -129,10 +132,10 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
           {isDownloading ? (
             <span className="flex items-center justify-center gap-2">
               <span className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full" />
-              Generando PDF...
+              {t("generatingPdf")}
             </span>
           ) : (
-            "Descargar PDF - 6 imágenes por hoja"
+            t("downloadPdfSixImages")
           )}
         </Button>
         <div className="mr-60 flex">
@@ -146,10 +149,10 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
             {isDownloading ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full" />
-                Generando PDF...
+                {t("generatingPdf")}
               </span>
             ) : (
-              "Descargar PDF - 1 imagen por hoja"
+              t("downloadPdfOneImage")
             )}
           </Button>
         </div>
@@ -159,7 +162,7 @@ export default function ReportActions({ setIsQuickModeOpen }: Props) {
             className={reportActionsButtonsClassName}
             onClick={() => setIsQuickModeOpen(true)}
           >
-            Modo rápido
+            {t("quickMode")}
           </Button>
           {/* <Button className={reportActionsButtonsClassName}>
             Modo rápido con ayuda

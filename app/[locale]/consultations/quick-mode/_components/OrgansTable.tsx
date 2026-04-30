@@ -3,8 +3,11 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { consultationCategories } from "@/config/consultationCategories";
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
+import { useTranslations } from "next-intl";
 
 export default function OrgansTable() {
+  const t = useTranslations("QuickModeSection");
+
   const setActiveCategory = useEditableSelectListStore(
     (state) => state.setActiveCategory
   );
@@ -20,16 +23,47 @@ export default function OrgansTable() {
   const columns: GridColDef[] = [
     {
       field: "label",
-      headerName: "ORGANO",
+      headerName: t("organ"),
       flex: 1,
     },
   ];
 
-  const rows = consultationCategories.map((c, index) => ({
-    id: index + 1,
-    label: c.label,
-    key: c.key,
-  }));
+  const rows = consultationCategories.map((c, index) => {
+    const translatedLabels: Record<string, string> = {
+      urinary_bladder: t("urinaryBladder"),
+      spleen: t("spleen"),
+      pancreas: t("pancreas"),
+      left_kidney: t("leftKidney"),
+      liver: t("liver"),
+      uterus: t("uterus"),
+      right_kidney: t("rightKidney"),
+      gallbladder: t("gallbladder"),
+      stomach: t("stomach"),
+      small_intestine: t("smallIntestine"),
+      colon: t("colon"),
+      urethra: t("urethra"),
+      lymph_nodes: t("lymphNodes"),
+      adrenal_glands: t("adrenalGlands"),
+      ovaries: t("ovaries"),
+      thyroid_glands: t("thyroidGlands"),
+      mammary_glands: t("mammaryGlands"),
+      ocular_study: t("ocularStudy"),
+      muscular_study: t("muscularStudy"),
+      bones_others: t("bonesOthers"),
+      thorax_lungs: t("thoraxLungs"),
+      others: t("others"),
+      major_vessels: t("majorVessels"),
+      abdominal_cavity: t("abdominalCavity"),
+      conclusions: t("conclusions"),
+      observations: t("observations"),
+    };
+
+    return {
+      id: index + 1,
+      label: c.key ? translatedLabels[c.key] ?? c.label : c.label,
+      key: c.key,
+    };
+  });
 
   return (
     <DataGrid

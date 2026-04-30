@@ -2,10 +2,13 @@ import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
 import { Database } from "@/types/database";
+import { useTranslations } from "next-intl";
 
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
 export default function DynamicTextarea() {
+  const t = useTranslations("QuickModeSection");
+
   const { formConsultation, setFieldConsultation } = useConsultationForm();
 
   const activeCategory = useEditableSelectListStore(
@@ -41,7 +44,7 @@ export default function DynamicTextarea() {
           );
         }}
       >
-        {activeField ?? "MOTIVOS"}
+        {activeField ?? t("defaultReason")}
       </ConsultLabeledTextarea>
     </div>
   );

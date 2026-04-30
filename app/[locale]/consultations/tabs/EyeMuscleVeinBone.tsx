@@ -2,8 +2,11 @@ import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
 import React from "react";
+import { useTranslations } from "next-intl";
 
 export default function EyeMuscleVeinBone() {
+  const t = useTranslations("ConsultationTabs");
+
   const {
     formConsultation,
     setFieldConsultation,
@@ -31,7 +34,7 @@ export default function EyeMuscleVeinBone() {
               setFieldConsultation("ocular_study", e.target.value)
             }
           >
-            ESTUDIO OCULAR
+            {t("ocularStudy")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -41,7 +44,7 @@ export default function EyeMuscleVeinBone() {
               setFieldConsultation("muscular_study", e.target.value)
             }
           >
-            ESTUDIO MUSCULAR
+            {t("muscularStudy")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -51,7 +54,7 @@ export default function EyeMuscleVeinBone() {
               setFieldConsultation("thorax_lungs", e.target.value)
             }
           >
-            TORAX - PULMONES
+            {t("thoraxLungs")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -61,7 +64,7 @@ export default function EyeMuscleVeinBone() {
               setFieldConsultation("bones_others", e.target.value)
             }
           >
-            HUESOS Y OTROS
+            {t("bonesOthers")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -71,13 +74,13 @@ export default function EyeMuscleVeinBone() {
               setFieldConsultation("ocular_notes", e.target.value)
             }
           >
-            FRASE LARGA O PLANTILLA
+            {t("longPhraseOrTemplate")}
           </ConsultLabeledTextarea>
 
           {/* ======== Saving and status messages ======== */}
           <div className="h-5 mt-2 flex justify-center items-center">
             {isSavingConsultation && (
-              <p className="text-sm text-blue-600">Guardando...</p>
+              <p className="text-sm text-blue-600">{t("saving")}</p>
             )}
             {statusMessageConsultation && (
               <h3 className="text-sm text-green-700">

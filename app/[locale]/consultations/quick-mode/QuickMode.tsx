@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import { Dialog } from "@headlessui/react";
 import QuickModeContent from "./_components/QuickModeContent";
 import DialogScaleWrapper from "@/components/DialogScaleWrapper";
+import { useTranslations } from "next-intl";
 
 interface Props {
   isQuickModeOpen: boolean;
@@ -15,6 +16,8 @@ export default function QuickMode({
   isQuickModeOpen,
   setIsQuickModeOpen,
 }: Props) {
+  const t = useTranslations("QuickModeSection");
+
   return (
     <div>
       <Dialog
@@ -44,7 +47,7 @@ export default function QuickMode({
 
             {/* Navbar */}
             <div className="w-full flex-shrink-0">
-              <Navbar>Consulta de Ecografía</Navbar>
+              <Navbar>{t("pageTitle")}</Navbar>
             </div>
 
             {/* ========= CONTENT ========= */}

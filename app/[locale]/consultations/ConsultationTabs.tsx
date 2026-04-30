@@ -12,8 +12,11 @@ import EyeMuscleVeinBone from "./tabs/EyeMuscleVeinBone";
 import SummaryReportContent from "./tabs/summary-report-tab/SummaryReportContent";
 import UltrasoundImagesContent from "./tabs/ultrasound-images-tab/UltrasoundImagesContent";
 import { useConsultationPetForm } from "@/hooks/useConsultationPetForm";
+import { useTranslations } from "next-intl";
 
 export default function ConsultationTabs() {
+  const t = useTranslations("ConsultationTabs");
+
   const [value, setValue] = useState(0);
 
   const { selectedPet, setField, isSaving, statusMessage, calculateAge } =
@@ -68,15 +71,15 @@ export default function ConsultationTabs() {
           },
         }}
       >
-        <Tab label="Mascotas" />
-        <Tab label="Hígado, Vesícula, Riñones" />
-        <Tab label="Bazo, Pancreas, Estom., Int. delg." />
-        <Tab label="Int. Grue., Vejiga, Uretra, Linfon." />
-        <Tab label="Gl. Adre, Utero, Ovario" />
-        <Tab label="G. Mamarias, Otros" />
-        <Tab label="Ocular, Muscular, Venas, Óseo" />
-        <Tab label="Informe" />
-        <Tab label="Imágenes" />
+        <Tab label={t("tabPets")} />
+        <Tab label={t("tabLiverGallbladderKidneys")} />
+        <Tab label={t("tabSpleenPancreasStomachSmallIntestine")} />
+        <Tab label={t("tabLargeIntestineBladderUrethraLymph")} />
+        <Tab label={t("tabAdrenalUterusOvaries")} />
+        <Tab label={t("tabMammaryGlandsOthers")} />
+        <Tab label={t("tabEyeMuscleVeinBone")} />
+        <Tab label={t("tabReport")} />
+        <Tab label={t("tabImages")} />
       </Tabs>
 
       <Box className="h-full min-h-0 pb-2 px-4 overflow-y-auto flex flex-col">

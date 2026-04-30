@@ -14,6 +14,7 @@ import { reportPdfTemplate } from "@/reports/templates/reportPdfTemplate";
 import { fetchUltrasoundImagesByConsultation } from "@/lib/queries/ultrasoundImages";
 import type { UltrasoundImageListItem } from "@/lib/queries/ultrasoundImages";
 import DialogScaleWrapper from "@/components/DialogScaleWrapper";
+import { useTranslations } from "next-intl";
 
 interface Props {
   isOpen: boolean;
@@ -26,6 +27,8 @@ export default function ReportPreviewDialog({
   onClose,
   report,
 }: Props) {
+  const t = useTranslations("SummaryReportTab");
+
   const formConsultation = useConsultationStore((s) => s.formConsultation);
   const consultationId = useConsultationStore(
     (s) => s.selectedConsultation?.consultation_id,
@@ -122,20 +125,20 @@ export default function ReportPreviewDialog({
             type="button"
             onClick={onClose}
             className="pt-0.5 absolute top-2 right-2 w-8 h-6 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-md shadow-md border border-gray-500 transition-colors text-2xl"
-            aria-label="Cerrar vista previa"
+            aria-label={t("closePreview")}
           >
             ×
           </button>
 
           <div className="w-full flex-shrink-0">
-            <Navbar>Vista previa del informe</Navbar>
+            <Navbar>{t("reportPreview")}</Navbar>
           </div>
 
           <div className="flex-1 min-h-0 p-4 flex flex-col">
             <div className="flex-1 min-h-0 overflow-auto flex justify-center">
               <div className="w-[210mm] min-h-full bg-white border shadow p-6">
                 <iframe
-                  title="Report Preview"
+                  title={t("reportPreviewIframeTitle")}
                   srcDoc={reportHtml}
                   className="w-full h-full border-0"
                 />
@@ -148,7 +151,7 @@ export default function ReportPreviewDialog({
                 onClick={onClose}
                 className="w-32 font-bold bg-green-300 border border-gray-50 hover:bg-green-400"
               >
-                Cerrar
+                {t("close")}
               </Button>
             </div>
           </div>

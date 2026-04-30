@@ -2,6 +2,7 @@
 
 import Button from "@/components/Button";
 import React from "react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   onDeleteSelectedTemplate: () => Promise<boolean>;
@@ -18,6 +19,8 @@ export default function FullTemplatesActions({
   onOpenRenameDialog,
   onAddSelectedTemplateToReport,
 }: Props) {
+  const t = useTranslations("FullReportTemplatesDialog");
+
   return (
     <div className="py-3 flex flex-row gap-3 justify-center items-center">
       <Button
@@ -25,21 +28,21 @@ export default function FullTemplatesActions({
           await onDeleteSelectedTemplate();
         }}
       >
-        Eliminar plantilla
+        {t("deleteTemplate")}
       </Button>
       <Button onClick={onOpenCreateDialog}>
-        Crear una plantilla nueva a partir de este informe
+        {t("createTemplateFromReport")}
       </Button>
-      <Button onClick={onOpenRenameDialog}>Modificar nombre</Button>
+      <Button onClick={onOpenRenameDialog}>{t("rename")}</Button>
       <Button
         onClick={async () => {
           await onAddSelectedTemplateToReport();
         }}
       >
-        Añadir plantilla seleccionada al informe
+        {t("addSelectedTemplateToReport")}
       </Button>
       <Button onClick={onCloseDialog} className="w-23">
-        Salir
+        {t("exit")}
       </Button>
     </div>
   );

@@ -209,5 +209,253 @@
 
   "EditableSelectListTable": {
     "phrase": "Frase"
+  },
+
+  "MedicalHistory": {
+    "reportViewer": "Visor de informes",
+    "close": "Cerrar",
+    "pet": "MASCOTA:",
+    "owner": "PROPIETARIO:",
+    "veterinarian": "VETERINARIO:",
+    "sex": "Sexo:",
+    "species": "Especie:",
+    "weight": "Peso:",
+    "age": "Edad:",
+    "breed": "Raza:",
+    "date": "Fecha:",
+    "vet": "Veterinario",
+    "closeDialog": "Cerrar historial médico"
+  },
+
+  "ConsultationTabs": {
+    "pageTitle": "Consulta de Ecografía",
+    "patient": "MASCOTA:",
+    "owner": "PROPIETARIO:",
+    "veterinarian": "VETERINARIO:",
+    "close": "Cerrar",
+
+    "tabPets": "Mascotas",
+    "tabLiverGallbladderKidneys": "Hígado, Vesícula, Riñones",
+    "tabSpleenPancreasStomachSmallIntestine": "Bazo, Pancreas, Estom., Int. delg.",
+    "tabLargeIntestineBladderUrethraLymph": "Int. Grue., Vejiga, Uretra, Linfon.",
+    "tabAdrenalUterusOvaries": "Gl. Adre, Utero, Ovario",
+    "tabMammaryGlandsOthers": "G. Mamarias, Otros",
+    "tabEyeMuscleVeinBone": "Ocular, Muscular, Venas, Óseo",
+    "tabReport": "Informe",
+    "tabImages": "Imágenes",
+
+    "sex": "Sexo:",
+    "species": "Especie:",
+    "weight": "Peso:",
+    "kilogramUnit": "Kg.",
+    "birthDate": "Fecha de nacimiento:",
+    "age": "Edad:",
+    "breed": "Raza:",
+    "date": "Fecha:",
+    "referredBy": "Referido por:",
+    "saving": "Guardando...",
+
+    "reasonForUltrasound": "MOTIVO DEL EXAMEN ECOGRÁFICO",
+    "equipmentUsed": "EQUIPO UTILIZADO",
+
+    "liver": "HÍGADO",
+    "gallbladder": "VESÍCULA BILIAR",
+    "leftKidney": "RIÑÓN IZQUIERDO",
+    "rightKidney": "RIÑÓN DERECHO",
+
+    "spleen": "BAZO",
+    "pancreas": "PÁNCREAS",
+    "stomach": "ESTÓMAGO",
+    "smallIntestine": "INTESTINO DELGADO",
+
+    "colon": "COLON",
+    "urinaryBladder": "VEJIGA URINARIA",
+    "urethra": "URETRA",
+    "lymphNodes": "LINFONODOS",
+
+    "adrenalGlands": "GLÁNDULAS ADRENALES",
+    "uterus": "ÚTERO",
+    "ovaries": "OVARIOS",
+    "thyroidGlands": "GLÁNDULAS TIROIDES",
+
+    "mammaryGlands": "GLÁNDULAS MAMARIAS",
+    "others": "OTROS",
+    "majorVessels": "GRANDES VASOS, VENAS Y ARTERIAS",
+    "abdominalCavity": "CAVIDAD ABDOMINAL",
+    "conclusions": "CONCLUSIONES",
+    "observations": "OBSERVACIONES",
+
+    "ocularStudy": "ESTUDIO OCULAR",
+    "muscularStudy": "ESTUDIO MUSCULAR",
+    "thoraxLungs": "TORAX - PULMONES",
+    "bonesOthers": "HUESOS Y OTROS",
+
+    "longPhraseOrTemplate": "FRASE LARGA O PLANTILLA"
+  },
+
+  "SummaryReportTab": {
+    "close": "Cerrar",
+    "closePreview": "Cerrar vista previa",
+    "reportPreview": "Vista previa del informe",
+    "reportPreviewIframeTitle": "Vista previa del informe",
+
+    "sex": "Sexo:",
+    "species": "Especie:",
+    "weight": "Peso:",
+    "kilogramUnit": "Kg.",
+    "birthDate": "Fecha de nacimiento:",
+    "age": "Edad:",
+    "breed": "Raza:",
+    "date": "Fecha:",
+    "referredBy": "Referido por:",
+    "pdfDocumentName": "Nombre del documento PDF:",
+    "reportTitle": "Título del informe:",
+
+    "fullTemplateMode": "Modo plantilla completa (edición libre)",
+    "templates": "Plantillas",
+
+    "pdfPreview": "Vista previa del PDF",
+    "generatingPdf": "Generando PDF...",
+    "downloadPdfSixImages": "Descargar PDF - 6 imágenes por hoja",
+    "downloadPdfOneImage": "Descargar PDF - 1 imagen por hoja",
+    "quickMode": "Modo rápido",
+
+    "fullTemplateReport": "Informe creado desde plantilla y edición libre",
+    "organReport": "Informe creado por órganos",
+    "savingReport": "Guardando informe...",
+    "reportReady": "Informe listo"
+  },
+
+  "UltrasoundImagesTab": {
+    "loadingImages": "Cargando imágenes...",
+    "loadingGallery": "Estamos preparando la galería de esta consulta.",
+    "noImages": "No hay imágenes en esta consulta",
+    "emptyStateDescription": "Haz clic en “Copiar imágenes desde la carpeta” para agregar imágenes de ecografía.",
+    "imagesLoadError": "No se pudieron cargar las imágenes",
+    "imagesLoadErrorDescription": "Ocurrió un problema al obtener las imágenes de esta consulta. Intenta nuevamente.",
+    "retry": "Reintentar",
+
+    "uploadingImages": "Subiendo imágenes...",
+    "fileProgress": "Archivo {currentFileIndex} de {totalFiles}",
+    "preparingFile": "Preparando archivo...",
+    "cancellingUpload": "Cancelando subida...",
+    "cancelUpload": "Cancelar subida",
+
+    "oneImageSelected": "1 imagen seleccionada",
+    "multipleImagesSelected": "{count} imágenes seleccionadas",
+    "selectAll": "Seleccionar todas",
+    "deselectAll": "Deseleccionar todas",
+
+    "copyImagesFromFolder": "Copiar imágenes desde la carpeta",
+    "deletingImages": "Borrando imágenes...",
+    "deleteSelectedImage": "Borrar imagen seleccionada",
+    "deleteSelectedImages": "Borrar imágenes seleccionadas",
+    "deleteAllImages": "Borrar todas las imágenes",
+
+    "confirmDeleteTitle": "Confirmar eliminación",
+    "deleteAllTitle": "Eliminar todas las imágenes de esta consulta",
+    "deleteAllQuestion": "¿Estás seguro de que deseas eliminar todas las imágenes de esta consulta?",
+    "irreversibleWarning": "Esta acción no se puede deshacer.",
+    "deleteAll": "Eliminar todo",
+    "cancel": "Cancelar",
+
+    "imageLimitTitle": "Límite de imágenes",
+    "cannotUploadImagesTitle": "No se pueden subir esas imágenes",
+    "understood": "Entendido",
+    "imageLimitReached": "Esta consulta ya tiene el límite de {maxImages} imágenes.",
+    "remainingUploadLimit": "Esta consulta tiene {currentImageCount} imágenes. Sólo puedes subir {remainingSlots} más.",
+    "imageLimitValidationError": "No se pudo validar el límite de imágenes. Intenta nuevamente.",
+
+    "cancelUploadNavbarTitle": "Cancelar subida",
+    "cancelUploadTitle": "¿Cancelar subida de imágenes?",
+    "cancelUploadDescription": "Ya se han subido {uploadedCount} de {totalFiles} imágenes. ¿Qué deseas hacer con las imágenes subidas hasta ahora?",
+    "keepUploadedImages": "Mantener imágenes subidas",
+    "removingImages": "Eliminando imágenes...",
+    "removeUploadedImages": "Eliminar imágenes subidas",
+    "back": "Volver",
+
+    "selectedImagesNavbarTitle": "Imágenes seleccionadas",
+    "noSelectedImagesTitle": "No hay imágenes seleccionadas",
+    "noSelectedImagesDescription": "Selecciona al menos una imagen antes de intentar borrar imágenes seleccionadas.",
+
+    "deleteSelectedTitle": "¿Borrar imágenes seleccionadas?",
+    "deleteOneSelectedDescription": "Vas a borrar 1 imagen seleccionada. Esta acción no se puede deshacer.",
+    "deleteMultipleSelectedDescription": "Vas a borrar {count} imágenes seleccionadas. Esta acción no se puede deshacer.",
+    "deleteImages": "Borrar imágenes",
+
+    "imagesCounter": "{currentImages} / {maxImages} imágenes",
+
+    "selectImage": "Seleccionar imagen",
+    "zoom": "Zoom",
+    "deleteImageTitle": "Eliminar imagen",
+    "deleteImageQuestion": "¿Estás seguro de que deseas eliminar esta imagen?",
+    "delete": "Eliminar",
+    "deletingImage": "Borrando imagen..."
+  },
+
+  "QuickModeSection": {
+    "pageTitle": "Consulta de Ecografía",
+    "close": "Cerrar",
+    "defaultReason": "MOTIVOS",
+    "organ": "ÓRGANO",
+    "longPhraseOrTemplate": "FRASE LARGA O PLANTILLA",
+
+    "fullTemplateReport": "Informe creado desde plantilla y edición libre",
+    "organReport": "Informe creado por órganos",
+    "savingReport": "Guardando informe...",
+    "reportReady": "Informe listo",
+
+    "urinaryBladder": "VEJIGA URINARIA",
+    "spleen": "BAZO",
+    "pancreas": "PÁNCREAS",
+    "leftKidney": "RIÑÓN IZQUIERDO",
+    "liver": "HÍGADO",
+    "uterus": "ÚTERO",
+    "rightKidney": "RIÑÓN DERECHO",
+    "gallbladder": "VESÍCULA BILIAR",
+    "stomach": "ESTÓMAGO",
+    "smallIntestine": "INTESTINO DELGADO",
+    "colon": "COLON",
+    "urethra": "URETRA",
+    "lymphNodes": "LINFONODOS",
+    "adrenalGlands": "GLÁNDULAS ADRENALES",
+    "ovaries": "OVARIOS",
+    "thyroidGlands": "GLÁNDULAS TIROIDES",
+    "mammaryGlands": "GLÁNDULAS MAMARIAS",
+    "ocularStudy": "ESTUDIO OCULAR",
+    "muscularStudy": "ESTUDIO MUSCULAR",
+    "bonesOthers": "HUESOS Y OTROS",
+    "thoraxLungs": "TORAX - PULMONES",
+    "others": "OTROS",
+    "majorVessels": "GRANDES VASOS, VENAS Y ARTERIAS",
+    "abdominalCavity": "CAVIDAD ABDOMINAL",
+    "conclusions": "CONCLUSIONES",
+    "observations": "OBSERVACIONES"
+  },
+
+  "FullReportTemplatesDialog": {
+    "templates": "Plantillas",
+    "template": "Plantilla",
+    "selectTemplate": "Debe seleccionar una plantilla.",
+    "savingContent": "Guardando contenido...",
+    "contentReady": "Contenido listo",
+
+    "createTemplates": "Crear plantillas",
+    "renameTemplateTitle": "Modificar nombre de la plantilla",
+    "newTemplateNameTitle": "Nombre de la nueva plantilla",
+    "templateNameRequired": "Debe escribir un nombre para la plantilla.",
+    "placeholder": "Escribe algo...",
+
+    "saving": "Guardando...",
+    "creating": "Creando...",
+    "accept": "Aceptar",
+    "createTemplate": "Crear plantilla",
+    "cancel": "Cancelar",
+
+    "deleteTemplate": "Eliminar plantilla",
+    "createTemplateFromReport": "Crear una plantilla nueva a partir de este informe",
+    "rename": "Modificar nombre",
+    "addSelectedTemplateToReport": "Añadir plantilla seleccionada al informe",
+    "exit": "Salir"
   }
 }

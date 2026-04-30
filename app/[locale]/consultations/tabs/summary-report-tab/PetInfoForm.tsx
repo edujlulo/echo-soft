@@ -6,6 +6,7 @@ import { useConsultationStore } from "@/context/consultationStore";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
 import { buildSuggestedPdfName } from "@/reports/pdfNameUtils";
 import { useEffect, useMemo } from "react";
+import { useTranslations } from "next-intl";
 
 type PetUpdate = Database["public"]["Tables"]["pets"]["Update"];
 type NewPet = Omit<
@@ -40,6 +41,8 @@ export default function PetInfoForm({
   calculateAge,
   setIsFullTemplatesDialogOpen,
 }: PetDetailsAndReasonProps) {
+  const t = useTranslations("SummaryReportTab");
+
   const { selectedConsultation } = useConsultationStore();
 
   const {
@@ -86,7 +89,7 @@ export default function PetInfoForm({
                 value={selectedPet?.sex ?? ""}
                 onChange={(e) => setField("sex", e.target.value)}
               >
-                Sexo:
+                {t("sex")}
               </LabeledInput>
               <LabeledInput
                 labelClassName="font-bold"
@@ -94,7 +97,7 @@ export default function PetInfoForm({
                 value={selectedPet?.species ?? ""}
                 onChange={(e) => setField("species", e.target.value)}
               >
-                Especie:
+                {t("species")}
               </LabeledInput>
               <div className="flex flex-row gap-2">
                 <LabeledInput
@@ -103,10 +106,10 @@ export default function PetInfoForm({
                   value={selectedPet?.weight ?? ""}
                   onChange={(e) => setField("weight", e.target.value)}
                 >
-                  Peso:
+                  {t("weight")}
                 </LabeledInput>
                 <p className="font-bold text-sm text-blue-950 flex justify-center items-center">
-                  Kg.
+                  {t("kilogramUnit")}
                 </p>
               </div>
             </div>
@@ -121,7 +124,7 @@ export default function PetInfoForm({
                 value={selectedPet?.birth_date ?? ""}
                 onChange={(e) => setField("birth_date", e.target.value)}
               >
-                Fecha de nacimiento:
+                {t("birthDate")}
               </LabeledInput>
               <LabeledInput
                 labelClassName="w-26 font-bold"
@@ -129,7 +132,7 @@ export default function PetInfoForm({
                 value={calculateAge(selectedPet?.birth_date ?? undefined)}
                 disabled
               >
-                Edad:
+                {t("age")}
               </LabeledInput>
               <LabeledInput
                 labelClassName="w-26 font-bold"
@@ -137,7 +140,7 @@ export default function PetInfoForm({
                 value={selectedPet?.breed ?? ""}
                 onChange={(e) => setField("breed", e.target.value)}
               >
-                Raza:
+                {t("breed")}
               </LabeledInput>
               <LabeledInput
                 labelClassName="w-26 font-bold"
@@ -148,7 +151,7 @@ export default function PetInfoForm({
                   setFieldConsultation("consultation_date", e.target.value)
                 }
               >
-                Fecha:
+                {t("date")}
               </LabeledInput>
             </div>
           </div>
@@ -159,7 +162,7 @@ export default function PetInfoForm({
             value={selectedPet?.referred_by ?? ""}
             onChange={(e) => setField("referred_by", e.target.value)}
           >
-            Referido por:
+            {t("referredBy")}
           </LabeledInput>
           <LabeledInput
             labelClassName="w-54 font-bold"
@@ -170,7 +173,7 @@ export default function PetInfoForm({
               setFieldConsultation("suggested_pdf_name", e.target.value)
             }
           >
-            Nombre del documento PDF:
+            {t("pdfDocumentName")}
           </LabeledInput>
 
           <LabeledInput
@@ -181,7 +184,7 @@ export default function PetInfoForm({
               setFieldConsultation("report_title", e.target.value)
             }
           >
-            Título del informe:
+            {t("reportTitle")}
           </LabeledInput>
 
           {/* ======= Actions buttons ========= */}

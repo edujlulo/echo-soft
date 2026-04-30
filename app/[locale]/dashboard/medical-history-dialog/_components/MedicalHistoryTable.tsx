@@ -1,6 +1,7 @@
 "use client";
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 import { useSelectedPetStore } from "@/context/selectedPetStore";
@@ -12,6 +13,8 @@ import { Database } from "@/types/database";
 type ConsultationRow = Database["public"]["Tables"]["consultations"]["Row"];
 
 export default function MedicalHistoryTable() {
+  const t = useTranslations("MedicalHistory");
+
   const { consultationsByPet, loadingConsultations } = useConsultations();
 
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
@@ -25,7 +28,7 @@ export default function MedicalHistoryTable() {
   const columns: GridColDef[] = [
     {
       field: "consultation_date",
-      headerName: "Fecha",
+      headerName: t("date").replace(":", ""),
       width: 110,
       sortable: false,
       filterable: false,
@@ -41,7 +44,7 @@ export default function MedicalHistoryTable() {
     },
     {
       field: "vet_name",
-      headerName: "Veterinario",
+      headerName: t("vet"),
       flex: 1,
       sortable: false,
       filterable: false,

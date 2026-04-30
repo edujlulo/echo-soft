@@ -7,8 +7,11 @@ import Button from "@/components/Button";
 import { useParams, useRouter } from "next/navigation";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useActiveVetStore } from "@/context/activeVetStore";
+import { useTranslations } from "next-intl";
 
 export default function ConsultationsPage() {
+  const t = useTranslations("ConsultationTabs");
+
   const router = useRouter();
 
   const params = useParams();
@@ -26,7 +29,7 @@ export default function ConsultationsPage() {
       <div className="w-[1600px] h-[800px] flex-1 min-h-0  bg-gray-300 flex flex-col rounded-md text-sm">
         {/* NavBar */}
         <div className="w-full">
-          <Navbar>Consulta de Ecografía</Navbar>
+          <Navbar>{t("pageTitle")}</Navbar>
         </div>
 
         {/* Contenedor principal */}
@@ -39,7 +42,7 @@ export default function ConsultationsPage() {
               value={selectedPet?.name}
               disabled
             >
-              MASCOTA:
+              {t("patient")}
             </LabeledInput>
             <LabeledInput
               labelClassName="font-bold w-30"
@@ -47,7 +50,7 @@ export default function ConsultationsPage() {
               value={selectedPet?.owner}
               disabled
             >
-              PROPIETARIO:
+              {t("owner")}
             </LabeledInput>
             <LabeledInput
               labelClassName="font-bold w-30"
@@ -55,7 +58,7 @@ export default function ConsultationsPage() {
               value={activeVet?.name}
               disabled
             >
-              VETERINARIO:
+              {t("veterinarian")}
             </LabeledInput>
 
             {/* Close button */}
@@ -64,7 +67,7 @@ export default function ConsultationsPage() {
                 onClick={navigateToDashboard}
                 className="flex w-20 items-center justify-center px-3 py-1 font-bold bg-green-300 border border-gray-50 hover:bg-green-400"
               >
-                Cerrar
+                {t("close")}
               </Button>
             </div>
           </div>

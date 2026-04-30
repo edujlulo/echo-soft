@@ -5,6 +5,7 @@ import { Dialog } from "@headlessui/react";
 import Button from "@/components/Button";
 import Navbar from "@/components/Navbar";
 import { Database } from "@/types/database";
+import { useTranslations } from "next-intl";
 
 type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
 
@@ -27,6 +28,8 @@ export default function NewFullTemplateNameDialog({
   onRenameTemplate,
   isSubmitting,
 }: Props) {
+  const t = useTranslations("FullReportTemplatesDialog");
+
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [templateName, setTemplateName] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +57,7 @@ export default function NewFullTemplateNameDialog({
     const trimmedName = templateName.trim();
 
     if (!trimmedName) {
-      setError("Debe escribir un nombre para la plantilla.");
+      setError(t("templateNameRequired"));
       return;
     }
 
@@ -88,14 +91,14 @@ export default function NewFullTemplateNameDialog({
         </button>
 
         <div className="w-full">
-          <Navbar>Crear plantillas</Navbar>
+          <Navbar>{t("createTemplates")}</Navbar>
         </div>
 
         <div className="py-4 px-20 flex flex-col gap-2 justify-center items-center">
           <Dialog.Title className="text-lg font-semibold mb-2">
             {mode === "rename"
-              ? "Modificar nombre de la plantilla"
-              : "Nombre de la nueva plantilla"}
+              ? t("renameTemplateTitle")
+              : t("newTemplateNameTitle")}
           </Dialog.Title>
 
           <input
@@ -115,7 +118,7 @@ export default function NewFullTemplateNameDialog({
             }}
             className="w-full border rounded p-2 bg-white"
             autoFocus
-            placeholder="Escribe algo..."
+            placeholder={t("placeholder")}
             onFocus={(e) => {
               const value = e.target.value;
               e.target.setSelectionRange(value.length, value.length);
@@ -135,15 +138,15 @@ export default function NewFullTemplateNameDialog({
           >
             {isSubmitting
               ? mode === "rename"
-                ? "Guardando..."
-                : "Creando..."
+                ? t("saving")
+                : t("creating")
               : mode === "rename"
-              ? "Aceptar"
-              : "Crear plantilla"}
+              ? t("accept")
+              : t("createTemplate")}
           </Button>
 
           <Button onClick={handleClose} className="w-23">
-            Cancelar
+            {t("cancel")}
           </Button>
         </div>
       </Dialog.Panel>

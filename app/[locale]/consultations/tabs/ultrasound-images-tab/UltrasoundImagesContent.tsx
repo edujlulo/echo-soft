@@ -10,57 +10,60 @@ import { useUltrasoundUploadManager } from "@/components/providers/UltrasoundUpl
 import { MAX_ULTRASOUND_IMAGES_PER_CONSULTATION } from "@/lib/queries/ultrasoundImages";
 import AppDialog from "@/components/AppDialog";
 import Button from "@/components/Button";
+import { useTranslations } from "next-intl";
 
 import "yet-another-react-lightbox/styles.css";
 import UltrasoundImagesActions from "./UltrasoundImagesActions";
 
+type UltrasoundImagesTranslator = ReturnType<typeof useTranslations>;
+
 function LoadingState() {
+  const t = useTranslations("UltrasoundImagesTab");
+
   return (
     <div className="h-full min-h-[320px] w-full flex flex-col items-center justify-center gap-4">
       <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-gray-700" />
       <div className="text-center">
         <p className="text-base font-medium text-gray-700">
-          Cargando imágenes...
+          {t("loadingImages")}
         </p>
-        <p className="text-sm text-gray-500">
-          Estamos preparando la galería de esta consulta.
-        </p>
+        <p className="text-sm text-gray-500">{t("loadingGallery")}</p>
       </div>
     </div>
   );
 }
 
 function EmptyState() {
+  const t = useTranslations("UltrasoundImagesTab");
+
   return (
     <div className="h-full min-h-[320px] w-full flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white px-6 text-center">
-      <p className="text-base font-medium text-gray-700">
-        No hay imágenes en esta consulta
-      </p>
+      <p className="text-base font-medium text-gray-700">{t("noImages")}</p>
       <p className="mt-2 text-sm text-gray-500">
-        Haz clic en “Copiar imágenes desde la carpeta” para agregar imágenes de
-        ecografía.
+        {t("emptyStateDescription")}
       </p>
     </div>
   );
 }
 
 function ErrorState({ onRetry }: { onRetry: () => void }) {
+  const t = useTranslations("UltrasoundImagesTab");
+
   return (
     <div className="h-full min-h-[320px] w-full flex flex-col items-center justify-center gap-4 text-center">
       <p className="text-base font-medium text-red-600">
-        No se pudieron cargar las imágenes
+        {t("imagesLoadError")}
       </p>
 
       <p className="text-sm text-gray-500 max-w-md">
-        Ocurrió un problema al obtener las imágenes de esta consulta. Intenta
-        nuevamente.
+        {t("imagesLoadErrorDescription")}
       </p>
 
       <button
         onClick={onRetry}
         className="mt-2 px-4 py-2 rounded-md bg-gray-900 text-white hover:bg-gray-800 transition"
       >
-        Reintentar
+        {t("retry")}
       </button>
     </div>
   );
@@ -81,20 +84,22 @@ function UploadProgressState({
   isCancelling: boolean;
   onCancelClick: () => void;
 }) {
+  const t = useTranslations("UltrasoundImagesTab");
+
   return (
     <div className="h-full min-h-[320px] w-full flex items-center justify-center">
       <div className="w-full max-w-2xl rounded-xl border border-gray-300 bg-white p-10 shadow-sm">
         <div className="text-center">
           <p className="text-2xl font-semibold text-gray-800">
-            Subiendo imágenes...
+            {t("uploadingImages")}
           </p>
 
           <p className="mt-3 text-base text-gray-500">
-            Archivo {currentFileIndex} de {totalFiles}
+            {t("fileProgress", { currentFileIndex, totalFiles })}
           </p>
 
           <p className="mt-2 text-sm text-gray-500 break-all">
-            {currentFileName ?? "Preparando archivo..."}
+            {currentFileName ?? t("preparingFile")}
           </p>
         </div>
 
@@ -116,7 +121,7 @@ function UploadProgressState({
             disabled={isCancelling}
             className="w-52"
           >
-            {isCancelling ? "Cancelando subida..." : "Cancelar subida"}
+            {isCancelling ? t("cancellingUpload") : t("cancelUpload")}
           </Button>
         </div>
       </div>
@@ -124,15 +129,20 @@ function UploadProgressState({
   );
 }
 
-function getSelectedImagesLabel(count: number) {
+function getSelectedImagesLabel(
+  count: number,
+  t: UltrasoundImagesTranslator,
+) {
   if (count === 1) {
-    return "1 imagen seleccionada";
+    return t("oneImageSelected");
   }
 
-  return `${count} imágenes seleccionadas`;
+  return t("multipleImagesSelected", { count });
 }
 
 export default function UltrasoundImagesContent() {
+  const t = useTranslations("UltrasoundImagesTab");
+
   const [index, setIndex] = useState(-1);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [isCancellingUpload, setIsCancellingUpload] = useState(false);
@@ -332,7 +342,7 @@ export default function UltrasoundImagesContent() {
             {shouldShowSelectionToolbar ? (
               <div className="mb-3 flex items-center justify-between rounded-md border border-gray-200 bg-white px-4 py-3">
                 <p className="text-sm font-medium text-gray-600">
-                  {getSelectedImagesLabel(selectedImageCount)}
+                  {getSelectedImagesLabel(selectedImageCount, t)}
                 </p>
 
                 <div className="flex gap-2">
@@ -342,7 +352,7 @@ export default function UltrasoundImagesContent() {
                     disabled={images.length === 0 || isSelectionBusy}
                     className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    Seleccionar todas
+                    {t("selectAll")}
                   </button>
 
                   <button
@@ -351,7 +361,7 @@ export default function UltrasoundImagesContent() {
                     disabled={selectedImageCount === 0 || isSelectionBusy}
                     className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    Deseleccionar todas
+                    {t("deselectAll")}
                   </button>
                 </div>
               </div>
@@ -389,13 +399,14 @@ export default function UltrasoundImagesContent() {
           if (isCancellingUpload) return;
           setIsCancelDialogOpen(false);
         }}
-        navbarTitle="Cancelar subida"
-        title="¿Cancelar subida de imágenes?"
+        navbarTitle={t("cancelUploadNavbarTitle")}
+        title={t("cancelUploadTitle")}
         description={
           <p>
-            Ya se han subido {activeBatch?.uploadedCount ?? 0} de{" "}
-            {activeBatch?.totalFiles ?? 0} imágenes. ¿Qué deseas hacer con las
-            imágenes subidas hasta ahora?
+            {t("cancelUploadDescription", {
+              uploadedCount: activeBatch?.uploadedCount ?? 0,
+              totalFiles: activeBatch?.totalFiles ?? 0,
+            })}
           </p>
         }
         showCancelButton={false}
@@ -409,8 +420,8 @@ export default function UltrasoundImagesContent() {
               className="w-56"
             >
               {isCancellingUpload
-                ? "Cancelando subida..."
-                : "Mantener imágenes subidas"}
+                ? t("cancellingUpload")
+                : t("keepUploadedImages")}
             </Button>
             <Button
               type="button"
@@ -419,8 +430,8 @@ export default function UltrasoundImagesContent() {
               className="w-56 bg-red-600 border-red-700 hover:bg-red-700"
             >
               {isCancellingUpload
-                ? "Eliminando imágenes..."
-                : "Eliminar imágenes subidas"}
+                ? t("removingImages")
+                : t("removeUploadedImages")}
             </Button>
             <Button
               type="button"
@@ -428,7 +439,7 @@ export default function UltrasoundImagesContent() {
               disabled={isCancellingUpload}
               className="w-32"
             >
-              Volver
+              {t("back")}
             </Button>
           </>
         }
@@ -437,15 +448,10 @@ export default function UltrasoundImagesContent() {
       <AppDialog
         isOpen={isNoSelectionDialogOpen}
         onClose={() => setIsNoSelectionDialogOpen(false)}
-        navbarTitle="Imágenes seleccionadas"
-        title="No hay imágenes seleccionadas"
-        description={
-          <p>
-            Selecciona al menos una imagen antes de intentar borrar imágenes
-            seleccionadas.
-          </p>
-        }
-        confirmLabel="Entendido"
+        navbarTitle={t("selectedImagesNavbarTitle")}
+        title={t("noSelectedImagesTitle")}
+        description={<p>{t("noSelectedImagesDescription")}</p>}
+        confirmLabel={t("understood")}
         showCancelButton={false}
         onConfirm={() => setIsNoSelectionDialogOpen(false)}
       />
@@ -457,23 +463,25 @@ export default function UltrasoundImagesContent() {
           clearUltrasoundImagesError();
           setIsDeleteSelectedDialogOpen(false);
         }}
-        navbarTitle="Confirmar eliminación"
-        title="¿Borrar imágenes seleccionadas?"
+        navbarTitle={t("confirmDeleteTitle")}
+        title={t("deleteSelectedTitle")}
         description={
           <>
             <p>
               {selectedImageCount === 1
-                ? "Vas a borrar 1 imagen seleccionada. Esta acción no se puede deshacer."
-                : `Vas a borrar ${selectedImageCount} imágenes seleccionadas. Esta acción no se puede deshacer.`}
+                ? t("deleteOneSelectedDescription")
+                : t("deleteMultipleSelectedDescription", {
+                    count: selectedImageCount,
+                  })}
             </p>
             {error ? (
               <p className="mt-2 font-medium text-red-700">{error}</p>
             ) : null}
           </>
         }
-        confirmLabel="Borrar imágenes"
-        confirmLoadingLabel="Borrando imágenes..."
-        cancelLabel="Cancelar"
+        confirmLabel={t("deleteImages")}
+        confirmLoadingLabel={t("deletingImages")}
+        cancelLabel={t("cancel")}
         variant="danger"
         isLoading={isDeletingSelectedImages}
         disableClose={isDeletingSelectedImages}
@@ -487,7 +495,10 @@ export default function UltrasoundImagesContent() {
       <div className="flex flex-col">
         <div className="w-full flex justify-start">
           <p className="pl-4 pt-4 text-lg text-gray-600">
-            {images.length} / {MAX_ULTRASOUND_IMAGES_PER_CONSULTATION} imágenes
+            {t("imagesCounter", {
+              currentImages: images.length,
+              maxImages: MAX_ULTRASOUND_IMAGES_PER_CONSULTATION,
+            })}
           </p>
         </div>
         <div className="h-full pl-4 pb-18 flex">

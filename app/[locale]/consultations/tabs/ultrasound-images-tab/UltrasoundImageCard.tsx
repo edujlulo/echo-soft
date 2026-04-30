@@ -3,6 +3,7 @@
 import AppDialog from "@/components/AppDialog";
 import Button from "@/components/Button";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface Image {
   id: string;
@@ -33,6 +34,8 @@ export default function UltrasoundImageCard({
   deleteUltrasoundImage,
   deletingImageId,
 }: Props) {
+  const t = useTranslations("UltrasoundImagesTab");
+
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const isDeletingThisImage = deletingImageId === image.id;
@@ -51,7 +54,7 @@ export default function UltrasoundImageCard({
               onChange={() => onToggleSelection(image.id)}
               disabled={isSelectionDisabled}
               className="h-4 w-4 cursor-pointer accent-blue-600"
-              aria-label="Seleccionar imagen"
+              aria-label={t("selectImage")}
             />
           </span>
         </label>
@@ -76,7 +79,7 @@ export default function UltrasoundImageCard({
           onClick={() => onZoom(index)}
           disabled={isDeletingThisImage || isSelectionDisabled}
         >
-          Zoom
+          {t("zoom")}
         </Button>
 
         <Button
@@ -90,19 +93,19 @@ export default function UltrasoundImageCard({
         <AppDialog
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
-          navbarTitle="Confirmar eliminación"
-          title="Eliminar imagen"
+          navbarTitle={t("confirmDeleteTitle")}
+          title={t("deleteImageTitle")}
           description={
             <>
-              <p>¿Estás seguro de que deseas eliminar esta imagen?</p>
+              <p>{t("deleteImageQuestion")}</p>
               <p className="mt-2 font-semibold text-red-700">
-                Esta acción no se puede deshacer.
+                {t("irreversibleWarning")}
               </p>
             </>
           }
-          confirmLabel="Eliminar"
-          confirmLoadingLabel="Borrando imagen..."
-          cancelLabel="Cancelar"
+          confirmLabel={t("delete")}
+          confirmLoadingLabel={t("deletingImage")}
+          cancelLabel={t("cancel")}
           variant="danger"
           isLoading={isDeletingThisImage}
           disableClose={isDeletingThisImage}

@@ -4,6 +4,7 @@ import { getMessages } from "next-intl/server";
 import { UltrasoundUploadManagerProvider } from "@/components/providers/UltrasoundUploadManagerProvider";
 import GlobalUltrasoundUploadOverlay from "@/components/uploads/GlobalUltrasoundUploadOverlay";
 import AppScaleWrapper from "@/components/AppScaleWrapper";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type LocaleLayoutProps = {
   children: ReactNode;
@@ -24,6 +25,9 @@ export default async function LocaleLayout({
       <body className="flex min-h-screen flex-col">
         <NextIntlClientProvider messages={messages}>
           <UltrasoundUploadManagerProvider>
+            {/* Language buttons top-right */}
+            <LanguageSwitcher />
+
             <AppScaleWrapper>
               {children}
               <GlobalUltrasoundUploadOverlay />

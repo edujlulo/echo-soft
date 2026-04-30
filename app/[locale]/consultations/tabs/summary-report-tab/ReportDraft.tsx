@@ -4,8 +4,11 @@ import { useConsultationStore } from "@/context/consultationStore";
 import { useFinalReport } from "@/hooks/useFinalReport";
 import { useManualReportDraftSave } from "@/hooks/useManualReportDraftSave";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export default function ReportDraft() {
+  const t = useTranslations("SummaryReportTab");
+
   const { reportMode, finalReport } = useFinalReport();
   const setManualReportDraft = useConsultationStore(
     (state) => state.setManualReportDraft,
@@ -27,8 +30,8 @@ export default function ReportDraft() {
       <div className="-mt-2 px-2 flex flex-col gap-1 items-start relative">
         <label className="w-full font-bold text-blue-950 items-center justify-center text-center text-lg">
           {reportMode === "full-template"
-            ? "Informe creado desde plantilla y edición libre"
-            : "Informe creado por órganos"}
+            ? t("fullTemplateReport")
+            : t("organReport")}
         </label>
 
         <textarea
@@ -43,8 +46,8 @@ export default function ReportDraft() {
         {isEditable ? (
           <p className="absolute left-3 -bottom-6 text-sm text-blue-900">
             {isSavingManualReportDraft
-              ? "Guardando informe..."
-              : "Informe listo"}
+              ? t("savingReport")
+              : t("reportReady")}
           </p>
         ) : null}
       </div>

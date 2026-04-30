@@ -3,8 +3,11 @@
 import ConsultLabeledTextarea from "@/components/ConsultLabeledTextarea";
 import EditableSelectList from "@/components/EditableSelectList";
 import { useConsultationForm } from "@/hooks/useConsultationForm";
+import { useTranslations } from "next-intl";
 
 export default function SpleenPancreasStomachSmallIntestine() {
+  const t = useTranslations("ConsultationTabs");
+
   const {
     formConsultation,
     setFieldConsultation,
@@ -30,7 +33,7 @@ export default function SpleenPancreasStomachSmallIntestine() {
             value={formatForDisplay(formConsultation?.spleen ?? "")}
             onChange={(e) => setFieldConsultation("spleen", e.target.value)}
           >
-            BAZO
+            {t("spleen")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -38,7 +41,7 @@ export default function SpleenPancreasStomachSmallIntestine() {
             value={formatForDisplay(formConsultation?.pancreas ?? "")}
             onChange={(e) => setFieldConsultation("pancreas", e.target.value)}
           >
-            PÁNCREAS
+            {t("pancreas")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -46,7 +49,7 @@ export default function SpleenPancreasStomachSmallIntestine() {
             value={formatForDisplay(formConsultation?.stomach ?? "")}
             onChange={(e) => setFieldConsultation("stomach", e.target.value)}
           >
-            ESTÓMAGO
+            {t("stomach")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -56,7 +59,7 @@ export default function SpleenPancreasStomachSmallIntestine() {
               setFieldConsultation("small_intestine", e.target.value)
             }
           >
-            INTESTINO DELGADO
+            {t("smallIntestine")}
           </ConsultLabeledTextarea>
 
           <ConsultLabeledTextarea
@@ -66,13 +69,13 @@ export default function SpleenPancreasStomachSmallIntestine() {
               setFieldConsultation("spleen_notes", e.target.value)
             }
           >
-            FRASE LARGA O PLANTILLA
+            {t("longPhraseOrTemplate")}
           </ConsultLabeledTextarea>
 
           {/* ======== Saving and status messages ======== */}
           <div className="h-5 mt-2 flex justify-center items-center">
             {isSavingConsultation && (
-              <p className="text-sm text-blue-600">Guardando...</p>
+              <p className="text-sm text-blue-600">{t("saving")}</p>
             )}
             {statusMessageConsultation && (
               <h3 className="text-sm text-green-700">

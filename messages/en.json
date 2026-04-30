@@ -206,5 +206,253 @@
 
   "EditableSelectListTable": {
     "phrase": "Phrase"
+  },
+
+  "MedicalHistory": {
+    "reportViewer": "Report viewer",
+    "close": "Close",
+    "pet": "PATIENT:",
+    "owner": "OWNER:",
+    "veterinarian": "VETERINARIAN:",
+    "sex": "Sex:",
+    "species": "Species:",
+    "weight": "Weight:",
+    "age": "Age:",
+    "breed": "Breed:",
+    "date": "Date:",
+    "vet": "Veterinarian",
+    "closeDialog": "Close medical history"
+  },
+
+  "ConsultationTabs": {
+    "pageTitle": "Ultrasound Consultation",
+    "patient": "PATIENT:",
+    "owner": "OWNER:",
+    "veterinarian": "VETERINARIAN:",
+    "close": "Close",
+
+    "tabPets": "Patients",
+    "tabLiverGallbladderKidneys": "Liver, Gall Blad., Kidneys",
+    "tabSpleenPancreasStomachSmallIntestine": "Spleen, Pancr., Stomach, Small Int.",
+    "tabLargeIntestineBladderUrethraLymph": "Large Int., Bladder, Urethra, Lymph",
+    "tabAdrenalUterusOvaries": "Adrenal, Uterus, Ovar.",
+    "tabMammaryGlandsOthers": "Mammary Glands, Others",
+    "tabEyeMuscleVeinBone": "Eye, Muscle, Veins, Bone",
+    "tabReport": "Report",
+    "tabImages": "Images",
+
+    "sex": "Sex:",
+    "species": "Species:",
+    "weight": "Weight:",
+    "kilogramUnit": "Kg.",
+    "birthDate": "Date of birth:",
+    "age": "Age:",
+    "breed": "Breed:",
+    "date": "Date:",
+    "referredBy": "Referred by:",
+    "saving": "Saving...",
+
+    "reasonForUltrasound": "REASON FOR ULTRASOUND EXAMINATION",
+    "equipmentUsed": "EQUIPMENT USED",
+
+    "liver": "LIVER",
+    "gallbladder": "GALL BLADDER",
+    "leftKidney": "LEFT KIDNEY",
+    "rightKidney": "RIGHT KIDNEY",
+
+    "spleen": "SPLEEN",
+    "pancreas": "PANCREAS",
+    "stomach": "STOMACH",
+    "smallIntestine": "SMALL INTESTINE",
+
+    "colon": "COLON",
+    "urinaryBladder": "URINARY BLADDER",
+    "urethra": "URETHRA",
+    "lymphNodes": "LYMPH NODES",
+
+    "adrenalGlands": "ADRENAL GLANDS",
+    "uterus": "UTERUS",
+    "ovaries": "OVARIES",
+    "thyroidGlands": "THYROID GLANDS",
+
+    "mammaryGlands": "MAMMARY GLANDS",
+    "others": "OTHERS",
+    "majorVessels": "MAJOR VESSELS, VEINS AND ARTERIES",
+    "abdominalCavity": "ABDOMINAL CAVITY",
+    "conclusions": "CONCLUSIONS",
+    "observations": "OBSERVATIONS",
+
+    "ocularStudy": "EYE STUDY",
+    "muscularStudy": "MUSCLE STUDY",
+    "thoraxLungs": "THORAX - LUNGS",
+    "bonesOthers": "BONES AND OTHERS",
+
+    "longPhraseOrTemplate": "LONG PHRASE OR TEMPLATE"
+  },
+
+  "SummaryReportTab": {
+    "close": "Close",
+    "closePreview": "Close preview",
+    "reportPreview": "Report preview",
+    "reportPreviewIframeTitle": "Report Preview",
+
+    "sex": "Sex:",
+    "species": "Species:",
+    "weight": "Weight:",
+    "kilogramUnit": "Kg.",
+    "birthDate": "Date of birth:",
+    "age": "Age:",
+    "breed": "Breed:",
+    "date": "Date:",
+    "referredBy": "Referred by:",
+    "pdfDocumentName": "PDF document name:",
+    "reportTitle": "Report title:",
+
+    "fullTemplateMode": "Full template mode (free editing)",
+    "templates": "Templates",
+
+    "pdfPreview": "PDF preview",
+    "generatingPdf": "Generating PDF...",
+    "downloadPdfSixImages": "Download PDF - 6 images per page",
+    "downloadPdfOneImage": "Download PDF - 1 image per page",
+    "quickMode": "Quick mode",
+
+    "fullTemplateReport": "Report created from template with free editing",
+    "organReport": "Report created by organs",
+    "savingReport": "Saving report...",
+    "reportReady": "Report ready"
+  },
+
+  "UltrasoundImagesTab": {
+    "loadingImages": "Loading images...",
+    "loadingGallery": "We are preparing the gallery for this consultation.",
+    "noImages": "There are no images in this consultation",
+    "emptyStateDescription": "Click “Copy images from folder” to add ultrasound images.",
+    "imagesLoadError": "The images could not be loaded",
+    "imagesLoadErrorDescription": "There was a problem retrieving the images for this consultation. Please try again.",
+    "retry": "Try again",
+
+    "uploadingImages": "Uploading images...",
+    "fileProgress": "File {currentFileIndex} of {totalFiles}",
+    "preparingFile": "Preparing file...",
+    "cancellingUpload": "Cancelling upload...",
+    "cancelUpload": "Cancel upload",
+
+    "oneImageSelected": "1 image selected",
+    "multipleImagesSelected": "{count} images selected",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+
+    "copyImagesFromFolder": "Copy images from folder",
+    "deletingImages": "Deleting images...",
+    "deleteSelectedImage": "Delete selected image",
+    "deleteSelectedImages": "Delete selected images",
+    "deleteAllImages": "Delete all images",
+
+    "confirmDeleteTitle": "Confirm deletion",
+    "deleteAllTitle": "Delete all images from this consultation",
+    "deleteAllQuestion": "Are you sure you want to delete all images from this consultation?",
+    "irreversibleWarning": "This action cannot be undone.",
+    "deleteAll": "Delete all",
+    "cancel": "Cancel",
+
+    "imageLimitTitle": "Image limit",
+    "cannotUploadImagesTitle": "These images cannot be uploaded",
+    "understood": "OK",
+    "imageLimitReached": "This consultation already has the limit of {maxImages} images.",
+    "remainingUploadLimit": "This consultation has {currentImageCount} images. You can only upload {remainingSlots} more.",
+    "imageLimitValidationError": "The image limit could not be validated. Please try again.",
+
+    "cancelUploadNavbarTitle": "Cancel upload",
+    "cancelUploadTitle": "Cancel image upload?",
+    "cancelUploadDescription": "{uploadedCount} of {totalFiles} images have already been uploaded. What would you like to do with the images uploaded so far?",
+    "keepUploadedImages": "Keep uploaded images",
+    "removingImages": "Removing images...",
+    "removeUploadedImages": "Remove uploaded images",
+    "back": "Back",
+
+    "selectedImagesNavbarTitle": "Selected images",
+    "noSelectedImagesTitle": "No images selected",
+    "noSelectedImagesDescription": "Select at least one image before trying to delete selected images.",
+
+    "deleteSelectedTitle": "Delete selected images?",
+    "deleteOneSelectedDescription": "You are about to delete 1 selected image. This action cannot be undone.",
+    "deleteMultipleSelectedDescription": "You are about to delete {count} selected images. This action cannot be undone.",
+    "deleteImages": "Delete images",
+
+    "imagesCounter": "{currentImages} / {maxImages} images",
+
+    "selectImage": "Select image",
+    "zoom": "Zoom",
+    "deleteImageTitle": "Delete image",
+    "deleteImageQuestion": "Are you sure you want to delete this image?",
+    "delete": "Delete",
+    "deletingImage": "Deleting image..."
+  },
+
+  "QuickModeSection": {
+    "pageTitle": "Ultrasound Consultation",
+    "close": "Close",
+    "defaultReason": "REASONS",
+    "organ": "ORGAN",
+    "longPhraseOrTemplate": "LONG PHRASE OR TEMPLATE",
+
+    "fullTemplateReport": "Report created from template with free editing",
+    "organReport": "Report created by organs",
+    "savingReport": "Saving report...",
+    "reportReady": "Report ready",
+
+    "urinaryBladder": "URINARY BLADDER",
+    "spleen": "SPLEEN",
+    "pancreas": "PANCREAS",
+    "leftKidney": "LEFT KIDNEY",
+    "liver": "LIVER",
+    "uterus": "UTERUS",
+    "rightKidney": "RIGHT KIDNEY",
+    "gallbladder": "GALL BLADDER",
+    "stomach": "STOMACH",
+    "smallIntestine": "SMALL INTESTINE",
+    "colon": "COLON",
+    "urethra": "URETHRA",
+    "lymphNodes": "LYMPH NODES",
+    "adrenalGlands": "ADRENAL GLANDS",
+    "ovaries": "OVARIES",
+    "thyroidGlands": "THYROID GLANDS",
+    "mammaryGlands": "MAMMARY GLANDS",
+    "ocularStudy": "EYE STUDY",
+    "muscularStudy": "MUSCLE STUDY",
+    "bonesOthers": "BONES AND OTHERS",
+    "thoraxLungs": "THORAX - LUNGS",
+    "others": "OTHERS",
+    "majorVessels": "MAJOR VESSELS, VEINS AND ARTERIES",
+    "abdominalCavity": "ABDOMINAL CAVITY",
+    "conclusions": "CONCLUSIONS",
+    "observations": "OBSERVATIONS"
+  },
+
+  "FullReportTemplatesDialog": {
+    "templates": "Templates",
+    "template": "Template",
+    "selectTemplate": "You must select a template.",
+    "savingContent": "Saving content...",
+    "contentReady": "Content ready",
+
+    "createTemplates": "Create templates",
+    "renameTemplateTitle": "Rename template",
+    "newTemplateNameTitle": "New template name",
+    "templateNameRequired": "You must enter a name for the template.",
+    "placeholder": "Type something...",
+
+    "saving": "Saving...",
+    "creating": "Creating...",
+    "accept": "OK",
+    "createTemplate": "Create template",
+    "cancel": "Cancel",
+
+    "deleteTemplate": "Delete template",
+    "createTemplateFromReport": "Create a new template from this report",
+    "rename": "Rename",
+    "addSelectedTemplateToReport": "Add selected template to report",
+    "exit": "Exit"
   }
 }
