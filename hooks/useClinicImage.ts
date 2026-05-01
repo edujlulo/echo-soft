@@ -6,6 +6,7 @@ import {
   uploadClinicImage,
   getClinicImageWithSignedUrl,
 } from "@/lib/queries/clinicImage";
+import { compressImageForClinicUpload } from "@/lib/images/compressImage";
 
 export function useClinicImage() {
   const { activeClinic } = useClinicStore();
@@ -32,11 +33,22 @@ export function useClinicImage() {
     const file = event.target.files[0];
     setLoading(true);
 
-    const url = await uploadClinicImage(activeClinic.clinic_id, file);
+    try {
+      const compressedFile = await compressImageForClinicUpload(file);
 
-    if (url) setImage(url);
+      const url = await uploadClinicImage(
+        activeClinic.clinic_id,
+        compressedFile
+      );
 
-    setLoading(false);
+      if (url) {
+        setImage(url + "?ts=" + Date.now());
+      }
+    } catch (error) {
+      console.error("Clinic image upload error:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return { image, loading, handleUpload };

@@ -8,6 +8,10 @@ import { useRef, useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
+import {
+  isVetImageWithinSizeLimit,
+  MAX_VET_IMAGE_SIZE_MB,
+} from "@/lib/queries/vetImages";
 
 export default function VetImages() {
   const t = useTranslations("VetImages");
@@ -73,6 +77,28 @@ export default function VetImages() {
     }
   }
 
+  function handleVetImageSelected(
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: "profile" | "signature"
+  ) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    if (!isVetImageWithinSizeLimit(file)) {
+      setDialogMessage(
+        t("imageSizeLimitError", {
+          maxSizeMb: MAX_VET_IMAGE_SIZE_MB,
+        })
+      );
+      setIsAlertDialogOpen(true);
+      event.target.value = "";
+      return;
+    }
+
+    handleUpload(event, type);
+  }
+
   return (
     <div className="w-[200px] flex flex-col items-center justify-start mt-1">
       {/* PROFILE PHOTO */}
@@ -103,7 +129,7 @@ export default function VetImages() {
           ref={profileInputRef}
           className="hidden"
           accept="image/*"
-          onChange={(e) => handleUpload(e, "profile")}
+          onChange={(e) => handleVetImageSelected(e, "profile")}
         />
 
         <Button
@@ -176,7 +202,7 @@ export default function VetImages() {
           ref={signatureInputRef}
           className="hidden"
           accept="image/*"
-          onChange={(e) => handleUpload(e, "signature")}
+          onChange={(e) => handleVetImageSelected(e, "signature")}
         />
 
         <Button

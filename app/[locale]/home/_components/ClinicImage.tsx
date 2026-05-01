@@ -3,13 +3,34 @@
 import Button from "@/components/Button";
 import { useClinicImage } from "@/hooks/useClinicImage";
 import { useTranslations } from "next-intl";
-import { useRef } from "react";
+import { useRef, useState, type ChangeEvent } from "react";
+import AppDialog from "@/components/AppDialog";
+import {
+  isClinicImageWithinSizeLimit,
+  MAX_CLINIC_IMAGE_SIZE_MB,
+} from "@/lib/queries/clinicImage";
 
 export default function ClinicImage() {
   const t = useTranslations("ClinicImage");
   const { image, loading, handleUpload } = useClinicImage();
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [isSizeLimitDialogOpen, setIsSizeLimitDialogOpen] = useState(false);
+
+  function handleClinicImageSelected(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    if (!isClinicImageWithinSizeLimit(file)) {
+      setIsSizeLimitDialogOpen(true);
+      event.target.value = "";
+      return;
+    }
+
+    handleUpload(event);
+  }
 
   return (
     <div className="w-[300px] flex flex-col items-center justify-start mt-1">
@@ -34,7 +55,24 @@ export default function ClinicImage() {
         ref={inputRef}
         className="hidden"
         accept="image/*"
-        onChange={(e) => handleUpload(e)}
+        onChange={handleClinicImageSelected}
+      />
+
+      <AppDialog
+        isOpen={isSizeLimitDialogOpen}
+        onClose={() => setIsSizeLimitDialogOpen(false)}
+        navbarTitle={t("imageSizeLimitTitle")}
+        title={t("imageSizeLimitTitle")}
+        description={
+          <p>
+            {t("imageSizeLimitError", {
+              maxSizeMb: MAX_CLINIC_IMAGE_SIZE_MB,
+            })}
+          </p>
+        }
+        confirmLabel={t("accept")}
+        showCancelButton={false}
+        onConfirm={() => setIsSizeLimitDialogOpen(false)}
       />
     </div>
   );

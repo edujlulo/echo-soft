@@ -11,6 +11,14 @@ const ULTRASOUND_IMAGES_BUCKET = "ultrasound-images";
 
 export const MAX_ULTRASOUND_IMAGES_PER_CONSULTATION = 90;
 
+export const MAX_ULTRASOUND_IMAGE_SIZE_MB = 6;
+export const MAX_ULTRASOUND_IMAGE_SIZE_BYTES =
+  MAX_ULTRASOUND_IMAGE_SIZE_MB * 1024 * 1024;
+
+export function isUltrasoundImageWithinSizeLimit(file: File): boolean {
+  return file.size <= MAX_ULTRASOUND_IMAGE_SIZE_BYTES;
+}
+
 function getSupabaseStorageTusEndpoint(): string {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 

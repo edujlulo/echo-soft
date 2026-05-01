@@ -11,6 +11,13 @@ export interface SignedVetImages {
   other: string[];
 }
 
+export const MAX_VET_IMAGE_SIZE_MB = 6;
+export const MAX_VET_IMAGE_SIZE_BYTES = MAX_VET_IMAGE_SIZE_MB * 1024 * 1024;
+
+export function isVetImageWithinSizeLimit(file: File): boolean {
+  return file.size <= MAX_VET_IMAGE_SIZE_BYTES;
+}
+
 // Traer imágenes y generar signed URLs
 export async function getVetImagesWithSignedUrls(
   vetId: string
@@ -53,8 +60,7 @@ export async function uploadVetImage(
   type: VetImageType,
   description: string | null = null
 ): Promise<string | null> {
-  const fileExt = file.name.split(".").pop();
-  const fileName = `${type}.${fileExt}`;
+  const fileName = `${type}.jpg`;
   const filePath = `${vetId}/${fileName}`;
 
   // Subir al bucket

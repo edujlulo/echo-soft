@@ -9,6 +9,13 @@ export interface PetImages {
   profile: string | null;
 }
 
+export const MAX_PET_IMAGE_SIZE_MB = 5;
+export const MAX_PET_IMAGE_SIZE_BYTES = MAX_PET_IMAGE_SIZE_MB * 1024 * 1024;
+
+export function isPetImageWithinSizeLimit(file: File): boolean {
+  return file.size <= MAX_PET_IMAGE_SIZE_BYTES;
+}
+
 // =========================
 // GET IMAGE (bucket público)
 // =========================

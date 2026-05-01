@@ -9,6 +9,7 @@ import {
   SignedVetImages,
   deleteVetImage,
 } from "@/lib/queries/vetImages";
+import { compressImageForVetUpload } from "@/lib/images/compressImage";
 
 export function useVetImages() {
   const { activeVet } = useActiveVetStore();
@@ -41,25 +42,32 @@ export function useVetImages() {
 
     const file = event.target.files[0];
 
-    // <-- 1. Mostrar cargando
     setLoading((prev) => ({ ...prev, [type]: true }));
 
-    const url = await uploadVetImage(activeVet.vet_id, file, type);
+    try {
+      const compressedFile = await compressImageForVetUpload(file);
 
-    if (!url) {
-      // <-- 2. En caso de error, dejar de mostrar cargando
+      const url = await uploadVetImage(activeVet.vet_id, compressedFile, type);
+
+      if (!url) {
+        setLoading((prev) => ({ ...prev, [type]: false }));
+        return;
+      }
+
+      setImages((prev) => ({
+        ...prev,
+        [type]: url + "?ts=" + Date.now(),
+      }));
+    } catch (error) {
+      console.error("Vet image upload error:", error);
+    } finally {
       setLoading((prev) => ({ ...prev, [type]: false }));
-      return;
     }
-
-    // <-- 3. Actualizar imagen
-    setImages((prev) => ({ ...prev, [type]: url }));
-
-    // <-- 4. Ya terminó de cargar
-    setLoading((prev) => ({ ...prev, [type]: false }));
   }
 
-  async function handleDelete(type: Extract<VetImageType, "profile" | "signature">) {
+  async function handleDelete(
+    type: Extract<VetImageType, "profile" | "signature">
+  ) {
     if (!activeVet) return;
 
     setLoading((prev) => ({ ...prev, [type]: true }));

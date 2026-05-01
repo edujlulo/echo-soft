@@ -1,8 +1,16 @@
 import { supabase } from "../supabase/client";
 
+export const MAX_CLINIC_IMAGE_SIZE_MB = 6;
+export const MAX_CLINIC_IMAGE_SIZE_BYTES =
+  MAX_CLINIC_IMAGE_SIZE_MB * 1024 * 1024;
+
+export function isClinicImageWithinSizeLimit(file: File): boolean {
+  return file.size <= MAX_CLINIC_IMAGE_SIZE_BYTES;
+}
+
 // Traer la imagen de la clínica y generar signed URL
 export async function getClinicImageWithSignedUrl(
-  clinicId: string,
+  clinicId: string
 ): Promise<string | null> {
   const { data, error } = await supabase
     .from("clinic_images")
@@ -32,10 +40,9 @@ export async function getClinicImageWithSignedUrl(
 // Subir imagen al bucket y registrar en la tabla
 export async function uploadClinicImage(
   clinicId: string,
-  file: File,
+  file: File
 ): Promise<string | null> {
-  const fileExt = file.name.split(".").pop();
-  const fileName = `clinic.${fileExt}`;
+  const fileName = "clinic.jpg";
   const filePath = `${clinicId}/${fileName}`;
 
   // Subir al bucket

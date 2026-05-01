@@ -15,6 +15,7 @@ import {
 } from "@/lib/queries/petImages";
 import { usePetFetcher } from "./usePetFetcher";
 import { emptyPet } from "@/context/selectedPetStore";
+import { compressImageForPetUpload } from "@/lib/images/compressImage";
 
 export function usePetImages() {
   const { selectedPet, setSelectedPet } = useSelectedPetStore();
@@ -76,40 +77,38 @@ export function usePetImages() {
 
     setLoading({ [type]: true });
 
-    const url = await uploadPetImage(petId, file, type);
+    try {
+      const compressedFile = await compressImageForPetUpload(file);
 
-    if (!url) {
-      setLoading({ [type]: false });
-      return;
-    }
+      const url = await uploadPetImage(petId, compressedFile, type);
 
-    const finalUrl = url + "?ts=" + Date.now();
-
-    // 1️⃣ Actualizamos la imagen en el estado local de selectedPet
-    setImages({
-      ...images, // tu estado actual
-      [type]: finalUrl,
-    });
-
-    // Actualizamos selectedPet
-    // useSelectedPetStore.getState().setSelectedPet({
-    //   ...selectedPet,
-    //   image_path: finalUrl,
-    // });
-
-    setLoading({ [type]: false });
-
-    // 3️⃣ Refrescamos la lista global de pets
-    // SOLO actualizar selectedPet después de refreshPets(), así ya no se pisa
-    refreshPets().then(() => {
-      const currentPet = useSelectedPetStore.getState().selectedPet;
-      if (currentPet) {
-        useSelectedPetStore.getState().setSelectedPet({
-          ...currentPet,
-          image_path: finalUrl,
-        });
+      if (!url) {
+        setLoading({ [type]: false });
+        return;
       }
-    });
+
+      const finalUrl = url + "?ts=" + Date.now();
+
+      setImages({
+        ...images,
+        [type]: finalUrl,
+      });
+
+      setLoading({ [type]: false });
+
+      refreshPets().then(() => {
+        const currentPet = useSelectedPetStore.getState().selectedPet;
+        if (currentPet) {
+          useSelectedPetStore.getState().setSelectedPet({
+            ...currentPet,
+            image_path: finalUrl,
+          });
+        }
+      });
+    } catch (error) {
+      console.error("Pet image upload error:", error);
+      setLoading({ [type]: false });
+    }
   }
 
   // =========================

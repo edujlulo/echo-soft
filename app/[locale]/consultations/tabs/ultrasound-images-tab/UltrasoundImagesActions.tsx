@@ -11,9 +11,12 @@ import { ultrasoundUploadManager } from "@/lib/uploads/ultrasoundUploadManager";
 import { useUltrasoundUploadManager } from "@/components/providers/UltrasoundUploadManagerProvider";
 import {
   countUltrasoundImagesByConsultation,
+  isUltrasoundImageWithinSizeLimit,
   MAX_ULTRASOUND_IMAGES_PER_CONSULTATION,
+  MAX_ULTRASOUND_IMAGE_SIZE_MB,
 } from "@/lib/queries/ultrasoundImages";
 import { useTranslations } from "next-intl";
+import { compressImageForUltrasoundUpload } from "@/lib/images/compressImage";
 
 interface Props {
   onUploadComplete?: () => Promise<void> | void;
@@ -25,6 +28,11 @@ interface Props {
   selectedImageCount: number;
   isSelectionActionsDisabled: boolean;
   currentImageCount: number;
+}
+
+interface PendingSizeLimitUpload {
+  validFiles: File[];
+  oversizedFiles: File[];
 }
 
 export default function UltrasoundImagesActions({
@@ -44,27 +52,31 @@ export default function UltrasoundImagesActions({
 
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
   const [uploadLimitMessage, setUploadLimitMessage] = useState<string | null>(
-    null,
+    null
   );
+  const [pendingSizeLimitUpload, setPendingSizeLimitUpload] =
+    useState<PendingSizeLimitUpload | null>(null);
 
   const { state: uploadManagerState } = useUltrasoundUploadManager();
 
   const isUploading = uploadManagerState.items.some(
-    (item) => item.status === "queued" || item.status === "uploading",
+    (item) => item.status === "queued" || item.status === "uploading"
   );
   const remainingImageSlots = Math.max(
     0,
-    MAX_ULTRASOUND_IMAGES_PER_CONSULTATION - currentImageCount,
+    MAX_ULTRASOUND_IMAGES_PER_CONSULTATION - currentImageCount
   );
   const hasReachedImageLimit = remainingImageSlots === 0;
   const isAnyDeleteInProgress =
-    isDeletingAllImages || isDeletingSelectedImages || isSelectionActionsDisabled;
+    isDeletingAllImages ||
+    isDeletingSelectedImages ||
+    isSelectionActionsDisabled;
 
   const clinicId = useClinicStore((s) => s.activeClinic?.clinic_id);
   const vetId = useActiveVetStore((s) => s.activeVet?.vet_id);
   const petId = useSelectedPetStore((s) => s.selectedPet?.pet_id);
   const consultationId = useConsultationStore(
-    (s) => s.selectedConsultation?.consultation_id,
+    (s) => s.selectedConsultation?.consultation_id
   );
 
   function handleOpenFilePicker() {
@@ -72,7 +84,7 @@ export default function UltrasoundImagesActions({
       setUploadLimitMessage(
         t("imageLimitReached", {
           maxImages: MAX_ULTRASOUND_IMAGES_PER_CONSULTATION,
-        }),
+        })
       );
       return;
     }
@@ -100,30 +112,74 @@ export default function UltrasoundImagesActions({
     }
   }
 
+  async function enqueueValidUltrasoundFiles(files: File[]) {
+    if (!clinicId || !vetId || !petId || !consultationId) {
+      console.error("Missing required IDs for ultrasound image upload.");
+      return;
+    }
+
+    const compressedFiles = await compressUltrasoundFiles(files);
+
+    await ultrasoundUploadManager.enqueueUltrasoundUploads({
+      files: compressedFiles,
+      clinicId,
+      vetId,
+      petId,
+      consultationId,
+      onUploadComplete,
+    });
+  }
+
+  async function compressUltrasoundFiles(files: File[]): Promise<File[]> {
+    return Promise.all(
+      files.map((file) => compressImageForUltrasoundUpload(file))
+    );
+  }
+
   async function handleFilesSelected(event: ChangeEvent<HTMLInputElement>) {
     const selectedFiles = event.target.files
       ? Array.from(event.target.files)
       : [];
 
+    event.target.value = "";
+
     if (selectedFiles.length === 0) return;
 
     if (!clinicId || !vetId || !petId || !consultationId) {
       console.error("Missing required IDs for ultrasound image upload.");
-      event.target.value = "";
       return;
     }
 
     try {
       setUploadLimitMessage(null);
+      setPendingSizeLimitUpload(null);
 
-      const currentStoredImageCount =
-        await countUltrasoundImagesByConsultation(consultationId);
-      const remainingSlots = Math.max(
-        0,
-        MAX_ULTRASOUND_IMAGES_PER_CONSULTATION - currentStoredImageCount,
+      const validSizeFiles = selectedFiles.filter(
+        isUltrasoundImageWithinSizeLimit
+      );
+      const oversizedFiles = selectedFiles.filter(
+        (file) => !isUltrasoundImageWithinSizeLimit(file)
       );
 
-      if (selectedFiles.length > remainingSlots) {
+      if (validSizeFiles.length === 0) {
+        setUploadLimitMessage(
+          t("allImagesExceedSizeLimit", {
+            maxSizeMb: MAX_ULTRASOUND_IMAGE_SIZE_MB,
+          })
+        );
+        return;
+      }
+
+      const currentStoredImageCount = await countUltrasoundImagesByConsultation(
+        consultationId
+      );
+
+      const remainingSlots = Math.max(
+        0,
+        MAX_ULTRASOUND_IMAGES_PER_CONSULTATION - currentStoredImageCount
+      );
+
+      if (validSizeFiles.length > remainingSlots) {
         setUploadLimitMessage(
           remainingSlots === 0
             ? t("imageLimitReached", {
@@ -132,26 +188,23 @@ export default function UltrasoundImagesActions({
             : t("remainingUploadLimit", {
                 currentImageCount: currentStoredImageCount,
                 remainingSlots,
-              }),
+              })
         );
-        event.target.value = "";
         return;
       }
 
-      await ultrasoundUploadManager.enqueueUltrasoundUploads({
-        files: selectedFiles,
-        clinicId,
-        vetId,
-        petId,
-        consultationId,
-        onUploadComplete,
-      });
+      if (oversizedFiles.length > 0) {
+        setPendingSizeLimitUpload({
+          validFiles: validSizeFiles,
+          oversizedFiles,
+        });
+        return;
+      }
 
-      event.target.value = "";
+      await enqueueValidUltrasoundFiles(validSizeFiles);
     } catch (error) {
       console.error("Upload error:", error);
       setUploadLimitMessage(t("imageLimitValidationError"));
-      event.target.value = "";
     }
   }
 
@@ -186,9 +239,7 @@ export default function UltrasoundImagesActions({
         type="button"
         onClick={onDeleteSelectedClick}
         disabled={isUploading || isAnyDeleteInProgress}
-        className={
-          isDeletingSelectedImages ? "bg-red-300 border-red-500!" : ""
-        }
+        className={isDeletingSelectedImages ? "bg-red-300 border-red-500!" : ""}
       >
         {isDeletingSelectedImages ? (
           <span className="inline-flex items-center justify-center gap-2">
@@ -249,6 +300,48 @@ export default function UltrasoundImagesActions({
         confirmLabel={t("understood")}
         showCancelButton={false}
         onConfirm={() => setUploadLimitMessage(null)}
+      />
+
+      <AppDialog
+        isOpen={pendingSizeLimitUpload !== null}
+        onClose={() => setPendingSizeLimitUpload(null)}
+        navbarTitle={t("imageSizeLimitTitle")}
+        title={t("someImagesExceedSizeLimitTitle")}
+        description={
+          <div className="space-y-3">
+            <p>
+              {t("someImagesExceedSizeLimitDescription", {
+                oversizedCount:
+                  pendingSizeLimitUpload?.oversizedFiles.length ?? 0,
+                maxSizeMb: MAX_ULTRASOUND_IMAGE_SIZE_MB,
+                validCount: pendingSizeLimitUpload?.validFiles.length ?? 0,
+              })}
+            </p>
+
+            <p className="font-semibold text-gray-700">
+              {t("continueWithValidImagesQuestion")}
+            </p>
+          </div>
+        }
+        confirmLabel={t("uploadValidImages", {
+          count: pendingSizeLimitUpload?.validFiles.length ?? 0,
+        })}
+        cancelLabel={t("cancelUpload")}
+        onConfirm={async () => {
+          const filesToUpload = pendingSizeLimitUpload?.validFiles ?? [];
+
+          setPendingSizeLimitUpload(null);
+
+          if (filesToUpload.length === 0) return;
+
+          try {
+            await enqueueValidUltrasoundFiles(filesToUpload);
+          } catch (error) {
+            console.error("Upload error:", error);
+            setUploadLimitMessage(t("imageLimitValidationError"));
+          }
+        }}
+        onCancel={() => setPendingSizeLimitUpload(null)}
       />
     </div>
   );

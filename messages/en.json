@@ -53,10 +53,15 @@
     "noSignatureToDelete": "The veterinarian has no signature to delete.",
 
     "errorDeletingProfile": "An error occurred while deleting the profile photo.",
-    "errorDeletingSignature": "An error occurred while deleting the signature."
+    "errorDeletingSignature": "An error occurred while deleting the signature.",
+
+    "imageSizeLimitError": "The image cannot be larger than {maxSizeMb} MB."
   },
   "ClinicImage": {
-    "loadingImage": "Loading image..."
+    "loadingImage": "Loading image...",
+    "imageSizeLimitTitle": "Image size limit",
+    "imageSizeLimitError": "The clinic image cannot be larger than {maxSizeMb} MB.",
+    "accept": "OK"
   },
   "DashboardPage": {
     "navbarTitle": "Patients"
@@ -158,7 +163,9 @@
     "accept": "OK",
 
     "noPhotoToDelete": "The patient has no photo to delete.",
-    "errorDeletingPhoto": "An error occurred while deleting the patient photo."
+    "errorDeletingPhoto": "An error occurred while deleting the patient photo.",
+
+    "imageSizeLimitError": "The image cannot be larger than {maxSizeMb} MB."
   },
 
   "SummaryFields": {
@@ -387,7 +394,14 @@
     "deleteImageTitle": "Delete image",
     "deleteImageQuestion": "Are you sure you want to delete this image?",
     "delete": "Delete",
-    "deletingImage": "Deleting image..."
+    "deletingImage": "Deleting image...",
+
+    "imageSizeLimitTitle": "Image size limit",
+    "someImagesExceedSizeLimitTitle": "Some images are too large",
+    "someImagesExceedSizeLimitDescription": "{oversizedCount} images are larger than {maxSizeMb} MB and will be skipped. You can upload the remaining {validCount} images.",
+    "continueWithValidImagesQuestion": "Do you want to continue?",
+    "uploadValidImages": "Upload {count} images",
+    "allImagesExceedSizeLimit": "All selected images are larger than {maxSizeMb} MB. Please choose smaller images."
   },
 
   "QuickModeSection": {

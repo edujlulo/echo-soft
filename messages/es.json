@@ -54,11 +54,16 @@
     "noSignatureToDelete": "El veterinario no tiene una firma para borrar.",
 
     "errorDeletingProfile": "Ocurrió un error al borrar la foto de perfil.",
-    "errorDeletingSignature": "Ocurrió un error al borrar la firma."
+    "errorDeletingSignature": "Ocurrió un error al borrar la firma.",
+
+    "imageSizeLimitError": "La imagen no puede pesar más de {maxSizeMb} MB."
   },
 
   "ClinicImage": {
-    "loadingImage": "Cargando imagen..."
+    "loadingImage": "Cargando imagen...",
+    "imageSizeLimitTitle": "Límite de peso",
+    "imageSizeLimitError": "La imagen de la clínica no puede pesar más de {maxSizeMb} MB.",
+    "accept": "Aceptar"
   },
 
   "DashboardPage": {
@@ -161,7 +166,9 @@
     "accept": "Aceptar",
 
     "noPhotoToDelete": "El paciente no tiene una foto para borrar.",
-    "errorDeletingPhoto": "Ocurrió un error al borrar la foto del paciente."
+    "errorDeletingPhoto": "Ocurrió un error al borrar la foto del paciente.",
+
+    "imageSizeLimitError": "La imagen no puede pesar más de {maxSizeMb} MB."
   },
 
   "SummaryFields": {
@@ -390,7 +397,14 @@
     "deleteImageTitle": "Eliminar imagen",
     "deleteImageQuestion": "¿Estás seguro de que deseas eliminar esta imagen?",
     "delete": "Eliminar",
-    "deletingImage": "Borrando imagen..."
+    "deletingImage": "Borrando imagen...",
+
+    "imageSizeLimitTitle": "Límite de peso",
+    "someImagesExceedSizeLimitTitle": "Algunas imágenes pesan demasiado",
+    "someImagesExceedSizeLimitDescription": "{oversizedCount} imágenes pesan más de {maxSizeMb} MB y serán omitidas. Puedes subir las {validCount} imágenes restantes.",
+    "continueWithValidImagesQuestion": "¿Deseas continuar?",
+    "uploadValidImages": "Subir {count} imágenes",
+    "allImagesExceedSizeLimit": "Todas las imágenes seleccionadas pesan más de {maxSizeMb} MB. Por favor, selecciona imágenes más livianas."
   },
 
   "QuickModeSection": {

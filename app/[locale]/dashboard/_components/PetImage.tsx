@@ -10,6 +10,10 @@ import { emptyPet, useSelectedPetStore } from "@/context/selectedPetStore";
 import AppDialog from "@/components/AppDialog";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { useTranslations } from "next-intl";
+import {
+  isPetImageWithinSizeLimit,
+  MAX_PET_IMAGE_SIZE_MB,
+} from "@/lib/queries/petImages";
 
 export default function PetImage() {
   const t = useTranslations("PetImage");
@@ -138,11 +142,20 @@ export default function PetImage() {
           accept="image/*"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file && file.size > 5 * 1024 * 1024) {
-              window.alert("La imagen no puede superar los 5MB.");
-              e.target.value = ""; // 🔹 Reset input aquí
+
+            if (!file) return;
+
+            if (!isPetImageWithinSizeLimit(file)) {
+              setDialogMessage(
+                t("imageSizeLimitError", {
+                  maxSizeMb: MAX_PET_IMAGE_SIZE_MB,
+                })
+              );
+              setIsAlertDialogOpen(true);
+              e.target.value = "";
               return;
             }
+
             handleUpload(e, "profile");
           }}
         />
