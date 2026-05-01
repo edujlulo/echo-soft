@@ -1,15 +1,22 @@
 {
   "LoginPage": {
-    "title": "Welcome to EchoSoft",
-    "subtitle": "Enter your email and password to continue",
+    "productName": "EchoSoft",
+    "productDescription": "Ultrasound reporting platform for veterinary clinics",
+    "title": "Sign in",
+    "subtitle": "Access your EchoSoft workspace",
     "emailLabel": "Email",
     "emailPlaceholder": "Enter your email address",
     "passwordLabel": "Password",
     "passwordPlaceholder": "Enter your password",
-    "loginButton": "Log in",
+    "loginButton": "Sign in",
     "loadingButton": "Loading...",
-    "unauthorizedMessage": "Only authorised clinic staff can log in",
-    "invalidCredentials": "Incorrect email address or password"
+    "unauthorizedMessage": "Access is restricted to authorised clinic staff",
+    "invalidCredentials": "Incorrect email address or password",
+
+    "demoText": "Explore the full application instantly",
+    "demoButton": "Explore Demo",
+    "or": "or",
+    "noSignupRequired": "No sign-up required"
   },
   "HomePage": {
     "echosoft": "EchoSoft",

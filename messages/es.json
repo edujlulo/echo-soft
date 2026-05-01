@@ -1,6 +1,8 @@
 {
   "LoginPage": {
-    "title": "Bienvenido a EcoSoft",
+    "productName": "Bienvenido a EchoSoft",
+    "productDescription": "Plataforma de informes de ecografía para clínicas veterinarias",
+    "title": "Inicia sesión",
     "subtitle": "Ingrese su correo y contraseña para continuar",
     "emailLabel": "Correo",
     "emailPlaceholder": "Ingrese su correo",
@@ -9,7 +11,12 @@
     "loginButton": "Entrar",
     "loadingButton": "Cargando...",
     "unauthorizedMessage": "Solo personal autorizado de la clínica puede iniciar sesión",
-    "invalidCredentials": "Correo o contraseña incorrectos"
+    "invalidCredentials": "Correo o contraseña incorrectos",
+
+    "demoText": "Explora la aplicación con una cuenta de prueba.",
+    "demoButton": "Probar ahora",
+    "or": "o",
+    "noSignupRequired": "No necesitas registrarte"
   },
   "HomePage": {
     "echosoft": "EcoSoft",
