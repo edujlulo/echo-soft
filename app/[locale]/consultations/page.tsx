@@ -8,6 +8,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
+import { useTextTemplatesStore } from "@/context/textTemplatesStore";
 
 export default function ConsultationsPage() {
   const t = useTranslations("ConsultationTabs");
@@ -19,6 +21,13 @@ export default function ConsultationsPage() {
 
   const activeVet = useActiveVetStore((s) => s.activeVet);
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
+  const fetchAllTemplates = useTextTemplatesStore((s) => s.fetchAllTemplates);
+
+  useEffect(() => {
+    if (!activeVet?.vet_id) return;
+
+    fetchAllTemplates(activeVet.vet_id);
+  }, [activeVet?.vet_id, fetchAllTemplates]);
 
   const navigateToDashboard = () => {
     router.push(`/${locale}/dashboard`);

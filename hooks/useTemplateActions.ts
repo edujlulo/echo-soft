@@ -5,11 +5,11 @@ import { useEditableSelectListStore } from "@/context/editableSelectListStore";
 import { useActiveVetStore } from "@/context/activeVetStore";
 import {
   deleteTextTemplate,
-  getTextTemplates,
   insertTextTemplate,
   updateTextTemplate,
 } from "@/lib/queries/textTemplates";
 import { Database } from "@/types/database";
+import { useTextTemplatesStore } from "@/context/textTemplatesStore";
 
 type TextTemplateRow = Database["public"]["Tables"]["text_templates"]["Row"];
 type TextTemplateInsert =
@@ -20,12 +20,22 @@ export function useTemplateActions() {
   const activeCategory = useEditableSelectListStore((s) => s.activeCategory);
   const activeVet = useActiveVetStore((s) => s.activeVet);
 
+  const allTemplates = useTextTemplatesStore((s) => s.templates);
+  const templatesLoading = useTextTemplatesStore((s) => s.loading);
+  const templatesError = useTextTemplatesStore((s) => s.error);
+  const upsertTemplate = useTextTemplatesStore((s) => s.upsertTemplate);
+  const removeTemplate = useTextTemplatesStore((s) => s.removeTemplate);
+
+  const [isMutating, setIsMutating] = useState(false);
+  const [mutationError, setMutationError] = useState<string | null>(null);
+
+  const templates = allTemplates.filter(
+    (template) => template.category === activeCategory
+  );
+
   // ========== STATES ==========
-  const [templates, setTemplates] = useState<TextTemplateRow[]>([]);
   const [selectedTemplate, setSelectedTemplate] =
     useState<TextTemplateRow | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // ========== EMPTY TEMPLATE ==========
   const emptyTemplate: TextTemplateInsert = {
@@ -39,41 +49,6 @@ export function useTemplateActions() {
     setSelectedTemplate(null);
   }, [activeCategory]);
 
-  // ========== FETCH TEMPLATES ==========
-  useEffect(() => {
-    if (!activeCategory || !activeVet) {
-      setTemplates([]);
-      setSelectedTemplate(null);
-      setError(null);
-      setLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    const fetchTemplates = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await getTextTemplates(activeVet.vet_id, activeCategory);
-        if (!signal.aborted) setTemplates(data);
-      } catch (err: any) {
-        if (!signal.aborted) {
-          console.error(err);
-          setError(err.message ?? "Failed to fetch text templates");
-          setTemplates([]);
-        }
-      } finally {
-        if (!signal.aborted) setLoading(false);
-      }
-    };
-
-    fetchTemplates();
-
-    return () => controller.abort();
-  }, [activeCategory, activeVet]);
-
   // ========== INITIALIZE NEW TEMPLATE ==========
   function initAddTemplate(vet_id: string) {
     setSelectedTemplate({ ...emptyTemplate, vet_id } as TextTemplateRow);
@@ -83,16 +58,16 @@ export function useTemplateActions() {
   async function addTemplate(): Promise<TextTemplateRow | null> {
     if (!selectedTemplate) return null;
     if (!activeCategory) {
-      setError("No active category selected.");
+      setMutationError("No active category selected.");
       return null;
     }
     if (!selectedTemplate.content || selectedTemplate.content.trim() === "") {
-      setError("Content cannot be empty.");
+      setMutationError("Content cannot be empty.");
       return null;
     }
 
-    setLoading(true);
-    setError(null);
+    setIsMutating(true);
+    setMutationError(null);
 
     try {
       const templateToInsert: TextTemplateInsert = {
@@ -104,20 +79,18 @@ export function useTemplateActions() {
 
       const inserted = await insertTextTemplate(templateToInsert);
 
-      if (inserted && activeVet && activeCategory) {
-        // Después de insertar, hacemos fetch completo
-        const data = await getTextTemplates(activeVet.vet_id, activeCategory);
-        setTemplates(data); // actualizar tabla con los datos reales
-        setSelectedTemplate(inserted); // New insert will be selectedTemplate
+      if (inserted) {
+        upsertTemplate(inserted);
+        setSelectedTemplate(inserted);
       }
 
       return inserted ?? null;
     } catch (err: any) {
       console.error(err);
-      setError(err.message ?? "Failed to add template.");
+      setMutationError(err.message ?? "Failed to add template.");
       return null;
     } finally {
-      setLoading(false);
+      setIsMutating(false);
     }
   }
 
@@ -128,12 +101,12 @@ export function useTemplateActions() {
     if (!selectedTemplate.id) return null;
 
     if (!selectedTemplate.content || selectedTemplate.content.trim() === "") {
-      setError("Content cannot be empty.");
+      setMutationError("Content cannot be empty.");
       return null;
     }
 
-    setLoading(true);
-    setError(null);
+    setIsMutating(true);
+    setMutationError(null);
 
     try {
       const updated = await updateTextTemplate(
@@ -141,50 +114,43 @@ export function useTemplateActions() {
         selectedTemplate.content
       );
 
-      if (activeVet && activeCategory) {
-        const data = await getTextTemplates(activeVet.vet_id, activeCategory);
-
-        setTemplates(data);
-        setSelectedTemplate(updated);
-      }
+      upsertTemplate(updated);
+      setSelectedTemplate(updated);
 
       return updated;
     } catch (err: any) {
       console.error(err);
-      setError(err.message ?? "Failed to update template.");
+      setMutationError(err.message ?? "Failed to update template.");
       return null;
     } finally {
-      setLoading(false);
+      setIsMutating(false);
     }
   }
 
   // ========== DELETE TEMPLATE ==========
   async function deleteTemplate(): Promise<boolean> {
     if (!selectedTemplate) {
-      setError("Debe seleccionar una frase.");
+      setMutationError("Debe seleccionar una frase.");
       alert("Debe seleccionar una frase"); // alerta si no hay seleccionado
       return false;
     }
 
-    setLoading(true);
-    setError(null);
+    setIsMutating(true);
+    setMutationError(null);
 
     try {
       await deleteTextTemplate(selectedTemplate.id);
 
-      if (activeVet && activeCategory) {
-        const data = await getTextTemplates(activeVet.vet_id, activeCategory);
-        setTemplates(data); // actualizar tabla con los datos reales
-        setSelectedTemplate(null); // limpiar selección
-      }
+      removeTemplate(selectedTemplate.id);
+      setSelectedTemplate(null);
 
       return true;
     } catch (err: any) {
       console.error(err);
-      setError(err.message ?? "Failed to delete template.");
+      setMutationError(err.message ?? "Failed to delete template.");
       return false;
     } finally {
-      setLoading(false);
+      setIsMutating(false);
     }
   }
 
@@ -196,7 +162,9 @@ export function useTemplateActions() {
     addTemplate,
     updateTemplate,
     deleteTemplate,
-    loading,
-    error,
+    loading: isMutating,
+    error: mutationError,
+    templatesLoading,
+    templatesError,
   };
 }

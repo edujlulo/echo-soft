@@ -12,6 +12,9 @@ import { usePetFetcher } from "@/hooks/usePetFetcher";
 import { Dialog } from "@headlessui/react";
 import DialogScaleWrapper from "@/components/DialogScaleWrapper";
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
+import { useActiveVetStore } from "@/context/activeVetStore";
+import { useTextTemplatesStore } from "@/context/textTemplatesStore";
 
 type PetFormModalProps = {
   isOpen: boolean;
@@ -25,6 +28,16 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
   const { refreshPets } = usePetFetcher();
   const setSelectedPet = useSelectedPetStore((s) => s.setSelectedPet);
   const isCreating = useSelectedPetStore((s) => s.isCreating);
+
+  const activeVet = useActiveVetStore((s) => s.activeVet);
+  const fetchAllTemplates = useTextTemplatesStore((s) => s.fetchAllTemplates);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    if (!activeVet?.vet_id) return;
+
+    fetchAllTemplates(activeVet.vet_id);
+  }, [isOpen, activeVet?.vet_id, fetchAllTemplates]);
 
   const onSuccess = (newPet: Pet) => {
     refreshPets();
@@ -75,7 +88,9 @@ export default function PetFormModal({ isOpen, onClose }: PetFormModalProps) {
 
               <div className="flex-1 min-h-0 p-4 flex flex-col gap-2 items-center justify-center">
                 {/* ======= TITLE ========= */}
-                <h1 className="pr-12 text-2xl font-semibold">{t("petTitle")}</h1>
+                <h1 className="pr-12 text-2xl font-semibold">
+                  {t("petTitle")}
+                </h1>
 
                 <div className="w-full min-h-0 flex flex-col gap-2">
                   <div className="w-full min-h-0 flex flex-row gap-5">
