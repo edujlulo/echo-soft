@@ -1,6 +1,11 @@
 "use client";
 
-import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridRowSelectionModel,
+  GridSortModel,
+} from "@mui/x-data-grid";
 import { Database } from "@/types/database";
 import { useTranslations } from "next-intl";
 
@@ -26,8 +31,8 @@ export default function FullTemplatesTable({
       field: "label",
       headerName: t("template"),
       flex: 1,
-      sortable: false,
-      filterable: false,
+      sortable: true,
+      filterable: true,
     },
   ];
 
@@ -52,6 +57,13 @@ export default function FullTemplatesTable({
     ids: new Set(selectedTemplateId ? [selectedTemplateId] : []),
   };
 
+  const initialSortModel: GridSortModel = [
+    {
+      field: "label",
+      sort: "asc",
+    },
+  ];
+
   return (
     <div className="h-full w-[38%] min-w-0">
       <DataGrid
@@ -62,6 +74,11 @@ export default function FullTemplatesTable({
         columnHeaderHeight={28}
         checkboxSelection={false}
         loading={loading}
+        initialState={{
+          sorting: {
+            sortModel: initialSortModel,
+          },
+        }}
         rowSelectionModel={rowSelectionModel}
         onRowClick={(params) => {
           if (params.row.isEmpty) return;
