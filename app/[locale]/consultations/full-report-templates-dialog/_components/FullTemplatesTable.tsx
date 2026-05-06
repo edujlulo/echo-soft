@@ -33,6 +33,25 @@ export default function FullTemplatesTable({
       flex: 1,
       sortable: true,
       filterable: true,
+      getSortComparator: (sortDirection) => {
+        return (value1, value2, cellParams1, cellParams2) => {
+          const row1 = cellParams1.api.getRow(cellParams1.id) as {
+            isEmpty?: boolean;
+          };
+          const row2 = cellParams2.api.getRow(cellParams2.id) as {
+            isEmpty?: boolean;
+          };
+
+          if (row1?.isEmpty && !row2?.isEmpty) return 1;
+          if (!row1?.isEmpty && row2?.isEmpty) return -1;
+
+          const comparison = String(value1 ?? "").localeCompare(
+            String(value2 ?? "")
+          );
+
+          return sortDirection === "desc" ? -comparison : comparison;
+        };
+      },
     },
   ];
 

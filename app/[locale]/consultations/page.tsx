@@ -10,6 +10,7 @@ import { useActiveVetStore } from "@/context/activeVetStore";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { useTextTemplatesStore } from "@/context/textTemplatesStore";
+import { useConsultationStore } from "@/context/consultationStore";
 
 export default function ConsultationsPage() {
   const t = useTranslations("ConsultationTabs");
@@ -19,6 +20,9 @@ export default function ConsultationsPage() {
   const params = useParams();
   const locale = params.locale as string;
 
+  const selectedConsultation = useConsultationStore(
+    (s) => s.selectedConsultation
+  );
   const activeVet = useActiveVetStore((s) => s.activeVet);
   const selectedPet = useSelectedPetStore((s) => s.selectedPet);
   const fetchAllTemplates = useTextTemplatesStore((s) => s.fetchAllTemplates);
@@ -64,7 +68,7 @@ export default function ConsultationsPage() {
             <LabeledInput
               labelClassName="font-bold w-30"
               inputClassName="w-90 bg-white"
-              value={activeVet?.name}
+              value={selectedConsultation?.vet_name ?? ""}
               disabled
             >
               {t("veterinarian")}

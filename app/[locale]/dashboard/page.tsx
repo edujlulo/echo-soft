@@ -8,11 +8,14 @@ import DashboardBottom from "./_components/DashboardBottom";
 import { useState } from "react";
 import PetFormModal from "./_components/pet-form-modal/PetFormModalPage";
 import { useSelectedPetStore } from "@/context/selectedPetStore";
+import { useTranslations } from "next-intl";
 
 // import { useSelectedPetStore } from "@/context/selectedPetStore";
 
 export default function DashboardPage() {
   const { isCreating, isEditing, resetSelectedPet } = useSelectedPetStore();
+
+  const t = useTranslations("DashboardPage");
 
   // Abrir modal si está creando o editando
   const open = isCreating || isEditing;
@@ -27,7 +30,7 @@ export default function DashboardPage() {
       <div className="w-[1400px] h-[700px] bg-blue-200 flex flex-col rounded-md text-sm">
         {/* NavBar */}
         <div className="w-full">
-          <Navbar>Pacientes</Navbar>
+          <Navbar>{t("navbarTitle")}</Navbar>
         </div>
 
         {/* =============== Top section ================= */}

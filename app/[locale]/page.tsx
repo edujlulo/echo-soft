@@ -3,6 +3,7 @@
 import Button from "@/components/Button";
 import LabeledInput from "@/components/LabeledInput";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useConsultationStore } from "@/context/consultationStore";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
@@ -96,6 +97,7 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             inputClassName="w-60"
             placeholder={t("emailPlaceholder")}
+            autoFocus
           >
             {t("emailLabel")}
           </LabeledInput>
