@@ -48,7 +48,10 @@ export async function uploadClinicImage(
   // Subir al bucket
   const { error: uploadError } = await supabase.storage
     .from("clinic-images")
-    .upload(filePath, file, { upsert: true });
+    .upload(filePath, file, {
+      upsert: true,
+      cacheControl: "0",
+    });
 
   if (uploadError) {
     console.error("Error uploading clinic image:", uploadError);

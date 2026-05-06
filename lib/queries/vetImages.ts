@@ -66,7 +66,10 @@ export async function uploadVetImage(
   // Subir al bucket
   const { error: uploadError } = await supabase.storage
     .from("vet-images")
-    .upload(filePath, file, { upsert: true });
+    .upload(filePath, file, {
+      upsert: true,
+      cacheControl: "0",
+    });
 
   if (uploadError) {
     console.error("Error uploading to storage:", uploadError);

@@ -54,10 +54,14 @@ export function useVetImages() {
         return;
       }
 
+      const separator = url.includes("?") ? "&" : "?";
+
       setImages((prev) => ({
         ...prev,
-        [type]: url + "?ts=" + Date.now(),
+        [type]: `${url}${separator}ts=${Date.now()}`,
       }));
+
+      event.target.value = "";
     } catch (error) {
       console.error("Vet image upload error:", error);
     } finally {

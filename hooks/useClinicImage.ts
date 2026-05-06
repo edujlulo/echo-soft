@@ -42,11 +42,14 @@ export function useClinicImage() {
       );
 
       if (url) {
-        setImage(url + "?ts=" + Date.now());
+        const separator = url.includes("?") ? "&" : "?";
+
+        setImage(`${url}${separator}ts=${Date.now()}`);
       }
     } catch (error) {
       console.error("Clinic image upload error:", error);
     } finally {
+      event.target.value = "";
       setLoading(false);
     }
   }
