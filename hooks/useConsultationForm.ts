@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { updateConsultation } from "@/lib/queries/consultations";
+import { useCallback, useEffect, useRef } from "react";
+import { autosaveConsultation } from "@/lib/queries/consultations";
 import { Database } from "@/types/database";
 import { useConsultationStore } from "@/context/consultationStore";
 
@@ -39,42 +39,47 @@ export function useConsultationForm() {
   // -------------------
   // Guardar cambios en Supabase
   // -------------------
-  const saveConsultation = async () => {
+  const saveConsultation = useCallback(async () => {
     const consultation = formRef.current;
     if (!consultation?.consultation_id) return;
 
-    const changes = pendingChanges.current;
-    if (Object.keys(changes).length === 0) return;
+    const changesToSave = { ...pendingChanges.current };
+
+    if (Object.keys(changesToSave).length === 0) return;
 
     setIsSavingConsultation(true);
 
     try {
-      const updated = await updateConsultation(
-        consultation.consultation_id,
-        changes,
-      );
+      await autosaveConsultation(consultation.consultation_id, changesToSave);
 
-      loadFromSelected(updated);
-      setSelectedConsultation(updated);
-      pendingChanges.current = {};
+      // Clear only the changes that were actually saved.
+      // If the user typed while the request was in progress,
+      // those newer changes must stay pending.
+      for (const key of Object.keys(changesToSave) as Array<
+        keyof ConsultationUpdate
+      >) {
+        if (pendingChanges.current[key] === changesToSave[key]) {
+          delete pendingChanges.current[key];
+        }
+      }
 
       setStatusMessageConsultation("Guardado correctamente!");
       setTimeout(() => setStatusMessageConsultation(null), 1000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error guardando consulta:", err);
       setStatusMessageConsultation("Error guardando consulta");
       setTimeout(() => setStatusMessageConsultation(null), 2000);
     } finally {
       setIsSavingConsultation(false);
     }
-  };
+  }, [setIsSavingConsultation, setStatusMessageConsultation]);
 
   // -------------------
   // Cambios en campos con debounce
   // -------------------
   const handleFieldChange = (
     field: keyof ConsultationRow,
-    value: string | null,
+    value: string | null
   ) => {
     const normalizedValue = value === "" ? null : value;
 
@@ -98,8 +103,9 @@ export function useConsultationForm() {
   // Sincronizar copia editable con la selección global
   // -------------------
   useEffect(() => {
+    if (Object.keys(pendingChanges.current).length > 0) return;
+
     loadFromSelected(selectedConsultation);
-    pendingChanges.current = {};
   }, [selectedConsultation, loadFromSelected]);
 
   // -------------------
@@ -108,9 +114,12 @@ export function useConsultationForm() {
   useEffect(() => {
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);
-      if (Object.keys(pendingChanges.current).length > 0) saveConsultation();
+
+      if (Object.keys(pendingChanges.current).length > 0) {
+        void saveConsultation();
+      }
     };
-  }, []);
+  }, [saveConsultation]);
 
   return {
     formConsultation,

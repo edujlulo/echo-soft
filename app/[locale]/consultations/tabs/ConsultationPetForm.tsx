@@ -89,7 +89,7 @@ export default function ConsultationPetForm({
               inputClassName="w-40 bg-white"
               type="date"
               value={selectedPet?.birth_date ?? ""}
-              onChange={(e) => setField("birth_date", e.target.value)}
+              onChange={(e) => setField("birth_date", e.target.value || null)}
             >
               {t("birthDate")}
             </LabeledInput>
@@ -114,7 +114,7 @@ export default function ConsultationPetForm({
               resetEditableSelectListOnFocus
               labelClassName="w-26 font-bold"
               inputClassName="w-40 bg-white"
-              type="Date"
+              type="date"
               value={formConsultation?.consultation_date}
               onChange={(e) =>
                 setFieldConsultation("consultation_date", e.target.value)

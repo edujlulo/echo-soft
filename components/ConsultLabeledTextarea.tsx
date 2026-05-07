@@ -41,8 +41,10 @@ export default function ConsultLabeledTextarea({
         {...(value !== undefined ? { value } : {})}
         {...(onChange ? { onChange } : {})}
         onFocus={() => {
-          setActiveField(label);
-          if (categoryKey) setActiveCategory(categoryKey); // set activeCategory on focus
+          if (categoryKey) {
+            setActiveCategory(categoryKey);
+            setActiveField(label);
+          }
         }}
         // onBlur={() => {
         //   setActiveField(null);
@@ -52,7 +54,7 @@ export default function ConsultLabeledTextarea({
           "w-full bg-white border border-blue-200 px-2 pb-0.5 pt-1.5 rounded",
           "focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 focus:bg-white",
           textareaHeight ?? "h-24",
-          textareaClassName,
+          textareaClassName
         )}
       />
     </div>

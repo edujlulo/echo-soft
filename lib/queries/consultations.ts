@@ -50,6 +50,30 @@ export const updateConsultation = async (
   return data;
 };
 
+// ============ AUTOSAVE CONSULTATION WITHOUT RETURNING ROW ============
+export const autosaveConsultation = async (
+  consultationId: string,
+  updates: ConsultationUpdate
+): Promise<void> => {
+  const { error } = await supabase
+    .from("consultations")
+    .update(updates)
+    .eq("consultation_id", consultationId);
+
+  if (error) {
+    console.error("Error autosaving consultation:", {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code,
+      updates,
+      consultationId,
+    });
+
+    throw new Error(error.message);
+  }
+};
+
 // =========== GET CONSULTATIONS BY PET ID ===========
 export const getConsultationsByPetId = async (petId: string) => {
   const { data, error } = await supabase

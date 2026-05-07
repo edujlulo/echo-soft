@@ -171,11 +171,16 @@ export default function EditableSelectListTable({
               params.row.frase
             );
 
-            if (setField) {
+            const petCategories = ["owner", "referred_by", "sex", "breed"];
+
+            if (petCategories.includes(activeCategory) && setField) {
               setField(activeCategory as any, newText.toUpperCase());
-            } else if (setFieldConsultation) {
-              // solo llamamos si existe
+              return;
+            }
+
+            if (setFieldConsultation) {
               setFieldConsultation(activeCategory as any, newText);
+              return;
             }
           }}
           sx={{
