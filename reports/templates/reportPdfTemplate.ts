@@ -154,23 +154,29 @@ export function reportPdfTemplate({
             .join("");
 
       const imagesHtml = pageImages
-        .map(
-          (img) => `
-          <div class="ultrasound-slot ${
-            isSingleLayout ? "ultrasound-slot-single" : ""
-          }">
-            <div class="ultrasound-image-frame ${
-              isSingleLayout ? "ultrasound-image-frame-single" : ""
-            }">
-              <img
-                class="ultrasound-image"
-                src="${img.src}"
-                alt="${img.alt ?? "Ultrasound image"}"
-              />
-            </div>
-          </div>
-        `
-        )
+        .map((img, imageIndex) => {
+          const imageNumber = pageIndex * imagesPerPage + imageIndex + 1;
+
+          return `
+                <div class="ultrasound-slot ${
+                  isSingleLayout ? "ultrasound-slot-single" : ""
+                }">
+                  <div class="ultrasound-image-title">
+                    Imagen Nro. ${imageNumber}
+                  </div>
+          
+                  <div class="ultrasound-image-frame ${
+                    isSingleLayout ? "ultrasound-image-frame-single" : ""
+                  }">
+                    <img
+                      class="ultrasound-image"
+                      src="${img.src}"
+                      alt="${img.alt ?? "Ultrasound image"}"
+                    />
+                  </div>
+                </div>
+              `;
+        })
         .join("");
 
       return `
@@ -305,6 +311,13 @@ h3 {
 .ultrasound-slot {
   width: 100%;
   break-inside: avoid;
+}
+
+.ultrasound-image-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 6px;
 }
 
 .ultrasound-slot-single {
